@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BYGIGABIT — Bootleg Paper Trading Terminal & Bybit V5 Feed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/common.css">
+  <link rel="stylesheet" href="/static/css/index.css">
+</head>
+<body>
+  <div class="top-transmission-bar">
+    INDEPENDENT CRYPTO TERMINAL FROM UKRAINE // 10,000 USDT SIMULATED BALANCE // WORLDWIDE TRANSMISSION // BYBIT V5 SPOT FEED
+  </div>
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="/" class="brand">
+        <span class="brand-title">BYGIGABIT</span>
+        <span class="brand-dept">BOOTLEG DEPT.</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/" class="nav-link active">ГОЛОВНА</a></li>
+        <li><a href="/chart" class="nav-link">ТЕРМІНАЛ</a></li>
+        <li><a href="/analytics" class="nav-link">АНАЛІТИКА</a></li>
+        <li><a href="/profile" class="nav-link">ГАМАНЕЦЬ</a></li>
+        {% if user and user.role == 'Admin' %}
+          <li><a href="/admin" class="nav-link">АДМІНКА</a></li>
+        {% endif %}
+      </ul>
+    </div>
+    <div class="nav-right">
+      <div class="status-pill">
+        <span class="pulse-dot"></span>
+        <span>BYBIT SPOT V5</span>
+      </div>
+      {% if user %}
+        <a href="/profile" class="btn-nav-auth mono" style="color:var(--green); font-weight:700;">$10,000.00</a>
+        <a href="/profile" class="btn-nav-auth">{{ user.email }}</a>
+        <button onclick="handleLogout()" class="btn btn-outline" style="padding:6px 12px; font-size:10px;">ВИЙТИ</button>
+      {% else %}
+        <a href="/auth" class="btn-nav-auth">ВХІД</a>
+        <a href="/auth" class="btn-primary" style="padding:8px 16px; font-size:11px;">СТАРТ ($10K) ↗</a>
+      {% endif %}
+    </div>
+  </nav>
+  <main class="main-container">
+    <section class="hero-section">
+      <div class="hero-meta">VOL. 001 / UNAUTHORIZED TRANSMISSION / EST. 2026</div>
+      <h1 class="hero-title">BYGIGABIT</h1>
+      <div class="hero-triad">
+        <div class="triad-left">
+          <div class="triad-rec">
+            <span class="triad-rec-dot"></span>
+            <span>REC ● 00:00:01</span>
+          </div>
+          <div class="triad-tagline">
+            BAD SIGNAL.<br>GOOD TRADES.
+          </div>
+          <p class="triad-subtext">
+            For the chronically online traders.<br>
+            Not approved by traditional banks.<br>
+            Especially your parents.
+          </p>
+          <div class="triad-specs">
+            SP / HI-FI / BYBIT_V5
+          </div>
+        </div>
+        <div class="triad-center">
+          <div class="terminal-mock-box crt-frame">
+            <div class="terminal-mock-bars">
+              <div class="t-bar-1"></div>
+              <div class="t-bar-2"></div>
+              <div class="t-bar-3"></div>
+              <div class="t-bar-4"></div>
+              <div class="t-bar-5"></div>
+              <div class="t-bar-6"></div>
+              <div class="t-bar-7"></div>
+            </div>
+            <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-dim); text-align:center; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px;">
+              [ SIGNAL LOCKED. REALTIME FEED ]
+            </div>
+            <div class="mock-price-big" id="heroBtcPrice">
+              $81,399.4
+            </div>
+            <div class="mock-price-sub" id="heroBtcChange">
+              ▲ +1.88% (24H SPOT VOLATILITY)
+            </div>
+            <div style="font-family:var(--font-mono); font-size:9px; color:var(--text-dim); display:flex; justify-content:space-between; border-top:1px solid #222; padding-top:8px;">
+              <span>PAIR: BTC/USDT</span>
+              <span>LEVERAGE: 1x-20x</span>
+            </div>
+          </div>
+          <a href="/chart" class="btn-primary triad-btn">
+            ВІДКРИТИ ТЕРМІНАЛ ↗
+          </a>
+        </div>
+        <div class="triad-right">
+          <div class="featured-file-tag">[ FEATURED ASSET ]</div>
+          <div class="featured-title">BITCOIN SPOT</div>
+          <p class="featured-desc">
+            Raw execution / zero slippage<br>
+            Order Book L2 via REST Bybit V5<br>
+            Virtual balance $10,000 USDT
+          </p>
+          <div class="featured-balance" id="featuredPriceDisplay">81,399 USDT</div>
+          <div class="featured-stock">
+            <span class="featured-stock-dot"></span>
+            <span>IN STOCK / LIVE LIQUIDITY</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="tape-strip">
+      <span>NO REAL LOSSES.</span>
+      <span class="x">✕</span>
+      <span>TRADE THE VOLATILITY.</span>
+      <span class="x">✕</span>
+      <span>100% VIRTUAL EXECUTION.</span>
+      <span class="x">✕</span>
+      <span>BYBIT SPOT REST V5.</span>
+      <span class="x">✕</span>
+      <span>NO REAL LOSSES.</span>
+    </div>
+    <div class="section-meta-tag">CATALOG_001 / ALL SIGNALS RECOVERED</div>
+    <div class="section-head-tape">
+      <div class="section-title-tape">FRESH OFF THE TAPE.</div>
+      <div class="section-sub-tape">3 ASSETS / BYBIT V5 LIVE QUOTES</div>
+    </div>
+    <div class="market-grid" id="marketCards">
+      <a href="/chart" class="tape-card crt-frame" style="text-decoration:none;">
+        <div class="card-top-tag">
+          <span>CH_01 / SPOT_FEED</span>
+          <span class="badge-status">PRIMARY</span>
+        </div>
+        <div class="card-screen">
+          <div class="screen-symbol">BTC</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-dim); margin-top:4px;">BITCOIN / TETHER</div>
+          <div class="screen-bar-indicator"><div class="screen-bar-indicator-fill" style="width:75%;"></div></div>
+        </div>
+        <div class="card-info-bottom">
+          <div class="coin-name-block">
+            <span class="coin-full-name">Bitcoin</span>
+            <span class="coin-sub-meta">BYBIT SPOT / REALTIME</span>
+          </div>
+          <div class="coin-price-block">
+            <span class="coin-price-val mono" id="btcPriceVal">81,399</span>
+            <span class="coin-price-curr">USDT</span>
+          </div>
+        </div>
+      </a>
+      <a href="/chart" class="tape-card crt-frame" style="text-decoration:none;">
+        <div class="card-top-tag">
+          <span>CH_02 / SPOT_FEED</span>
+          <span class="badge-status" style="color:var(--cyan);">NEW FILE</span>
+        </div>
+        <div class="card-screen">
+          <div class="screen-symbol" style="color:var(--cyan);">ETH</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-dim); margin-top:4px;">ETHEREUM / TETHER</div>
+          <div class="screen-bar-indicator"><div class="screen-bar-indicator-fill" style="width:55%; background:var(--magenta);"></div></div>
+        </div>
+        <div class="card-info-bottom">
+          <div class="coin-name-block">
+            <span class="coin-full-name">Ethereum</span>
+            <span class="coin-sub-meta">SMART CONTRACTS / V5</span>
+          </div>
+          <div class="coin-price-block">
+            <span class="coin-price-val mono" id="ethPriceVal">2,364</span>
+            <span class="coin-price-curr">USDT</span>
+          </div>
+        </div>
+      </a>
+      <a href="/chart" class="tape-card crt-frame" style="text-decoration:none;">
+        <div class="card-top-tag">
+          <span>CH_03 / SPOT_FEED</span>
+          <span class="badge-status" style="color:var(--green);">HIGH VOL</span>
+        </div>
+        <div class="card-screen">
+          <div class="screen-symbol" style="color:var(--green);">SOL</div>
+          <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-dim); margin-top:4px;">SOLANA / TETHER</div>
+          <div class="screen-bar-indicator"><div class="screen-bar-indicator-fill" style="width:85%; background:var(--green);"></div></div>
+        </div>
+        <div class="card-info-bottom">
+          <div class="coin-name-block">
+            <span class="coin-full-name">Solana</span>
+            <span class="coin-sub-meta">HIGH SPEED / V5</span>
+          </div>
+          <div class="coin-price-block">
+            <span class="coin-price-val mono" id="solPriceVal">102.8</span>
+            <span class="coin-price-curr">USDT</span>
+          </div>
+        </div>
+      </a>
+    </div>
+    <section class="lore-section crt-frame">
+      <div class="lore-poster">
+        <div class="poster-tag">FOUND_SIGNAL_001.BIN</div>
+        <div class="poster-center-glitch">NO SIGNAL.</div>
+        <div class="poster-badge">NOT A GAMBLE. PROBABLY.</div>
+      </div>
+      <div class="lore-content">
+        <div class="lore-tag">ABOUT / THE ARCHITECTURE</div>
+        <h2 class="lore-title">TRADING LIKE A CORRUPTED FILE.</h2>
+        <p class="lore-desc">
+          ByGigaBit is an independent trading terminal project from Ukraine. We turn raw Bybit V5 market volatility into actionable paper trading simulations. Fast execution. Zero interest in losing real money.
+        </p>
+        <div class="lore-points">
+          <span>01 / <strong>ORIGINAL ALGORITHM</strong></span>
+          <span>02 / <strong>LIVE BYBIT V5</strong></span>
+          <span>03 / <strong>ZERO REAL LOSS</strong></span>
+        </div>
+        <div>
+          <a href="/chart" class="lore-link">WELCOME TO THE PAPER TRADING FREQUENCY. ↗</a>
+        </div>
+      </div>
+    </section>
+    <div class="features-strip">
+      <div class="feat-item">
+        <div class="feat-title">⚡ FAST TRANSMISSION</div>
+        <div class="feat-desc">Direct Bybit V5 Spot connection with microsecond latency. Accurate candle history.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-title">📐 BIG LEVERAGE. NO GUESSWORK.</div>
+        <div class="feat-desc">Up to 20x leverage on virtual margin. Precise liquidation price math and margin control.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-title">🔄 ZERO RISK TO RECONSIDER</div>
+        <div class="feat-desc">Reset your $10,000 USDT deposit anytime in one click. Practice without panic.</div>
+      </div>
+    </div>
+    <section class="cta-banner">
+      <div class="cta-left">
+        <div style="font-family:var(--font-mono); font-size:10px; color:var(--cyan); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:6px;">JOIN THE TRADING FREQUENCY</div>
+        <h3>MORE TRADES. LESS RISK.</h3>
+        <p>Early access, trade journal stats, market depth calculations.</p>
+      </div>
+      <form class="cta-form" onsubmit="event.preventDefault(); window.location.href='/auth';">
+        <input type="email" class="cta-input" placeholder="YOUR@EMAIL.COM" required>
+        <button type="submit" class="cta-btn">TUNE IN ↗</button>
+      </form>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <h4>BYGIGABIT®</h4>
+        <p style="font-size:11px; color:var(--text-dim); max-width:280px; line-height:1.5; margin-top:8px;">
+          INDEPENDENT. UKRAINIAN. UNHINGED TERMINAL.
+        </p>
+        <p style="margin-top:16px;">
+          <a href="mailto:support@bygigabit.local" style="color:var(--magenta); text-decoration:none; font-weight:700;">SUPPORT@BYGIGABIT.LOCAL ↗</a>
+        </p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h5>ТЕРМІНАЛ</h5>
+          <ul>
+            <li><a href="/chart">Bybit V5 Candlesticks</a></li>
+            <li><a href="/chart">Order Book (DOM)</a></li>
+            <li><a href="/analytics">Trade Journal</a></li>
+            <li><a href="/profile">Paper Wallet</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>БЕЗПЕКА & СИСТЕМА</h5>
+          <ul>
+            <li><a href="/auth">2FA Authentication</a></li>
+            <li><a href="/admin">RBAC System</a></li>
+            <li><a href="/profile">Session Security</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>ПАРАМЕТРИ СИГНАЛУ</h5>
+          <ul>
+            <li><span style="color:var(--green);">● TRANSMISSION: LIVE</span></li>
+            <li><span>PORT: 8080</span></li>
+            <li><span>LATENCY: ~15ms</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 BYGIGABIT. ALL RIGHTS RESERVED. ALL SIGNALS DISTORTED.</div>
+      <div style="color:var(--magenta); font-weight:700; cursor:pointer;" onclick="window.scrollTo({top:0, behavior:'smooth'})">[ EJECT ■ ]</div>
+    </div>
+  </footer>
+  <script src="/static/js/index.js"></script>
+  <script>
+    async function handleLogout() {
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        localStorage.removeItem('bygigabit_token');
+        localStorage.removeItem('bygigabit_user');
+        window.location.reload();
+      } catch (e) {
+        window.location.href = '/';
+      }
+    }
+  </script>
+</body>
+</html>

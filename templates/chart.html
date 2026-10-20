@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ByGigaBit — Торговий термінал BTC/USDT (Bybit Spot V5)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/common.css">
+  <link rel="stylesheet" href="/static/css/chart.css">
+  <script src="/static/js/theme.js"></script>
+  <script src="/static/js/lightweight-charts.js"></script>
+  <script>
+    if (typeof LightweightCharts === 'undefined') {
+      document.write('<script src="https://unpkg.com/lightweight-charts@4.2.1/dist/lightweight-charts.standalone.production.js"><\/script>');
+    }
+  </script>
+</head>
+<body>
+  <div class="top-transmission-bar">
+    INDEPENDENT CRYPTO TERMINAL FROM UKRAINE // 10,000 USDT SIMULATED BALANCE // BYBIT V5 SPOT FEED
+  </div>
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="/" class="brand">
+        <span class="brand-title">BYGIGABIT</span>
+        <span class="brand-dept">BOOTLEG DEPT.</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/" class="nav-link">ГОЛОВНА</a></li>
+        <li><a href="/chart" class="nav-link active">ТЕРМІНАЛ</a></li>
+        <li><a href="/analytics" class="nav-link">АНАЛІТИКА</a></li>
+        <li><a href="/profile" class="nav-link">ГАМАНЕЦЬ</a></li>
+        {% if user and user.role == 'Admin' %}
+          <li><a href="/admin" class="nav-link">АДМІНКА</a></li>
+        {% endif %}
+      </ul>
+    </div>
+    <div class="nav-right">
+      <div class="status-pill">
+        <span class="pulse-dot"></span>
+        <span>BYBIT SPOT V5 LIVE</span>
+      </div>
+      <a href="/profile" class="btn-nav-auth mono" id="navWalletBal" style="color:var(--green); font-weight:800;">$10,000.00</a>
+    </div>
+  </nav>
+  <header class="ticker-bar">
+    <div class="symbol-info">
+      <span class="symbol-name">BTC / USDT</span>
+      <span class="badge-spot">SPOT V5</span>
+    </div>
+    <div id="tickerPrice" class="current-price mono">---.--</div>
+    <div id="tickerChange" class="price-change up">+0.00%</div>
+    <div class="stats-items mono">
+      <div class="stat-item">
+        <span class="stat-label">24h High</span>
+        <span id="statHigh" class="stat-val">$---.--</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">24h Low</span>
+        <span id="statLow" class="stat-val">$---.--</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">24h Об'єм (BTC)</span>
+        <span id="statVol" class="stat-val">--- BTC</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">24h Оборот (USDT)</span>
+        <span id="statTurnover" class="stat-val">$--- M</span>
+      </div>
+    </div>
+  </header>
+  <main class="workspace">
+    <div class="terminal-main-col">
+      <section class="chart-panel">
+        <div class="chart-toolbar">
+          <div class="tf-buttons">
+            <button class="tf-btn" data-interval="1">1m</button>
+            <button class="tf-btn" data-interval="5">5m</button>
+            <button class="tf-btn active" data-interval="15">15m</button>
+            <button class="tf-btn" data-interval="60">1h</button>
+            <button class="tf-btn" data-interval="240">4h</button>
+            <button class="tf-btn" data-interval="D">1D</button>
+          </div>
+          <div id="chartLegend" class="legend mono">
+            <span>O: <strong id="legO">—</strong></span>
+            <span>H: <strong id="legH">—</strong></span>
+            <span>L: <strong id="legL">—</strong></span>
+            <span>C: <strong id="legC">—</strong></span>
+            <span>Vol: <strong id="legV">—</strong></span>
+          </div>
+        </div>
+        <div id="chartContainer"></div>
+      </section>
+      <section class="bottom-panel">
+        <div class="bottom-tabs">
+          <button class="bottom-tab active" onclick="switchBottomTab('positions')">
+            Відкриті позиції <span id="posCountBadge" class="tab-badge">0</span>
+          </button>
+          <button class="bottom-tab" onclick="switchBottomTab('orders')">
+            Лімітні ордери <span id="ordCountBadge" class="tab-badge">0</span>
+          </button>
+          <button class="bottom-tab" onclick="switchBottomTab('history')">
+            Історія угод
+          </button>
+          <button class="bottom-tab" onclick="switchBottomTab('wallet')">
+            Стан віртуального рахунку
+          </button>
+        </div>
+        <div id="tabContentPositions" class="tab-content active">
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Символ</th>
+                  <th>Тип</th>
+                  <th>Плече</th>
+                  <th>Об'єм (BTC)</th>
+                  <th>Вхід</th>
+                  <th>Ціна марк</th>
+                  <th>Маржа</th>
+                  <th>Ліквідація</th>
+                  <th>PnL (USDT / ROI)</th>
+                  <th>Дія</th>
+                </tr>
+              </thead>
+              <tbody id="positionsTableBody">
+                <tr><td colspan="11" class="empty-state">Завантаження позицій...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div id="tabContentOrders" class="tab-content">
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Символ</th>
+                  <th>Напрямок</th>
+                  <th>Ціна виконання</th>
+                  <th>Маржа</th>
+                  <th>Плече</th>
+                  <th>Кількість</th>
+                  <th>Час розміщення</th>
+                  <th>Статус</th>
+                  <th>Дія</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody">
+                <tr><td colspan="10" class="empty-state">Немає активних лімітних ордерів</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div id="tabContentHistory" class="tab-content">
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Пара</th>
+                  <th>Тип</th>
+                  <th>Вхід</th>
+                  <th>Вихід</th>
+                  <th>Маржа</th>
+                  <th>Плече</th>
+                  <th>Прибуток / Збиток (PnL)</th>
+                  <th>ROI %</th>
+                  <th>Час закриття</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody">
+                <tr><td colspan="10" class="empty-state">Завантаження історії...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div id="tabContentWallet" class="tab-content">
+          <div class="wallet-summary-grid">
+            <div class="wallet-box">
+              <span class="w-label">Загальний капітал (Equity)</span>
+              <span id="wEquity" class="w-val mono">$10,000.00</span>
+            </div>
+            <div class="wallet-box">
+              <span class="w-label">Баланс гаманця</span>
+              <span id="wBalance" class="w-val mono">$10,000.00</span>
+            </div>
+            <div class="wallet-box">
+              <span class="w-label">Задіяна маржа в угодах</span>
+              <span id="wUsedMargin" class="w-val mono" style="color:var(--orange);">$0.00</span>
+            </div>
+            <div class="wallet-box">
+              <span class="w-label">Доступно для торгівлі</span>
+              <span id="wAvailMargin" class="w-val mono" style="color:var(--green);">$10,000.00</span>
+            </div>
+          </div>
+          <div style="margin-top:14px; display:flex; justify-content:flex-end;">
+            <a href="/profile" class="btn btn-outline" style="font-size:12px;">Керувати віртуальним гаманцем</a>
+          </div>
+        </div>
+      </section>
+    </div>
+    <aside class="sidebar">
+      <div class="side-box">
+        <div class="box-title">
+          <span>Книга ордерів (Order Book)</span>
+          <span style="font-size:11px; color:#38bdf8;">Bybit V5</span>
+        </div>
+        <div class="ob-header">
+          <span>Ціна (USDT)</span>
+          <span>Кількість (BTC)</span>
+        </div>
+        <div class="ob-list" id="obAsks">
+          <div style="color:#64748b; font-size:12px; padding:8px 0; text-align:center;">Завантаження стакана...</div>
+        </div>
+        <div class="ob-spread mono" id="obSpread">
+          $---.--
+        </div>
+        <div class="ob-list" id="obBids">
+        </div>
+      </div>
+      <div class="side-box">
+        <div class="box-title">
+          <span>Оформлення угоди</span>
+          <span id="tradeBoxBalance" style="font-size:11px; color:#10b981;">Баланс: $10,000</span>
+        </div>
+        <div class="trade-tabs">
+          <div id="tabLong" class="trade-tab long active" onclick="setTradeSide('long')">Long / Купити</div>
+          <div id="tabShort" class="trade-tab short" onclick="setTradeSide('short')">Short / Продати</div>
+        </div>
+        <div class="order-type-switch">
+          <button id="typeMarketBtn" class="ot-btn active" onclick="setOrderType('market')">Ринковий (Market)</button>
+          <button id="typeLimitBtn" class="ot-btn" onclick="setOrderType('limit')">Лімітний (Limit)</button>
+        </div>
+        <div id="limitPriceGroup" class="form-group" style="display:none;">
+          <div class="form-label">
+            <span>Ціна ордера (USDT):</span>
+            <span style="color:#38bdf8; cursor:pointer;" onclick="document.getElementById('inputLimitPrice').value=currentPrice.toFixed(1); updateCalc();">Поточна</span>
+          </div>
+          <input id="inputLimitPrice" type="number" class="input-field mono" value="80000" step="10" oninput="updateCalc()">
+        </div>
+        <div class="form-group">
+          <div class="form-label">
+            <span>Сума маржі (USDT):</span>
+            <span id="marginMax" style="cursor:pointer; color:#38bdf8;" onclick="document.getElementById('inputAmount').value=1000; updateCalc();">1000 USDT</span>
+          </div>
+          <input id="inputAmount" type="number" class="input-field mono" value="500" min="10" step="10" oninput="updateCalc()">
+        </div>
+        <div class="form-group">
+          <div class="form-label">
+            <span>Кредитне плече (Leverage):</span>
+            <span id="leverageVal" class="mono" style="color:#38bdf8; font-weight:700;">10x</span>
+          </div>
+          <div class="slider-container">
+            <input id="leverageSlider" type="range" class="slider" min="1" max="20" value="10" oninput="onLeverageChange(this.value)">
+          </div>
+        </div>
+        <div class="calc-summary-box">
+          <div class="calc-row">
+            <span>Об'єм позиції:</span>
+            <strong id="calcPosSize" class="mono">$5,000.00</strong>
+          </div>
+          <div class="calc-row">
+            <span>Кількість у монеті:</span>
+            <strong id="calcBtcSize" class="mono">0.061 BTC</strong>
+          </div>
+          <div class="calc-row">
+            <span>Ціна ліквідації:</span>
+            <strong id="calcLiqPrice" class="mono" style="color:#ef4444;">$72,400</strong>
+          </div>
+        </div>
+        <button id="btnSubmitTrade" class="btn-submit-trade buy" onclick="submitOrder()">
+          Відкрити Long позицію
+        </button>
+      </div>
+    </aside>
+  </main>
+  <div id="toast" class="toast"></div>
+  <script src="/static/js/chart.js"></script>
+</body>
+</html>
