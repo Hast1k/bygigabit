@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ByGigaBit — Авторизація & 2FA Безпека</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/common.css">
+  <link rel="stylesheet" href="/static/css/auth.css">
+  <script src="/static/js/theme.js"></script>
+</head>
+<body>
+  <div class="top-transmission-bar">
+    INDEPENDENT CRYPTO TERMINAL FROM UKRAINE // AUTH GATEWAY // BYBIT V5 SPOT FEED
+  </div>
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="/" class="brand">
+        <span class="brand-title">BYGIGABIT</span>
+        <span class="brand-dept">BOOTLEG DEPT.</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/" class="nav-link">ГОЛОВНА</a></li>
+        <li><a href="/chart" class="nav-link">ТЕРМІНАЛ</a></li>
+        <li><a href="/analytics" class="nav-link">АНАЛІТИКА</a></li>
+        <li><a href="/profile" class="nav-link">ГАМАНЕЦЬ</a></li>
+        {% if user and user.role == 'Admin' %}
+          <li><a href="/admin" class="nav-link">АДМІНКА</a></li>
+        {% endif %}
+      </ul>
+    </div>
+    <div class="nav-right">
+      <div class="status-pill">
+        <span class="pulse-dot"></span>
+        <span>JWT & 2FA PROTECTED</span>
+      </div>
+    </div>
+  </nav>
+  <main class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-badge">Модуль безпеки & облікових записів</div>
+        <h2 id="authTitle">Вхід у ByGigaBit</h2>
+        <p id="authSubtitle">Введіть дані для доступу до віртуального рахунку та торгівлі</p>
+      </div>
+      <div class="auth-tabs">
+        <button id="tabLogin" class="auth-tab active" onclick="switchAuthMode('login')">Вхід (Login)</button>
+        <button id="tabRegister" class="auth-tab" onclick="switchAuthMode('register')">Реєстрація (Register)</button>
+      </div>
+      <form id="authMainForm" onsubmit="handleMainSubmit(event)">
+        <div class="form-group">
+          <label class="input-label" for="authEmail">Електронна пошта (Email)</label>
+          <input type="email" id="authEmail" class="auth-input" placeholder="trader@bygigabit.com" required value="trader@bygigabit.com">
+        </div>
+        <div class="form-group">
+          <label class="input-label" for="authPassword">Пароль</label>
+          <input type="password" id="authPassword" class="auth-input" placeholder="••••••••••••" required value="SecurePass123!">
+        </div>
+        <div id="repeatPasswordGroup" class="form-group" style="display:none;">
+          <label class="input-label" for="authPasswordRepeat">Повторіть пароль</label>
+          <input type="password" id="authPasswordRepeat" class="auth-input" placeholder="••••••••••••">
+        </div>
+        <div class="quick-credentials">
+          <span>Швидкий вибір ролі (RBAC):</span>
+          <div class="role-tags">
+            <span class="role-tag" onclick="fillCreds('trader@bygigabit.com', 'Trader')">Трейдер (Trader)</span>
+            <span class="role-tag" onclick="fillCreds('admin@bygigabit.com', 'Admin')">Адміністратор (Admin)</span>
+          </div>
+        </div>
+        <button type="submit" id="btnSubmitAuth" class="btn btn-primary btn-auth-submit">
+          Продовжити вхід
+        </button>
+      </form>
+      <div id="auth2FAStep" class="step-2fa" style="display:none;">
+        <div class="two-factor-banner">
+          <div>
+            <strong>Двофакторна автентифікація (2FA)</strong>
+            <p style="font-size:12px; color:#94a3b8; margin-top:2px;">
+              Ми відправили 6-значний одноразовий код на вказану пошту
+            </p>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:16px;">
+          <label class="input-label" for="input2FACode">Введіть 6-значний код підтвердження</label>
+          <input type="text" id="input2FACode" class="auth-input mono code-input" maxlength="6" placeholder="777888" value="777888">
+          <div style="font-size:11px; color:#38bdf8; margin-top:5px;">Тестовий код підтвердження: <strong>777888</strong></div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:16px;">
+          <button type="button" class="btn btn-outline" style="flex:1;" onclick="cancel2FA()">Назад</button>
+          <button type="button" class="btn btn-success" style="flex:2;" onclick="verify2FACode()">Підтвердити та увійти</button>
+        </div>
+      </div>
+      <div class="auth-footer-note">
+        Сесії захищені JWT Access Token з шифруванням SHA256 &bull; PBKDF2 Password Hashing
+      </div>
+    </div>
+  </main>
+  <div id="toast" class="toast"></div>
+  <script src="/static/js/auth.js"></script>
+</body>
+</html>
