@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ByGigaBit — Аналітика & Журнал угод</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/common.css">
+  <link rel="stylesheet" href="/static/css/analytics.css">
+  <script src="/static/js/theme.js"></script>
+</head>
+<body>
+  <div class="top-transmission-bar">
+    INDEPENDENT CRYPTO TERMINAL FROM UKRAINE // TRADE JOURNAL & ANALYTICS // BYBIT V5 FEED
+  </div>
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="/" class="brand">
+        <span class="brand-title">BYGIGABIT</span>
+        <span class="brand-dept">BOOTLEG DEPT.</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/" class="nav-link">ГОЛОВНА</a></li>
+        <li><a href="/chart" class="nav-link">ТЕРМІНАЛ</a></li>
+        <li><a href="/analytics" class="nav-link active">АНАЛІТИКА</a></li>
+        <li><a href="/profile" class="nav-link">ГАМАНЕЦЬ</a></li>
+        {% if user and user.role == 'Admin' %}
+          <li><a href="/admin" class="nav-link">АДМІНКА</a></li>
+        {% endif %}
+      </ul>
+    </div>
+    <div class="nav-right">
+      <div class="status-pill">
+        <span class="pulse-dot"></span>
+        <span>ANALYTICS LIVE</span>
+      </div>
+      <a href="/chart" class="btn btn-primary" style="padding:6px 14px; font-size:11px;">НОВА УГОДА ↗</a>
+    </div>
+  </nav>
+  <main class="analytics-container">
+    <header class="page-header">
+      <div>
+        <h1 class="page-title">Журнал угод та аналітика трейдера</h1>
+        <p class="page-subtitle">Детальний розрахунок метрик ефективності торгової сесії, Win Rate та крива капіталу</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" onclick="loadAnalytics()">Оновити дані</button>
+      </div>
+    </header>
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-top">
+          <span class="m-title">Win Rate (% прибутку)</span>
+        </div>
+        <div class="m-val mono" id="metricWinRate">0.0%</div>
+        <div class="win-bar-wrap">
+          <div id="winBarFill" class="win-bar-fill" style="width: 0%;"></div>
+        </div>
+        <div class="m-sub" id="metricWinLossCount">Прибуткові: 0 | Збиткові: 0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-top">
+          <span class="m-title">Загальний чистий прибуток</span>
+        </div>
+        <div class="m-val mono" id="metricNetProfit">$0.00</div>
+        <div class="m-sub" id="metricProfitSub">Фіксований PnL за весь час сесії</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-top">
+          <span class="m-title">Profit Factor & R:R</span>
+        </div>
+        <div class="m-val mono" id="metricPF">1.00</div>
+        <div class="m-sub" id="metricRR">Середній Risk / Reward: <strong>1:1.5</strong></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-top">
+          <span class="m-title">Всього угод</span>
+        </div>
+        <div class="m-val mono" id="metricTotalTrades">0</div>
+        <div class="m-sub" id="metricExtremes">Найкраща: $0 | Найгірша: $0</div>
+      </div>
+    </section>
+    <section class="card chart-section">
+      <div class="section-head">
+        <div>
+          <h3>Динаміка депозиту (Equity Curve)</h3>
+          <span style="font-size:12px; color:#94a3b8;">Зміна балансу з початкових $10,000 USDT в процесі угод</span>
+        </div>
+      </div>
+      <div class="equity-svg-container" id="equityContainer">
+        <svg id="equitySvg" viewBox="0 0 800 200" preserveAspectRatio="none"></svg>
+      </div>
+    </section>
+    <section class="card journal-section">
+      <div class="section-head">
+        <div>
+          <h3>Детальний журнал закритих ордерів</h3>
+          <span style="font-size:12px; color:#94a3b8;">Повна історія відкриття та фіксації прибутку/збитку</span>
+        </div>
+        <div class="filters-row">
+          <select id="filterSide" class="filter-select" onchange="applyFilters()">
+            <option value="all">Усі сторони</option>
+            <option value="long">Тільки Long</option>
+            <option value="short">Тільки Short</option>
+          </select>
+          <select id="filterResult" class="filter-select" onchange="applyFilters()">
+            <option value="all">Усі результати</option>
+            <option value="win">Тільки прибуткові (Win)</option>
+            <option value="loss">Тільки збиткові (Loss)</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID Угоди</th>
+              <th>Торгова пара</th>
+              <th>Напрямок</th>
+              <th>Вхід</th>
+              <th>Вихід</th>
+              <th>Маржа</th>
+              <th>Плече</th>
+              <th>Чистий PnL ($)</th>
+              <th>ROI (%)</th>
+              <th>Дата та час</th>
+            </tr>
+          </thead>
+          <tbody id="journalTableBody">
+            <tr><td colspan="10" class="empty-state">Завантаження журналу угод...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <div id="toast" class="toast"></div>
+  <script src="/static/js/analytics.js"></script>
+</body>
+</html>
