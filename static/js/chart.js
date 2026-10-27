@@ -1,3 +1,4 @@
+let currentSymbol = localStorage.getItem('bygigabit_active_pair') || 'BTCUSDT';
 let currentInterval = '15';
 let currentPrice = 80000;
 let chart = null;
@@ -5,6 +6,15 @@ let candleSeries = null;
 let volumeSeries = null;
 let tradeSide = 'long';
 let orderType = 'market';
+let allPairsList = [];
+let currentPairTab = 'top';
+
+function formatPrice(p) {
+  if (p === undefined || p === null || isNaN(p)) return '---.--';
+  if (p >= 1000) return p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (p >= 1) return p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+  return p.toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 6 });
+}
 function getChartThemeOptions(theme) {
   const isLight = theme === 'light';
   return {
@@ -93,7 +103,7 @@ function initChart() {
 async function loadKlines(interval) {
   currentInterval = interval;
   try {
-    const res = await fetch(`/api/klines?symbol=BTCUSDT&interval=${interval}&limit=150`);
+    const res = await fetch(`/api/klines?symbol=${currentSymbol}&interval=${interval}&limit=150`);
     const data = await res.json();
     if (data.ok && data.candles && data.candles.length > 0 && candleSeries) {
       candleSeries.setData(data.candles);
@@ -114,19 +124,27 @@ async function loadKlines(interval) {
 }
 async function updateTicker() {
   try {
-    const res = await fetch('/api/ticker?symbol=BTCUSDT');
+    const res = await fetch(`/api/ticker?symbol=${currentSymbol}`);
     const data = await res.json();
     if (data.ok) {
       currentPrice = data.lastPrice;
+      const base = currentSymbol.replace('USDT', '');
       const pEl = document.getElementById('tickerPrice');
-      pEl.textContent = '$' + data.lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      pEl.textContent = '$' + formatPrice(data.lastPrice);
       const chEl = document.getElementById('tickerChange');
       const isUp = data.change24h >= 0;
       chEl.textContent = (isUp ? '+' : '') + data.change24h + '%';
       chEl.className = 'price-change ' + (isUp ? 'up' : 'down');
-      document.getElementById('statHigh').textContent = '$' + data.high24h.toLocaleString('en-US');
-      document.getElementById('statLow').textContent = '$' + data.low24h.toLocaleString('en-US');
-      document.getElementById('statVol').textContent = Math.round(data.volume24h).toLocaleString('en-US') + ' BTC';
+      document.getElementById('statHigh').textContent = '$' + formatPrice(data.high24h);
+      document.getElementById('statLow').textContent = '$' + formatPrice(data.low24h);
+      const statVol = document.getElementById('statVol');
+      if (statVol) {
+        statVol.textContent = Math.round(data.volume24h).toLocaleString('en-US') + ' ' + base;
+      }
+      const statVolLabel = document.getElementById('statVolLabel');
+      if (statVolLabel) {
+        statVolLabel.textContent = `24h Об'єм (${base})`;
+      }
       const turnoverM = (data.turnover24h / 1_000_000).toFixed(1);
       document.getElementById('statTurnover').textContent = '$' + turnoverM + ' M';
       updateCalc();
@@ -138,7 +156,7 @@ async function updateTicker() {
 }
 async function updateOrderbook() {
   try {
-    const res = await fetch('/api/orderbook?symbol=BTCUSDT&limit=6');
+    const res = await fetch(`/api/orderbook?symbol=${currentSymbol}&limit=6`);
     const data = await res.json();
     if (data.ok) {
       const asksContainer = document.getElementById('obAsks');
@@ -330,16 +348,17 @@ function setTradeSide(side) {
   const tabLong = document.getElementById('tabLong');
   const tabShort = document.getElementById('tabShort');
   const btn = document.getElementById('btnSubmitTrade');
+  const base = currentSymbol.replace('USDT', '');
   if (side === 'long') {
     tabLong.className = 'trade-tab long active';
     tabShort.className = 'trade-tab short';
     btn.className = 'btn-submit-trade buy';
-    btn.textContent = orderType === 'market' ? 'Відкрити Long позицію' : 'Розмістити Limit Long';
+    btn.textContent = orderType === 'market' ? `Купити ${base} (Long)` : `Лімітний Long (${base})`;
   } else {
     tabLong.className = 'trade-tab long';
     tabShort.className = 'trade-tab short active';
     btn.className = 'btn-submit-trade sell';
-    btn.textContent = orderType === 'market' ? 'Відкрити Short позицію' : 'Розмістити Limit Short';
+    btn.textContent = orderType === 'market' ? `Продати ${base} (Short)` : `Лімітний Short (${base})`;
   }
   updateCalc();
 }
@@ -372,7 +391,8 @@ function updateCalc() {
   }
   const btcSize = basePrice > 0 ? (posSize / basePrice) : 0;
   document.getElementById('calcPosSize').textContent = '$' + posSize.toLocaleString('en-US', { minimumFractionDigits: 2 });
-  document.getElementById('calcBtcSize').textContent = btcSize.toFixed(4) + ' BTC';
+  const base = currentSymbol.replace('USDT', '');
+  document.getElementById('calcBtcSize').textContent = btcSize.toFixed(4) + ' ' + base;
   let liqPrice = 0;
   if (tradeSide === 'long') {
     liqPrice = basePrice * (1 - (0.95 / lev));
@@ -394,7 +414,7 @@ async function submitOrder() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        symbol: 'BTCUSDT',
+        symbol: currentSymbol,
         side: tradeSide,
         orderType: orderType,
         margin: margin,
@@ -456,6 +476,187 @@ function showToast(msg) {
   t.style.display = 'block';
   setTimeout(() => { t.style.display = 'none'; }, 4000);
 }
+
+// ---------------- СЕЛЕКТОР ТОРГОВИХ ПАР (BINARIUM / BYBIT СТИЛЬ) ----------------
+const TOP_SYMBOLS = [
+  'BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'TONUSDT', 'XRPUSDT',
+  'BNBUSDT', 'DOGEUSDT', 'ADAUSDT', 'AVAXUSDT', 'SUIUSDT',
+  'NEARUSDT', 'LINKUSDT', 'PEPEUSDT', 'SHIBUSDT'
+];
+
+async function loadPairsList() {
+  try {
+    const res = await fetch('/api/tickers');
+    const data = await res.json();
+    if (data.ok && data.tickers) {
+      allPairsList = data.tickers;
+      renderPairsList();
+    }
+  } catch (err) {
+    console.error("Помилка завантаження списку пар:", err);
+  }
+}
+
+function renderPairsList() {
+  const container = document.getElementById('pairListScroll');
+  if (!container) return;
+
+  const searchInput = document.getElementById('pairSearchInput');
+  const query = (searchInput ? searchInput.value : '').trim().toUpperCase();
+
+  let list = [...allPairsList];
+
+  // Якщо Bybit API ще не відповів, показуємо дефолтний топ
+  if (list.length === 0) {
+    list = TOP_SYMBOLS.map(s => ({
+      symbol: s,
+      base: s.replace('USDT', ''),
+      price: s === 'BTCUSDT' ? 74000 : (s === 'ETHUSDT' ? 2100 : 85),
+      change24h: 0.0
+    }));
+  }
+
+  // Фільтрація за вкладкою
+  if (currentPairTab === 'top') {
+    list = list.filter(p => TOP_SYMBOLS.includes(p.symbol));
+  } else if (currentPairTab === 'gainers') {
+    list = list.filter(p => p.change24h > 0).sort((a, b) => b.change24h - a.change24h);
+  } else if (currentPairTab === 'losers') {
+    list = list.filter(p => p.change24h < 0).sort((a, b) => a.change24h - b.change24h);
+  }
+
+  // Фільтрація за пошуком
+  if (query) {
+    list = list.filter(p => p.symbol.includes(query) || p.base.includes(query));
+  }
+
+  if (list.length === 0) {
+    container.innerHTML = '<div class="pair-empty">Пар за запитом не знайдено</div>';
+    return;
+  }
+
+  container.innerHTML = list.map(item => {
+    const isActive = item.symbol === currentSymbol;
+    const isUp = item.change24h >= 0;
+    const sign = isUp ? '+' : '';
+    const badgeText = item.base.slice(0, 4);
+
+    return `
+      <div class="pair-list-item ${isActive ? 'active' : ''}" onclick="selectPair('${item.symbol}')">
+        <div class="pair-item-left">
+          <div class="pair-coin-badge">${badgeText}</div>
+          <div class="pair-name-group">
+            <span class="pair-symbol-text">${item.base} / USDT</span>
+            <span class="pair-quote-text">SPOT V5</span>
+          </div>
+        </div>
+        <div class="pair-item-right">
+          <span class="pair-price-text">$${formatPrice(item.price)}</span>
+          <span class="pair-change-badge ${isUp ? 'up' : 'down'}">${sign}${item.change24h.toFixed(2)}%</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function selectPair(symbol) {
+  if (currentSymbol === symbol) {
+    closePairDropdown();
+    return;
+  }
+
+  currentSymbol = symbol;
+  localStorage.setItem('bygigabit_active_pair', symbol);
+
+  const base = symbol.replace('USDT', '');
+  const labelEl = document.getElementById('currentSymbolLabel');
+  if (labelEl) labelEl.textContent = `${base} / USDT`;
+
+  const statVolLabel = document.getElementById('statVolLabel');
+  if (statVolLabel) statVolLabel.textContent = `24h Об'єм (${base})`;
+
+  const obBase = document.getElementById('obBaseAsset');
+  if (obBase) obBase.textContent = base;
+
+  closePairDropdown();
+  setTradeSide(tradeSide);
+
+  // Оновлюємо дані для нової пари
+  await updateTicker();
+  await loadKlines(currentInterval);
+  await updateOrderbook();
+  renderPairsList();
+}
+
+function togglePairDropdown() {
+  const wrapper = document.getElementById('symbolDropdownWrapper');
+  if (!wrapper) return;
+  wrapper.classList.toggle('open');
+  if (wrapper.classList.contains('open')) {
+    const searchInput = document.getElementById('pairSearchInput');
+    if (searchInput) {
+      searchInput.value = '';
+      setTimeout(() => searchInput.focus(), 50);
+    }
+    renderPairsList();
+  }
+}
+
+function closePairDropdown() {
+  const wrapper = document.getElementById('symbolDropdownWrapper');
+  if (wrapper) wrapper.classList.remove('open');
+}
+
+function initPairSelector() {
+  const btn = document.getElementById('symbolDropdownBtn');
+  if (btn) {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      togglePairDropdown();
+    });
+  }
+
+  const dropdown = document.getElementById('pairDropdownMenu');
+  if (dropdown) {
+    dropdown.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+  }
+
+  document.addEventListener('click', () => {
+    closePairDropdown();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closePairDropdown();
+  });
+
+  const searchInput = document.getElementById('pairSearchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      renderPairsList();
+    });
+  }
+
+  document.querySelectorAll('.pair-tab-btn').forEach(tabBtn => {
+    tabBtn.addEventListener('click', () => {
+      document.querySelectorAll('.pair-tab-btn').forEach(b => b.classList.remove('active'));
+      tabBtn.classList.add('active');
+      currentPairTab = tabBtn.dataset.tab;
+      renderPairsList();
+    });
+  });
+
+  // Встановлюємо збережену пару при завантаженні
+  const base = currentSymbol.replace('USDT', '');
+  const labelEl = document.getElementById('currentSymbolLabel');
+  if (labelEl) labelEl.textContent = `${base} / USDT`;
+  const statVolLabel = document.getElementById('statVolLabel');
+  if (statVolLabel) statVolLabel.textContent = `24h Об'єм (${base})`;
+  const obBase = document.getElementById('obBaseAsset');
+  if (obBase) obBase.textContent = base;
+}
+
 window.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.tf-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -465,10 +666,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
   });
   initChart();
+  initPairSelector();
+  loadPairsList();
   await updateTicker();
-  await loadKlines('15');
+  await loadKlines(currentInterval);
   await updateOrderbook();
   await loadTerminalState();
+  setInterval(loadPairsList, 10000);
   setInterval(updateTicker, 3000);
   setInterval(updateOrderbook, 3000);
   setInterval(() => loadKlines(currentInterval), 15000);

@@ -46,9 +46,40 @@
     </div>
   </nav>
   <header class="ticker-bar">
-    <div class="symbol-info">
-      <span class="symbol-name">BTC / USDT</span>
-      <span class="badge-spot">SPOT V5</span>
+    <!-- СЕЛЕКТОР ТОРГОВОЇ ПАРИ З ВИПАДАЮЧИМ МЕНЮ (BINARIUM / BYBIT СТИЛЬ) -->
+    <div class="symbol-dropdown-wrapper" id="symbolDropdownWrapper">
+      <button class="symbol-select-btn" id="symbolDropdownBtn" type="button" title="Вибрати іншу торгову пару">
+        <div class="symbol-info">
+          <span class="symbol-name" id="currentSymbolLabel">BTC / USDT</span>
+          <span class="badge-spot">SPOT V5</span>
+        </div>
+        <svg class="dropdown-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+
+      <div class="pair-dropdown-menu" id="pairDropdownMenu">
+        <div class="pair-dropdown-header">
+          <div class="pair-search-wrapper">
+            <svg class="pair-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="pairSearchInput" class="pair-search-input" placeholder="Пошук активу (BTC, ETH, SOL, XRP)..." autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="pair-filter-tabs">
+          <button class="pair-tab-btn active" type="button" data-tab="top">ТОП</button>
+          <button class="pair-tab-btn" type="button" data-tab="all">Всі USDT</button>
+          <button class="pair-tab-btn" type="button" data-tab="gainers">Зростання</button>
+          <button class="pair-tab-btn" type="button" data-tab="losers">Падіння</button>
+        </div>
+
+        <div class="pair-list-scroll" id="pairListScroll">
+          <div class="pair-loading">Завантаження пар Bybit Spot...</div>
+        </div>
+      </div>
     </div>
     <div id="tickerPrice" class="current-price mono">---.--</div>
     <div id="tickerChange" class="price-change up">+0.00%</div>
@@ -62,7 +93,7 @@
         <span id="statLow" class="stat-val">$---.--</span>
       </div>
       <div class="stat-item">
-        <span class="stat-label">24h Об'єм (BTC)</span>
+        <span class="stat-label" id="statVolLabel">24h Об'єм (BTC)</span>
         <span id="statVol" class="stat-val">--- BTC</span>
       </div>
       <div class="stat-item">
@@ -211,7 +242,7 @@
         </div>
         <div class="ob-header">
           <span>Ціна (USDT)</span>
-          <span>Кількість (BTC)</span>
+          <span>Кількість (<span id="obBaseAsset">BTC</span>)</span>
         </div>
         <div class="ob-list" id="obAsks">
           <div style="color:#64748b; font-size:12px; padding:8px 0; text-align:center;">Завантаження стакана...</div>

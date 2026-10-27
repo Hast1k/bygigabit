@@ -229,28 +229,45 @@ order_history: List[Dict[str, Any]] = [
 
 
 
+tickers_cache = {"timestamp": 0.0, "tickers": []}
+
+
 @app.get("/api/tickers")
 def get_tickers():
-    """Короткі котирування для головної сторінки (BTC, ETH, SOL) — публічний доступ."""
+    """Котирування спотових пар Bybit Spot V5 з кешуванням."""
+    global tickers_cache
+    now = time.time()
+    if now - tickers_cache["timestamp"] < 4.0 and tickers_cache["tickers"]:
+        return {"ok": True, "tickers": tickers_cache["tickers"]}
+
     try:
         session = get_session()
-        symbols = ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
-        result = []
-        for sym in symbols:
-            res = session.get_tickers(category="spot", symbol=sym)
-            if res.get("retCode") == 0 and res.get("result", {}).get("list"):
-                t = res["result"]["list"][0]
-                pcnt = float(t.get("price24hPcnt", 0)) * 100
-                result.append({
-                    "symbol": sym,
-                    "price": float(t.get("lastPrice", 0)),
-                    "change24h": round(pcnt, 2),
-                    "high24h": float(t.get("highPrice24h", 0)),
-                    "low24h": float(t.get("lowPrice24h", 0)),
-                    "volume24h": float(t.get("volume24h", 0))
-                })
-        return {"ok": True, "tickers": result}
+        res = session.get_tickers(category="spot")
+        if res.get("retCode") == 0 and res.get("result", {}).get("list"):
+            raw_list = res["result"]["list"]
+            tickers_list = []
+            for t in raw_list:
+                sym = t.get("symbol", "")
+                if sym.endswith("USDT"):
+                    pcnt = float(t.get("price24hPcnt", 0)) * 100
+                    tickers_list.append({
+                        "symbol": sym,
+                        "base": sym.replace("USDT", ""),
+                        "price": float(t.get("lastPrice", 0)),
+                        "change24h": round(pcnt, 2),
+                        "high24h": float(t.get("highPrice24h", 0)),
+                        "low24h": float(t.get("lowPrice24h", 0)),
+                        "volume24h": float(t.get("volume24h", 0)),
+                        "turnover24h": float(t.get("turnover24h", 0)),
+                    })
+            top_order = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "TONUSDT", "XRPUSDT", "BNBUSDT", "DOGEUSDT", "ADAUSDT", "AVAXUSDT", "SUIUSDT", "NEARUSDT", "LINKUSDT", "PEPEUSDT"]
+            tickers_list.sort(key=lambda x: (0 if x["symbol"] in top_order else 1, top_order.index(x["symbol"]) if x["symbol"] in top_order else -x["turnover24h"]))
+            tickers_cache = {"timestamp": now, "tickers": tickers_list}
+            return {"ok": True, "tickers": tickers_list}
+        return {"ok": False, "error": "Не вдалося отримати тікери"}
     except Exception as e:
+        if tickers_cache["tickers"]:
+            return {"ok": True, "tickers": tickers_cache["tickers"]}
         return {"ok": False, "error": str(e)}
 
 

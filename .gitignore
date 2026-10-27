@@ -10,3 +10,5 @@ env/
 venv/
 .idea/
 .vscode/
+~$*
+temp_export.ps1
