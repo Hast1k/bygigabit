@@ -235,6 +235,40 @@
       </section>
     </div>
     <aside class="sidebar">
+      <div class="side-box ai-radar-box">
+        <div class="box-title">
+          <span style="display:flex; align-items:center; gap:6px;">
+            <span class="ai-pulse-dot"></span>
+            <span>AI QUANT RADAR</span>
+          </span>
+          <span id="aiModelBadge" class="badge badge-magenta" style="font-size:9px;">RandomForest</span>
+        </div>
+        <div class="ai-signal-card">
+          <div class="ai-signal-header">
+            <span class="ai-label">ML ПРЕДИКТ:</span>
+            <span id="aiSignalVal" class="ai-signal-value mono" style="color:var(--green);">АНАЛІЗ...</span>
+          </div>
+          <div class="ai-prob-bar">
+            <div id="aiProbUpBar" class="ai-prob-fill up" style="width:50%;"></div>
+            <div id="aiProbDownBar" class="ai-prob-fill down" style="width:50%;"></div>
+          </div>
+          <div class="ai-prob-labels mono">
+            <span>UP: <strong id="aiProbUpVal">50%</strong></span>
+            <span>DOWN: <strong id="aiProbDownVal">50%</strong></span>
+          </div>
+          <div class="ai-meta-grid">
+            <div class="ai-meta-item">
+              <span class="ai-meta-lbl">ТРЕНД (SMA)</span>
+              <span id="aiTrendVal" class="ai-meta-v mono">---</span>
+            </div>
+            <div class="ai-meta-item">
+              <span class="ai-meta-lbl">RSI (14)</span>
+              <span id="aiRsiVal" class="ai-meta-v mono">--.-</span>
+            </div>
+          </div>
+          <div id="aiReasonVal" class="ai-reason-text">Ініціалізація моделі ByGigaBit AI...</div>
+        </div>
+      </div>
       <div class="side-box">
         <div class="box-title">
           <span>Книга ордерів (Order Book)</span>

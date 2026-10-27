@@ -683,3 +683,118 @@ body.light-theme .pair-coin-badge {
 body.light-theme .pair-list-item:hover {
   background: #f8fafc;
 }
+
+
+/* AI QUANT RADAR WIDGET */
+.ai-radar-box {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  padding: 14px 16px;
+}
+
+.ai-pulse-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--magenta);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--magenta);
+  display: inline-block;
+  animation: pulseMagenta 1.5s infinite;
+}
+
+@keyframes pulseMagenta {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+.ai-signal-card {
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  padding: 12px;
+  margin-top: 8px;
+}
+
+.ai-signal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.ai-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+}
+
+.ai-signal-value {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.ai-prob-bar {
+  display: flex;
+  height: 6px;
+  width: 100%;
+  background: #000;
+  border: 1px solid var(--border-color);
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+
+.ai-prob-fill.up {
+  background: var(--green);
+  transition: width 0.4s ease;
+}
+
+.ai-prob-fill.down {
+  background: var(--red);
+  transition: width 0.4s ease;
+}
+
+.ai-prob-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+
+.ai-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 8px;
+}
+
+.ai-meta-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-meta-lbl {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+}
+
+.ai-meta-v {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.ai-reason-text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  border-top: 1px dashed var(--border-color);
+  padding-top: 6px;
+}

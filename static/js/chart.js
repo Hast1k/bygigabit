@@ -678,3 +678,58 @@ window.addEventListener('DOMContentLoaded', async () => {
   setInterval(() => loadKlines(currentInterval), 15000);
   setInterval(loadTerminalState, 5000);
 });
+
+
+async function updateAiPrediction() {
+  try {
+    const sym = window.currentSymbol || 'BTCUSDT';
+    const interval = currentInterval || '15';
+    const res = await fetch(`/api/predict?symbol=${sym}&interval=${interval}`);
+    const data = await res.json();
+    if (!data || !data.ok) return;
+
+    const ind = data.indicators || {};
+    const ml = data.ml || {};
+
+    const sigEl = document.getElementById('aiSignalVal');
+    const modelBadge = document.getElementById('aiModelBadge');
+    const upBar = document.getElementById('aiProbUpBar');
+    const downBar = document.getElementById('aiProbDownBar');
+    const upVal = document.getElementById('aiProbUpVal');
+    const downVal = document.getElementById('aiProbDownVal');
+    const trendEl = document.getElementById('aiTrendVal');
+    const rsiEl = document.getElementById('aiRsiVal');
+    const reasonEl = document.getElementById('aiReasonVal');
+
+    if (sigEl) {
+      sigEl.textContent = ml.signal;
+      sigEl.style.color = ml.signalColor || 'var(--green)';
+    }
+    if (modelBadge) modelBadge.textContent = ml.model || 'RandomForest';
+    if (upBar) upBar.style.width = (ml.probUp || 50) + '%';
+    if (downBar) downBar.style.width = (ml.probDown || 50) + '%';
+    if (upVal) upVal.textContent = (ml.probUp || 50) + '%';
+    if (downVal) downVal.textContent = (ml.probDown || 50) + '%';
+
+    if (trendEl) {
+      trendEl.textContent = ind.trend ? ind.trend.split(' ')[0] : 'NEUTRAL';
+      trendEl.style.color = ind.trendColor || '#fff';
+    }
+    if (rsiEl) {
+      rsiEl.textContent = ind.rsi !== undefined ? ind.rsi : '--.-';
+      if (ind.rsi > 70) rsiEl.style.color = 'var(--red)';
+      else if (ind.rsi < 30) rsiEl.style.color = 'var(--green)';
+      else rsiEl.style.color = 'var(--cyan)';
+    }
+    if (reasonEl) {
+      reasonEl.textContent = data.reason || 'Аналіз завершено';
+    }
+  } catch (err) {
+    console.warn('AI update error:', err);
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  updateAiPrediction();
+  setInterval(updateAiPrediction, 10000);
+});

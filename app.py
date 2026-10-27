@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pybit.unified_trading import HTTP
 import uvicorn
+import ml_service
 import database
 
 API_KEY = os.getenv("BYBIT_API_KEY", "pTRtHhIA6TD0eqyeB3")
@@ -329,6 +330,37 @@ def get_klines(
         return {"ok": True, "symbol": symbol, "interval": interval, "candles": candles, "volumes": volumes}
     except Exception as e:
         return {"ok": False, "error": str(e)}
+
+@app.get("/api/predict")
+def get_prediction(
+    symbol: str = Query("BTCUSDT", description="Торгова пара"),
+    interval: str = Query("15", description="Таймфрейм")
+):
+    try:
+        session = get_session()
+        res = session.get_kline(category="spot", symbol=symbol, interval=interval, limit=120)
+        if res.get("retCode") != 0:
+            return {"ok": False, "error": res.get("retMsg", "Помилка Bybit API")}
+
+        raw_list = res.get("result", {}).get("list", [])
+        candles = []
+        for row in reversed(raw_list):
+            candles.append({
+                "time": int(row[0]) // 1000,
+                "open": float(row[1]),
+                "high": float(row[2]),
+                "low": float(row[3]),
+                "close": float(row[4]),
+                "volume": float(row[5])
+            })
+
+        pred = ml_service.analyze_and_predict(candles)
+        pred["symbol"] = symbol
+        pred["interval"] = interval
+        return pred
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
 
 
 @app.get("/api/orderbook")
