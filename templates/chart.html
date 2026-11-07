@@ -101,7 +101,34 @@
         <span id="statTurnover" class="stat-val">$--- M</span>
       </div>
     </div>
+
+    <!-- CHAOS MODE BAR -->
+    <div class="chaos-widget-bar" id="chaosWidgetBar">
+      <button class="chaos-switch-btn" id="chaosSwitchBtn" type="button" onclick="toggleChaosMode()" title="Увімкнути/вимкнути режим стрес-тестування трейдера">
+        <span class="chaos-led" id="chaosLed"></span>
+        <span class="chaos-title mono">CHAOS MODE</span>
+      </button>
+      <div class="chaos-controls-strip" id="chaosControlsStrip" style="display: none;">
+        <span class="chaos-pill ping mono" id="chaosPingDisplay">PING: 680ms</span>
+        <span class="chaos-pill slip mono" title="Прослизання ринкової ціни">SLIP: ~1.0%</span>
+        <button class="chaos-action-btn dump" type="button" onclick="triggerFlashCrash('dump', 12)" title="Спровокувати раптовий обвал ринку на -12%">
+          DUMP -12%
+        </button>
+        <button class="chaos-action-btn pump" type="button" onclick="triggerFlashCrash('pump', 12)" title="Спровокувати раптовий сквиз угору на +12%">
+          PUMP +12%
+        </button>
+        <button class="chaos-action-btn reset" type="button" onclick="resetFlashCrash()" title="Повернути ринкову ціну">
+          RESET
+        </button>
+      </div>
+    </div>
   </header>
+
+  <!-- БАНЕР ПОПЕРЕДЖЕННЯ CHAOS MODE -->
+  <div class="chaos-alert-banner" id="chaosAlertBanner" style="display: none;">
+    <span class="chaos-alert-icon">!</span>
+    <span class="chaos-alert-msg" id="chaosAlertMsg">РЕЖИМ ХАОСУ АКТИВОВАНО: симуляція біржових затримок, прослизання ціни та форс-мажорів.</span>
+  </div>
   <main class="workspace">
     <div class="terminal-main-col">
       <section class="chart-panel">

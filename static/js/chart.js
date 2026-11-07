@@ -221,6 +221,19 @@ async function loadTerminalState() {
     }
     const data = await res.json();
     if (!data.ok) return;
+
+    // Обробка сповіщень про автоліквідації
+    if (data.liquidations && data.liquidations.length > 0) {
+      data.liquidations.forEach(liq => {
+        showToast(`УВАГА: Позицію ${liq.pos_id} (${liq.symbol} ${liq.side.toUpperCase()}) примусово ЛІКВІДОВАНО біржею за ціною $${Number(liq.exitPrice).toLocaleString('en-US')}! Втрачено маржу: $${liq.margin}.`, true);
+      });
+    }
+
+    // Синхронізація Chaos Mode бекенду
+    if (data.chaosActive !== undefined && !userManuallyToggledChaos) {
+      syncChaosUI(data.chaosActive);
+    }
+
     const posBody = document.getElementById('positionsTableBody');
     const posBadge = document.getElementById('posCountBadge');
     posBadge.textContent = data.positions.length;
@@ -409,6 +422,17 @@ async function submitOrder() {
     showToast('Вкажіть суму забезпечення (маржі)');
     return;
   }
+
+  const submitBtn = document.getElementById('btnSubmitTrade');
+  const originalText = submitBtn ? submitBtn.textContent : '';
+
+  if (chaosModeActive && submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'ОБРОБКА В МЕРЕЖІ (CHAOS)...';
+    // Симуляція затримки мережі клієнта
+    await new Promise(r => setTimeout(r, Math.floor(Math.random() * 400 + 350)));
+  }
+
   try {
     const res = await fetch('/api/terminal/order', {
       method: 'POST',
@@ -420,18 +444,28 @@ async function submitOrder() {
         margin: margin,
         leverage: leverage,
         currentPrice: currentPrice,
-        limitPrice: limitPrice
+        limitPrice: limitPrice,
+        chaosMode: chaosModeActive
       })
     });
     const data = await res.json();
     if (data.ok) {
-      showToast(data.message);
+      if (data.chaosInfo) {
+        showToast(`Виконано в Chaos Mode: затримка ${data.chaosInfo.latencyMs}мс | Прослизання ціни ${data.chaosInfo.slippagePcnt}% (за $${Number(data.chaosInfo.executedPrice).toLocaleString('en-US')})`, false);
+      } else {
+        showToast(data.message);
+      }
       loadTerminalState();
     } else {
       showToast(`Помилка: ${data.error || 'Не вдалося створити ордер'}`);
     }
   } catch (err) {
     showToast('Помилка мережі при відправці ордера');
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
   }
 }
 async function closePosition(posId) {
@@ -469,12 +503,125 @@ async function cancelOrder(ordId) {
     showToast('Помилка при скасуванні ордера');
   }
 }
-function showToast(msg) {
+function showToast(msg, isAlert = false) {
   const t = document.getElementById('toast');
   if (!t) return;
   t.textContent = msg;
   t.style.display = 'block';
-  setTimeout(() => { t.style.display = 'none'; }, 4000);
+  if (isAlert) {
+    t.style.background = '#ef4444';
+    t.style.color = '#ffffff';
+    t.style.borderColor = '#b91c1c';
+  } else {
+    t.style.background = '';
+    t.style.color = '';
+    t.style.borderColor = '';
+  }
+  setTimeout(() => { t.style.display = 'none'; }, 5000);
+}
+
+// ---------------- CHAOS MODE КОНТРОЛЕР ----------------
+let chaosModeActive = false;
+let userManuallyToggledChaos = false;
+let pingInterval = null;
+
+function syncChaosUI(active) {
+  chaosModeActive = active;
+  const switchBtn = document.getElementById('chaosSwitchBtn');
+  const controls = document.getElementById('chaosControlsStrip');
+  const banner = document.getElementById('chaosAlertBanner');
+
+  if (active) {
+    if (switchBtn) switchBtn.classList.add('active');
+    if (controls) controls.style.display = 'flex';
+    if (banner) banner.style.display = 'flex';
+    if (!pingInterval) {
+      pingInterval = setInterval(() => {
+        const pingEl = document.getElementById('chaosPingDisplay');
+        if (pingEl) pingEl.textContent = `PING: ${Math.floor(Math.random() * 350 + 480)}ms`;
+      }, 1500);
+    }
+  } else {
+    if (switchBtn) switchBtn.classList.remove('active');
+    if (controls) controls.style.display = 'none';
+    if (banner) banner.style.display = 'none';
+    if (pingInterval) {
+      clearInterval(pingInterval);
+      pingInterval = null;
+    }
+  }
+}
+
+async function toggleChaosMode() {
+  userManuallyToggledChaos = true;
+  chaosModeActive = !chaosModeActive;
+  syncChaosUI(chaosModeActive);
+
+  try {
+    const res = await fetch('/api/chaos/toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ enabled: chaosModeActive })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showToast(chaosModeActive ? 'CHAOS MODE АКТИВОВАНО: стрес-тестування трейдера увімкнено' : 'CHAOS MODE ВИМКНЕНО: повернено нормальний ринок');
+    }
+  } catch (err) {
+    console.error('Помилка перемикання Chaos Mode:', err);
+  }
+}
+
+async function triggerFlashCrash(direction, percent) {
+  try {
+    const res = await fetch('/api/chaos/flash-crash', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        symbol: currentSymbol,
+        direction: direction,
+        percent: percent,
+        duration: 25
+      })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      const dirText = direction === 'dump' ? 'ОБВАЛ (-' : 'СКВИЗ (+';
+      showToast(`УВАГА: СПРОВОКОВАНО FLASH ${dirText}${percent}%) НА ${currentSymbol}!`, true);
+      const bannerMsg = document.getElementById('chaosAlertMsg');
+      if (bannerMsg) {
+        bannerMsg.textContent = `УВАГА: FLASH ${direction.toUpperCase()} (${direction === 'dump' ? '-' : '+'}${percent}%) НА ${currentSymbol}! Ризик миттєвої ліквідації.`;
+      }
+      updateTicker();
+      loadKlines(currentInterval);
+      updateOrderbook();
+      loadTerminalState();
+      updateAiPrediction();
+    }
+  } catch (err) {
+    showToast('Помилка запуску Flash Crash');
+  }
+}
+
+async function resetFlashCrash() {
+  try {
+    const res = await fetch('/api/chaos/reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ symbol: currentSymbol })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showToast('Ринкову ціну відновлено до норми');
+      updateTicker();
+      loadKlines(currentInterval);
+      updateOrderbook();
+      loadTerminalState();
+      updateAiPrediction();
+    }
+  } catch (err) {
+    showToast('Помилка відновлення ціни');
+  }
 }
 
 // ---------------- СЕЛЕКТОР ТОРГОВИХ ПАР (BINARIUM / BYBIT СТИЛЬ) ----------------

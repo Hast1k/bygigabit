@@ -1,6 +1,8 @@
 import os
 import time
 import secrets
+import random
+import asyncio
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, Query, Request, Body, Response
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
@@ -232,6 +234,150 @@ order_history: List[Dict[str, Any]] = [
 
 tickers_cache = {"timestamp": 0.0, "tickers": []}
 
+# --- ПІДСИСТЕМА CHAOS MODE ТА ДВИЖОК АВТОЛІКВІДАЦІЇ ---
+chaos_state = {
+    "enabled": False,
+    "latency_ms": 650,
+    "slippage_rate": 0.008,
+    "flash_crash": {},  # symbol -> {"multiplier": float, "expires_at": float, "direction": str}
+}
+
+# Черга сповіщень про автоліквідації для користувачів: user_id -> List[Dict]
+liquidation_notifications: Dict[int, List[Dict[str, Any]]] = {}
+
+
+def get_symbol_mark_price(symbol: str) -> float:
+    """Отримання поточної ціни активу з урахуванням активного Flash Crash."""
+    now = time.time()
+    crash = chaos_state["flash_crash"].get(symbol)
+
+    base_price = 0.0
+    for t in tickers_cache.get("tickers", []):
+        if t["symbol"] == symbol:
+            base_price = t["price"]
+            break
+
+    if base_price <= 0:
+        try:
+            session = get_session()
+            res = session.get_tickers(category="spot", symbol=symbol)
+            if res.get("retCode") == 0 and res.get("result", {}).get("list"):
+                base_price = float(res["result"]["list"][0].get("lastPrice", 0))
+        except Exception:
+            base_price = 80000.0 if symbol == "BTCUSDT" else 100.0
+
+    if crash and crash["expires_at"] > now:
+        return round(base_price * crash["multiplier"], 2)
+    return base_price
+
+
+def check_and_execute_liquidations_sync():
+    """Фонова перевірка та виконання автоліквідацій та лімітних заявок."""
+    try:
+        all_positions = database.db_get_all_positions()
+        all_orders = database.db_get_all_limit_orders()
+
+        if not all_positions and not all_orders:
+            return
+
+        symbols = set([p["symbol"] for p in all_positions] + [o["symbol"] for o in all_orders])
+        prices = {sym: get_symbol_mark_price(sym) for sym in symbols}
+
+        # 1. Автоліквідація відкритих маржинальних позицій
+        for pos in all_positions:
+            sym = pos["symbol"]
+            curr_p = prices.get(sym, 0.0)
+            if curr_p <= 0:
+                continue
+
+            side = pos["side"]
+            liq_p = pos["liqPrice"]
+            is_liquidated = False
+
+            if side == "long" and curr_p <= liq_p:
+                is_liquidated = True
+            elif side == "short" and curr_p >= liq_p:
+                is_liquidated = True
+
+            if is_liquidated:
+                user_id = pos["user_id"]
+                liq_rec = database.db_liquidate_position(user_id, pos["id"], curr_p)
+                if liq_rec:
+                    if user_id not in liquidation_notifications:
+                        liquidation_notifications[user_id] = []
+                    liquidation_notifications[user_id].append({
+                        "pos_id": pos["id"],
+                        "symbol": sym,
+                        "side": side,
+                        "entryPrice": pos["entryPrice"],
+                        "liqPrice": liq_p,
+                        "exitPrice": curr_p,
+                        "margin": pos["margin"],
+                        "leverage": pos["leverage"],
+                        "time": time.strftime("%Y-%m-%d %H:%M:%S")
+                    })
+
+        # 2. Виконання активних лімітних ордерів
+        for ord_obj in all_orders:
+            sym = ord_obj["symbol"]
+            curr_p = prices.get(sym, 0.0)
+            if curr_p <= 0:
+                continue
+
+            side = ord_obj["side"]
+            target_p = ord_obj["orderPrice"]
+            should_fill = False
+
+            if side == "buy" and curr_p <= target_p:
+                should_fill = True
+                exec_side = "long"
+            elif side == "sell" and curr_p >= target_p:
+                should_fill = True
+                exec_side = "short"
+
+            if should_fill:
+                user_id = ord_obj["user_id"]
+                database.db_delete_limit_order(user_id, ord_obj["id"])
+
+                lev = ord_obj["leverage"]
+                exec_p = target_p
+                if exec_side == "long":
+                    liq_p = round(exec_p * (1 - (0.95 / lev)), 1)
+                else:
+                    liq_p = round(exec_p * (1 + (0.95 / lev)), 1)
+
+                new_pos = {
+                    "id": f"POS-{int(time.time() * 1000) % 100000}",
+                    "symbol": sym,
+                    "side": exec_side,
+                    "entryPrice": exec_p,
+                    "markPrice": curr_p,
+                    "margin": ord_obj["margin"],
+                    "leverage": lev,
+                    "size": ord_obj["size"],
+                    "liqPrice": liq_p,
+                    "unrealizedPnL": 0.0,
+                    "roi": 0.0,
+                    "openedAt": time.strftime("%Y-%m-%d %H:%M:%S")
+                }
+                database.db_save_position(user_id, new_pos)
+    except Exception as e:
+        print(f"[Liquidation Engine Error]: {e}")
+
+
+@app.on_event("startup")
+async def start_liquidation_worker():
+    """Запуск фонового демона автоліквідації кожні 3 секунди."""
+    async def liquidation_loop():
+        while True:
+            try:
+                check_and_execute_liquidations_sync()
+            except Exception:
+                pass
+            await asyncio.sleep(3)
+
+    asyncio.create_task(liquidation_loop())
+
 
 @app.get("/api/tickers")
 def get_tickers():
@@ -282,6 +428,19 @@ def get_ticker(symbol: str = Query("BTCUSDT")):
             t = res["result"]["list"][0]
             last_price = float(t.get("lastPrice", 0))
             change_pcnt = float(t.get("price24hPcnt", 0)) * 100
+            bid_p = float(t.get("bid1Price", 0))
+            ask_p = float(t.get("ask1Price", 0))
+
+            # Врахування активного Flash Crash у Chaos Mode
+            now = time.time()
+            crash = chaos_state["flash_crash"].get(symbol)
+            if crash and crash["expires_at"] > now:
+                mult = crash["multiplier"]
+                last_price = round(last_price * mult, 2)
+                bid_p = round(bid_p * mult, 2)
+                ask_p = round(ask_p * mult, 2)
+                change_pcnt = round(change_pcnt + ((mult - 1.0) * 100), 2)
+
             return {
                 "ok": True,
                 "symbol": symbol,
@@ -291,8 +450,9 @@ def get_ticker(symbol: str = Query("BTCUSDT")):
                 "low24h": float(t.get("lowPrice24h", 0)),
                 "volume24h": float(t.get("volume24h", 0)),
                 "turnover24h": float(t.get("turnover24h", 0)),
-                "bidPrice": float(t.get("bid1Price", 0)),
-                "askPrice": float(t.get("ask1Price", 0)),
+                "bidPrice": bid_p,
+                "askPrice": ask_p,
+                "chaosActive": chaos_state["enabled"] or bool(crash and crash["expires_at"] > now)
             }
         return {"ok": False, "error": res.get("retMsg", "Не вдалося отримати дані")}
     except Exception as e:
@@ -327,6 +487,19 @@ def get_klines(
             candles.append({"time": ts_sec, "open": o, "high": h, "low": l, "close": c})
             volumes.append({"time": ts_sec, "value": v, "color": "#10b98188" if c >= o else "#ef444488"})
 
+        # Сквиз останньої свічки у випадку активного Flash Crash
+        now = time.time()
+        crash = chaos_state["flash_crash"].get(symbol)
+        if candles and crash and crash["expires_at"] > now:
+            mult = crash["multiplier"]
+            last_c = candles[-1]
+            c_price = round(last_c["close"] * mult, 2)
+            last_c["close"] = c_price
+            if mult < 1.0:
+                last_c["low"] = min(last_c["low"], c_price)
+            else:
+                last_c["high"] = max(last_c["high"], c_price)
+
         return {"ok": True, "symbol": symbol, "interval": interval, "candles": candles, "volumes": volumes}
     except Exception as e:
         return {"ok": False, "error": str(e)}
@@ -354,9 +527,32 @@ def get_prediction(
                 "volume": float(row[5])
             })
 
+        # Врахування активного Flash Crash у Chaos Mode для AI-аналізу
+        now = time.time()
+        crash = chaos_state["flash_crash"].get(symbol)
+        if candles and crash and crash["expires_at"] > now:
+            mult = crash["multiplier"]
+            last_c = candles[-1]
+            c_price = round(last_c["close"] * mult, 2)
+            last_c["close"] = c_price
+            if mult < 1.0:
+                last_c["low"] = min(last_c["low"], c_price)
+            else:
+                last_c["high"] = max(last_c["high"], c_price)
+
         pred = ml_service.analyze_and_predict(candles)
         pred["symbol"] = symbol
         pred["interval"] = interval
+
+        if crash and crash["expires_at"] > now:
+            pred["reason"] = f"[CHAOS FLASH {crash['direction'].upper()}] " + pred.get("reason", "")
+            if crash["direction"] == "dump":
+                pred["indicators"]["trend"] = "EXTREME DUMP (CRASH)"
+                pred["indicators"]["trendColor"] = "var(--red)"
+            else:
+                pred["indicators"]["trend"] = "EXTREME PUMP (SPIKE)"
+                pred["indicators"]["trendColor"] = "var(--green)"
+
         return pred
     except Exception as e:
         return {"ok": False, "error": str(e)}
@@ -373,7 +569,21 @@ def get_orderbook(symbol: str = Query("BTCUSDT"), limit: int = Query(7, ge=1, le
             result = res.get("result", {})
             asks = [[float(p), float(s)] for p, s in result.get("a", [])]
             bids = [[float(p), float(s)] for p, s in result.get("b", [])]
-            return {"ok": True, "symbol": symbol, "timestamp": result.get("ts"), "asks": asks, "bids": bids}
+
+            now = time.time()
+            crash = chaos_state["flash_crash"].get(symbol)
+            if crash and crash["expires_at"] > now:
+                mult = crash["multiplier"]
+                asks = [[round(p * mult, 2), s] for p, s in asks]
+                bids = [[round(p * mult, 2), s] for p, s in bids]
+
+            if chaos_state["enabled"]:
+                # Штучне розширення спреду в Chaos Mode (Spread Widening)
+                spread_mult = 1.012
+                asks = [[round(p * spread_mult, 2), round(s * random.uniform(0.7, 1.8), 4)] for p, s in asks]
+                bids = [[round(p * (2.0 - spread_mult), 2), round(s * random.uniform(0.7, 1.8), 4)] for p, s in bids]
+
+            return {"ok": True, "symbol": symbol, "timestamp": result.get("ts"), "asks": asks, "bids": bids, "chaos": chaos_state["enabled"]}
         return {"ok": False, "error": res.get("retMsg", "Помилка книги ордерів")}
     except Exception as e:
         return {"ok": False, "error": str(e)}
@@ -426,14 +636,25 @@ def get_terminal_state(request: Request):
     if not user:
         return JSONResponse(status_code=401, content={"ok": False, "error": "Потрібна авторизація", "authRequired": True})
 
+    # Синхронна перевірка та виконання ліквідацій перед формуванням відповіді
+    check_and_execute_liquidations_sync()
+
     positions = database.db_get_positions(user["id"])
     orders = database.db_get_limit_orders(user["id"])
-    history = database.db_get_order_history(user["id"], limit=10)
+    history = database.db_get_order_history(user["id"], limit=15)
+
+    # Сповіщення про примусові ліквідації для цього користувача
+    notifications = liquidation_notifications.pop(user["id"], [])
+
+    is_any_crash = any(c["expires_at"] > time.time() for c in chaos_state["flash_crash"].values())
+
     return {
         "ok": True,
         "positions": positions,
         "limitOrders": orders,
         "history": history,
+        "liquidations": notifications,
+        "chaosActive": chaos_state["enabled"] or is_any_crash
     }
 
 
@@ -452,8 +673,34 @@ def create_terminal_order(request: Request, payload: Dict[str, Any] = Body(...))
     current_price = float(payload.get("currentPrice", 80000))
     limit_price = float(payload.get("limitPrice", current_price))
 
-    pos_value = margin * leverage
+    # Перевірка Chaos Mode
+    is_chaos = payload.get("chaosMode", False) or chaos_state["enabled"]
+    chaos_info = None
+
     exec_price = current_price if order_type == "market" else limit_price
+
+    if is_chaos and order_type == "market":
+        # 1. Штучна затримка мережі (симуляція високого навантаження сервера)
+        latency_ms = random.randint(350, 850)
+        time.sleep(latency_ms / 1000.0)
+
+        # 2. Ринкове прослизання (Slippage) від 0.4% до 1.5%
+        slip_pct = random.uniform(0.004, 0.015)
+        orig_price = exec_price
+        if side == "long":
+            exec_price = round(exec_price * (1.0 + slip_pct), 2)
+        else:
+            exec_price = round(exec_price * (1.0 - slip_pct), 2)
+
+        chaos_info = {
+            "applied": True,
+            "latencyMs": latency_ms,
+            "slippagePcnt": round(slip_pct * 100, 2),
+            "originalPrice": orig_price,
+            "executedPrice": exec_price
+        }
+
+    pos_value = margin * leverage
     size = round(pos_value / exec_price, 4)
 
     if order_type == "market":
@@ -478,7 +725,18 @@ def create_terminal_order(request: Request, payload: Dict[str, Any] = Body(...))
             "openedAt": time.strftime("%Y-%m-%d %H:%M:%S")
         }
         database.db_save_position(user["id"], new_pos)
-        return {"ok": True, "type": "market", "message": f"Позицію {side.upper()} відкрито", "position": new_pos}
+
+        resp_msg = f"Позицію {side.upper()} відкрито"
+        if chaos_info:
+            resp_msg += f" (Chaos: пінг {chaos_info['latencyMs']}мс, прослизання {chaos_info['slippagePcnt']}%)"
+
+        return {
+            "ok": True,
+            "type": "market",
+            "message": resp_msg,
+            "position": new_pos,
+            "chaosInfo": chaos_info
+        }
     else:
         ord_id = f"ORD-{int(time.time() * 1000) % 100000}"
         new_ord = {
@@ -495,6 +753,79 @@ def create_terminal_order(request: Request, payload: Dict[str, Any] = Body(...))
         }
         database.db_save_limit_order(user["id"], new_ord)
         return {"ok": True, "type": "limit", "message": f"Лімітний ордер на ${limit_price} розміщено", "order": new_ord}
+
+
+# --- CHAOS API ENDPOINTS ---
+
+@app.get("/api/chaos/status")
+def get_chaos_status():
+    """Поточний стан режиму стрес-тестування Chaos Mode."""
+    now = time.time()
+    active_crashes = {}
+    for sym, c in list(chaos_state["flash_crash"].items()):
+        if c["expires_at"] > now:
+            active_crashes[sym] = {
+                "multiplier": c["multiplier"],
+                "direction": c["direction"],
+                "remainingSec": int(c["expires_at"] - now)
+            }
+        else:
+            del chaos_state["flash_crash"][sym]
+
+    return {
+        "ok": True,
+        "enabled": chaos_state["enabled"],
+        "latencyMs": random.randint(450, 850) if chaos_state["enabled"] else 35,
+        "slippageEst": "0.5% - 1.5%" if chaos_state["enabled"] else "0.0%",
+        "activeCrashes": active_crashes
+    }
+
+
+@app.post("/api/chaos/toggle")
+def toggle_chaos(payload: Dict[str, Any] = Body(...)):
+    """Увімкнення або вимкнення режиму Chaos Mode."""
+    chaos_state["enabled"] = bool(payload.get("enabled", not chaos_state["enabled"]))
+    return {"ok": True, "enabled": chaos_state["enabled"]}
+
+
+@app.post("/api/chaos/flash-crash")
+def trigger_flash_crash(payload: Dict[str, Any] = Body(...)):
+    """Симуляція раптового обвалу (Flash Dump) або сквизу (Flash Pump)."""
+    symbol = payload.get("symbol", "BTCUSDT")
+    direction = payload.get("direction", "dump")
+    percent = float(payload.get("percent", 12.0))
+    duration = int(payload.get("duration", 25))
+
+    mult = round(1.0 - (percent / 100.0), 4) if direction == "dump" else round(1.0 + (percent / 100.0), 4)
+    chaos_state["flash_crash"][symbol] = {
+        "multiplier": mult,
+        "direction": direction,
+        "expires_at": time.time() + duration
+    }
+
+    # Негайна перевірка ліквідацій під час раптового обвалу
+    check_and_execute_liquidations_sync()
+
+    sign = "-" if direction == "dump" else "+"
+    return {
+        "ok": True,
+        "symbol": symbol,
+        "direction": direction,
+        "percent": percent,
+        "multiplier": mult,
+        "duration": duration,
+        "message": f"FLASH {direction.upper()} ({sign}{percent}%) запущено на {duration} секунд!"
+    }
+
+
+@app.post("/api/chaos/reset")
+def reset_flash_crash(payload: Dict[str, Any] = Body(...)):
+    """Скидання штучного спайку ціни до норми."""
+    symbol = payload.get("symbol", "BTCUSDT")
+    if symbol in chaos_state["flash_crash"]:
+        del chaos_state["flash_crash"][symbol]
+    return {"ok": True, "message": f"Flash Crash для {symbol} скинуто до норми"}
+
 
 
 @app.post("/api/terminal/close-position")

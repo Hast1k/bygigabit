@@ -400,3 +400,74 @@ def db_save_order_history(user_id: int, history_data: Dict[str, Any]):
         )
         db.merge(h)
         db.commit()
+
+
+def db_get_all_positions() -> List[Dict[str, Any]]:
+    """Отримати всі активні позиції всіх користувачів для фонової перевірки ліквідацій."""
+    with SessionLocal() as db:
+        positions = db.query(PositionModel).all()
+        res = []
+        for p in positions:
+            d = p.to_dict()
+            d["user_id"] = p.user_id
+            res.append(d)
+        return res
+
+
+def db_get_all_limit_orders() -> List[Dict[str, Any]]:
+    """Отримати всі активні лімітні ордери всіх користувачів."""
+    with SessionLocal() as db:
+        orders = db.query(LimitOrderModel).all()
+        res = []
+        for o in orders:
+            d = o.to_dict()
+            d["user_id"] = o.user_id
+            res.append(d)
+        return res
+
+
+def db_liquidate_position(user_id: int, pos_id: str, mark_price: float) -> Optional[Dict[str, Any]]:
+    """Примусова серверна ліквідація позиції при досягненні liqPrice."""
+    with SessionLocal() as db:
+        pos = db.query(PositionModel).filter(PositionModel.user_id == user_id, PositionModel.id == pos_id).first()
+        if not pos:
+            return None
+
+        pos_data = pos.to_dict()
+        margin = pos_data["margin"]
+        liq_price = pos_data["liqPrice"]
+        exit_price = round(mark_price, 2) if mark_price > 0 else liq_price
+
+        # Видалення ліквідованої позиції
+        db.delete(pos)
+
+        # Фіксація ліквідації в історії
+        liq_record = OrderHistoryModel(
+            id=f"LIQ-{int(time.time() * 1000) % 100000}",
+            user_id=user_id,
+            symbol=pos_data["symbol"],
+            side=pos_data["side"],
+            orderType="liquidation",
+            price=pos_data["entryPrice"],
+            closePrice=exit_price,
+            margin=margin,
+            leverage=pos_data["leverage"],
+            pnl=-margin,
+            roi=-100.0,
+            status="liquidated",
+            time=time.strftime("%Y-%m-%d %H:%M:%S")
+        )
+        db.add(liq_record)
+
+        # Списання маржі з балансу користувача
+        user = db.query(UserModel).filter(UserModel.id == user_id).first()
+        if user:
+            user.balance = round(max(0.0, user.balance - margin), 2)
+            user.tradesCount = (user.tradesCount or 0) + 1
+
+        db.commit()
+
+        result = liq_record.to_dict()
+        result["user_id"] = user_id
+        return result
+
