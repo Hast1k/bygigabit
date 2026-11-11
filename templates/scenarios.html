@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ByGigaBit — Навчальний тренажер біржових сценаріїв</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/common.css">
+  <link rel="stylesheet" href="/static/css/scenarios.css">
+  <script src="/static/js/theme.js"></script>
+  <script src="/static/js/lightweight-charts.js"></script>
+  <script>
+    if (typeof LightweightCharts === 'undefined') {
+      document.write('<script src="https://unpkg.com/lightweight-charts@4.2.1/dist/lightweight-charts.standalone.production.js"><\/script>');
+    }
+  </script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="/" class="brand">
+        <span class="brand-title">BYGIGABIT</span>
+        <span class="brand-dept">BOOTLEG DEPT.</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/" class="nav-link">ГОЛОВНА</a></li>
+        <li><a href="/chart" class="nav-link">ТЕРМІНАЛ</a></li>
+        <li><a href="/scenarios" class="nav-link active">ТРЕНАЖЕР</a></li>
+        <li><a href="/analytics" class="nav-link">АНАЛІТИКА</a></li>
+        <li><a href="/help" class="nav-link">ДОВІДКА</a></li>
+        {% if user and user.role == 'Admin' %}
+          <li><a href="/admin" class="nav-link">АДМІНКА</a></li>
+        {% endif %}
+      </ul>
+    </div>
+    <div class="nav-right">
+      <div class="exp-toggle-pill beginner" onclick="toggleExperienceLevel()" title="Миттєве перемикання рівня (Новачок / PRO)">
+        <span class="exp-dot"></span>
+        <span class="exp-label">НОВАЧОК</span>
+      </div>
+      <div class="status-pill">
+        <span class="pulse-dot"></span>
+        <span>LAB SIMULATOR</span>
+      </div>
+      <a href="/chart" class="btn btn-primary" style="padding:6px 14px; font-size:11px;">ТЕРМІНАЛ ↗</a>
+      {% if user %}
+        <a href="/profile" class="nav-profile-circle" title="Профіль: {{ user.nickname or user.email }}">
+          <span>{{ (user.nickname or user.email)[0]|upper }}</span>
+        </a>
+      {% else %}
+        <a href="/auth" class="btn-nav-auth">УВІЙТИ</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <main class="trainer-wrapper">
+    <!-- ЗАГОЛОВОК ТА СЕЛЕКТОР СЦЕНАРІЇВ -->
+    <header class="trainer-header">
+      <div class="header-text-block">
+        <div class="trainer-badge">Курс біржового трейдингу &bull; Практичний тренажер</div>
+        <h1 class="trainer-title">Тренажер історичних біржових ситуацій</h1>
+        <p class="trainer-desc">
+          Проаналізуйте перші 25 свічок реального графіка, оцініть стан індикаторів та прийміть рішення: відкрити <strong>LONG</strong> чи <strong>SHORT</strong>. Після вашого вибору тренажер покаже наступні 10 свічок та надасть докладний аналіз.
+        </p>
+      </div>
+
+      <!-- ЛІЧИЛЬНИК УСПІХУ -->
+      <div class="trainer-score-card">
+        <div class="score-label">РЕЗУЛЬТАТ ТРЕНУВАННЯ</div>
+        <div class="score-numbers mono">
+          <span id="scoreCorrect" style="color:var(--green);">0</span> / <span id="scoreTotal">4</span>
+        </div>
+        <div class="score-sub">правильних рішень</div>
+      </div>
+    </header>
+
+    <!-- ВКЛАДКИ СЦЕНАРІЇВ -->
+    <div class="scenario-tabs-nav">
+      <div class="scenario-tab-btn active" id="tabScenario1" onclick="switchScenario(1)">
+        <span class="tab-index mono">01</span>
+        <div class="tab-info">
+          <span class="tab-name">Перекупленість (RSI)</span>
+          <span class="tab-asset mono">BTC / USDT</span>
+        </div>
+        <span class="tab-status-dot" id="dotScenario1"></span>
+      </div>
+
+      <div class="scenario-tab-btn" id="tabScenario2" onclick="switchScenario(2)">
+        <span class="tab-index mono">02</span>
+        <div class="tab-info">
+          <span class="tab-name">Підтримка SMA-50</span>
+          <span class="tab-asset mono">ETH / USDT</span>
+        </div>
+        <span class="tab-status-dot" id="dotScenario2"></span>
+      </div>
+
+      <div class="scenario-tab-btn" id="tabScenario3" onclick="switchScenario(3)">
+        <span class="tab-index mono">03</span>
+        <div class="tab-info">
+          <span class="tab-name">Пробій об'єму</span>
+          <span class="tab-asset mono">SOL / USDT</span>
+        </div>
+        <span class="tab-status-dot" id="dotScenario3"></span>
+      </div>
+
+      <div class="scenario-tab-btn" id="tabScenario4" onclick="switchScenario(4)">
+        <span class="tab-index mono">04</span>
+        <div class="tab-info">
+          <span class="tab-name">Хибний пробій</span>
+          <span class="tab-asset mono">TON / USDT</span>
+        </div>
+        <span class="tab-status-dot" id="dotScenario4"></span>
+      </div>
+    </div>
+
+    <!-- ГОЛОВНА РОБОЧА ОБЛАСТЬ СЦЕНАРІЮ -->
+    <div class="scenario-workspace">
+      <!-- ЛІВА КОЛОНКА: ГРАФІК ТА ОПИС СИТУАЦІЇ -->
+      <div class="scenario-chart-col">
+        <div class="scenario-meta-bar">
+          <div class="scenario-title-area">
+            <h2 id="scenarioTitle" class="scenario-h2">Завантаження сценарію...</h2>
+            <div class="scenario-tags">
+              <span class="tag-pill cyan mono" id="scenarioSymbolTag">BTCUSDT</span>
+              <span class="tag-pill mono" id="scenarioTfTag">15m</span>
+              <span class="tag-pill magenta mono" id="scenarioDiffTag">Базовий рівень</span>
+              <span class="tag-pill orange mono" id="scenarioCategoryTag">RSI Розворот</span>
+            </div>
+          </div>
+          <div class="scenario-phase-badge" id="scenarioPhaseBadge">ЕТАП 1: АНАЛІЗ (25 СВІЧОК)</div>
+        </div>
+
+        <!-- КОНТЕКСТ СИТУАЦІЇ -->
+        <div class="scenario-context-card">
+          <div class="context-label">ОПИС БІРЖОВОЇ СИТУАЦІЇ:</div>
+          <p id="scenarioContextText" class="context-text">Опис завантажується...</p>
+        </div>
+
+        <!-- ГРАФІК СВІЧОК -->
+        <div class="trainer-chart-box">
+          <div id="trainerChartContainer" class="chart-canvas-wrap"></div>
+          <div class="chart-watermark-overlay" id="chartWatermark">ВІДРІЗОК: 25 СВІЧОК</div>
+        </div>
+
+        <!-- ПАНЕЛЬ ПОКАЗНИКІВ ТА ІНДИКАТОРІВ -->
+        <div class="scenario-indicators-grid">
+          <div class="scen-ind-box">
+            <span class="scen-ind-lbl">RSI (14)</span>
+            <span id="scenRsiVal" class="scen-ind-val mono">--.-</span>
+            <span id="scenRsiDesc" class="scen-ind-sub">Аналіз...</span>
+          </div>
+          <div class="scen-ind-box">
+            <span class="scen-ind-lbl">КОВЗНІ СЕРЕДНІ (SMA)</span>
+            <span id="scenSmaVal" class="scen-ind-val mono">SMA-50</span>
+            <span id="scenSmaDesc" class="scen-ind-sub">Аналіз...</span>
+          </div>
+          <div class="scen-ind-box">
+            <span class="scen-ind-lbl">ОБ'ЄМ ТОРГІВ (VOLUME)</span>
+            <span id="scenVolVal" class="scen-ind-val mono">VOLUME</span>
+            <span id="scenVolDesc" class="scen-ind-sub">Аналіз...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ПРАВА КОЛОНКА: ДІЯ КОРИСТУВАЧА ТА ВЕРДИКТ -->
+      <aside class="scenario-action-aside">
+        <!-- БЛОК ПРИЙНЯТТЯ РІШЕННЯ -->
+        <div class="card action-decision-card" id="decisionPanel">
+          <div class="box-title">
+            <span>Ваше біржове рішення</span>
+            <span class="step-num mono">КРОК 1 / 2</span>
+          </div>
+          <p class="decision-prompt" id="scenarioQuestionText">
+            Оцініть патерн свічок та індикатори. Яку угоду відкрити?
+          </p>
+
+          <div class="big-action-buttons">
+            <button class="btn-scenario-action btn-long" id="btnActionLong" onclick="chooseAction('long')">
+              <span class="action-btn-title">ВІДКРИТИ LONG</span>
+              <span class="action-btn-sub">Очікування зростання ціни</span>
+            </button>
+            <button class="btn-scenario-action btn-short" id="btnActionShort" onclick="chooseAction('short')">
+              <span class="action-btn-title">ВІДКРИТИ SHORT</span>
+              <span class="action-btn-sub">Очікування спаду ціни</span>
+            </button>
+          </div>
+          <div class="decision-note">
+            Угода відкривається з умовним плечем <strong>10x</strong>. Наступні 10 свічок покажуть реальну реакцію біржі.
+          </div>
+        </div>
+
+        <!-- БЛОК РЕЗУЛЬТАТУ ТА РОЗВ'ЯЗКИ (З'ЯВЛЯЄТЬСЯ ПІСЛЯ ДІЇ) -->
+        <div class="card outcome-card" id="outcomePanel" style="display: none;">
+          <div class="outcome-header" id="outcomeHeaderBox">
+            <div class="outcome-verdict-title" id="outcomeVerdictTitle">ВЕРДИКТ</div>
+            <div class="outcome-roi-badge mono" id="outcomeRoiBadge">+0.0% ROI</div>
+          </div>
+
+          <div class="outcome-title-text" id="outcomeTitleText">Результат угоди</div>
+
+          <div class="outcome-explanation-box">
+            <div class="exp-block-title">НАВЧАЛЬНИЙ АНАЛІЗ СИТУАЦІЇ:</div>
+            <p id="outcomeExplanationText" class="exp-text">
+              Пояснення завантажується...
+            </p>
+          </div>
+
+          <div class="key-takeaway-box">
+            <div class="takeaway-label">ЗОЛОТЕ ПРАВИЛО ТРЕЙДЕРА:</div>
+            <div id="outcomeTakeawayText" class="takeaway-text">...</div>
+          </div>
+
+          <div class="outcome-actions-row">
+            <button class="btn btn-outline" style="flex:1;" onclick="retryScenario()">
+              Спробувати знову
+            </button>
+            <button class="btn btn-primary" style="flex:1;" id="btnNextScenario" onclick="goToNextScenario()">
+              Наступний сценарій ↗
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div id="toast" class="toast"></div>
+  <script src="/static/js/scenarios.js"></script>
+</body>
+</html>

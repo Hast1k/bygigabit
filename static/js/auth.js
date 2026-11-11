@@ -1,4 +1,17 @@
 let authMode = 'login';
+let currentQualification = 'beginner';
+
+function selectQualification(level) {
+  currentQualification = level === 'pro' ? 'pro' : 'beginner';
+  const cardBeg = document.getElementById('qualBeginner');
+  const cardPro = document.getElementById('qualPro');
+  const inputEl = document.getElementById('selectedQualification');
+  if (cardBeg) cardBeg.classList.toggle('active', currentQualification === 'beginner');
+  if (cardPro) cardPro.classList.toggle('active', currentQualification === 'pro');
+  if (inputEl) inputEl.value = currentQualification;
+  localStorage.setItem('bygigabit_experience_level', currentQualification);
+}
+
 function switchAuthMode(mode) {
   authMode = mode;
   document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
@@ -7,16 +20,19 @@ function switchAuthMode(mode) {
   const sub = document.getElementById('authSubtitle');
   const btn = document.getElementById('btnSubmitAuth');
   const repeatGroup = document.getElementById('repeatPasswordGroup');
+  const nickGroup = document.getElementById('nicknameGroup');
   if (mode === 'login') {
     title.textContent = 'Вхід у ByGigaBit';
     sub.textContent = 'Введіть дані для доступу до віртуального рахунку та торгівлі';
     btn.textContent = 'Продовжити вхід';
     repeatGroup.style.display = 'none';
+    if (nickGroup) nickGroup.style.display = 'none';
   } else {
     title.textContent = 'Створення акаунта трейдера';
     sub.textContent = 'Отримайте стартовий віртуальний баланс $10,000 USDT для Paper Trading';
     btn.textContent = 'Зареєструватися ($10,000 бонус)';
     repeatGroup.style.display = 'block';
+    if (nickGroup) nickGroup.style.display = 'block';
   }
   cancel2FA();
 }
@@ -31,6 +47,8 @@ async function handleMainSubmit(e) {
   const password = document.getElementById('authPassword').value;
   if (authMode === 'register') {
     const repeat = document.getElementById('authPasswordRepeat').value;
+    const nicknameEl = document.getElementById('authNickname');
+    const nickname = nicknameEl ? nicknameEl.value.trim() : '';
     if (password !== repeat) {
       showToast('Паролі не співпадають!');
       return;
@@ -39,7 +57,7 @@ async function handleMainSubmit(e) {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, nickname, password, experienceLevel: currentQualification })
       });
       const data = await res.json();
       if (data.ok) {
@@ -55,7 +73,7 @@ async function handleMainSubmit(e) {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password, experienceLevel: currentQualification })
       });
       const data = await res.json();
       if (data.ok && data.requires2FA) {
@@ -84,7 +102,7 @@ async function verify2FACode() {
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, code2fa: code })
+      body: JSON.stringify({ email, password, code2fa: code, experienceLevel: currentQualification })
     });
     const data = await res.json();
     if (data.ok && data.token) {
@@ -99,6 +117,9 @@ async function verify2FACode() {
 function completeLogin(data) {
   localStorage.setItem('bygigabit_token', data.token);
   localStorage.setItem('bygigabit_user', JSON.stringify(data.user));
+  if (data.user && data.user.experienceLevel) {
+    localStorage.setItem('bygigabit_experience_level', data.user.experienceLevel);
+  }
   showToast(data.message);
   const urlParams = new URLSearchParams(window.location.search);
   const nextUrl = urlParams.get('next');
@@ -124,6 +145,8 @@ function showToast(msg) {
   setTimeout(() => { t.style.display = 'none'; }, 4000);
 }
 window.addEventListener('DOMContentLoaded', () => {
+  const savedExp = localStorage.getItem('bygigabit_experience_level') || 'beginner';
+  selectQualification(savedExp);
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('mode') === 'register' || window.location.pathname === '/register') {
     switchAuthMode('register');

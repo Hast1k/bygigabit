@@ -21,6 +21,80 @@ async function loadProfileWallet() {
     console.error("Помилка завантаження гаманця:", err);
   }
 }
+
+async function loadUserProfile() {
+  try {
+    const res = await fetch('/api/auth/me');
+    const data = await res.json();
+    if (data.ok && data.user) {
+      const u = data.user;
+      document.getElementById('userEmailMeta').textContent = u.email;
+      document.getElementById('userRoleBadge').textContent = (u.role || 'TRADER').toUpperCase();
+      document.getElementById('navRoleBadge').textContent = (u.role || 'TRADER') + ' Role';
+      
+      const is2FA = u.twoFactor !== false;
+      const toggle = document.getElementById('toggle2FA');
+      if (toggle) toggle.checked = is2FA;
+      update2FAUI(is2FA);
+    }
+  } catch (e) {
+    console.error("Помилка завантаження профілю:", e);
+  }
+}
+
+function update2FAUI(enabled) {
+  const badge = document.getElementById('prof2FABadge');
+  if (badge) {
+    badge.textContent = enabled ? 'АКТИВНИЙ ЗАХИСТ' : 'ВИМКНЕНО';
+    badge.className = enabled ? 'badge badge-green' : 'badge badge-red';
+  }
+  const box = document.getElementById('box2FADetails');
+  if (box) {
+    box.style.opacity = enabled ? '1' : '0.45';
+  }
+}
+
+async function handle2FAToggle(checked) {
+  try {
+    const res = await fetch('/api/user/2fa', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ twoFactor: checked })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showToast(data.message);
+      update2FAUI(checked);
+      const userJson = localStorage.getItem('bygigabit_user');
+      if (userJson) {
+        try {
+          const u = JSON.parse(userJson);
+          u.twoFactor = checked;
+          localStorage.setItem('bygigabit_user', JSON.stringify(u));
+        } catch (e) {}
+      }
+    } else {
+      showToast(data.error || 'Помилка оновлення 2FA');
+      document.getElementById('toggle2FA').checked = !checked;
+    }
+  } catch (err) {
+    showToast('Помилка з\'єднання із сервером');
+    document.getElementById('toggle2FA').checked = !checked;
+  }
+}
+
+function copy2FAKey() {
+  const keyEl = document.getElementById('totpSecretKey');
+  if (!keyEl) return;
+  navigator.clipboard.writeText(keyEl.value).then(() => {
+    showToast('Секретний ключ 2FA скопійовано в буфер обміну');
+  }).catch(() => {
+    keyEl.select();
+    document.execCommand('copy');
+    showToast('Секретний ключ 2FA скопійовано');
+  });
+}
+
 async function resetWallet() {
   if (!confirm('Ви дійсно бажаєте скинути віртуальний баланс до стартових $10,000 USDT? Всі відкриті позиції буде анульовано.')) {
     return;
@@ -38,10 +112,7 @@ async function resetWallet() {
     showToast('Помилка з\'єднання із сервером');
   }
 }
-function handle2FAToggle(checked) {
-  const status = checked ? 'увімкнено' : 'вимкнено';
-  showToast(`Двофакторну автентифікацію (2FA) ${status}`);
-}
+
 function handlePasswordChange(e) {
   e.preventDefault();
   const newPass = document.getElementById('newPass').value;
@@ -52,6 +123,7 @@ function handlePasswordChange(e) {
   showToast('Пароль успішно змінено та захешовано (PBKDF2/SHA256)');
   e.target.reset();
 }
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   if (!t) return;
@@ -59,6 +131,7 @@ function showToast(msg) {
   t.style.display = 'block';
   setTimeout(() => { t.style.display = 'none'; }, 4000);
 }
+
 async function handleLogout() {
   try {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -69,15 +142,8 @@ async function handleLogout() {
     window.location.href = '/';
   }
 }
+
 window.addEventListener('DOMContentLoaded', () => {
-  const userJson = localStorage.getItem('bygigabit_user');
-  if (userJson) {
-    try {
-      const u = JSON.parse(userJson);
-      document.getElementById('userEmailMeta').textContent = u.email;
-      document.getElementById('userRoleBadge').textContent = u.role.toUpperCase();
-      document.getElementById('navRoleBadge').textContent = u.role + ' Role';
-    } catch (e) {}
-  }
+  loadUserProfile();
   loadProfileWallet();
 });

@@ -25,7 +25,7 @@
   --accent: #ff00ea;
   --accent-hover: #ff2aee;
   --green: #00FF00;
-  --green-bg: rgba(0, 255, 136, 0.12);
+  --green-bg: rgba(0, 255, 0, 0.14);
   --red: #FF0000;
   --red-bg: rgba(255, 42, 85, 0.12);
   --orange: #ff9900;
@@ -181,6 +181,45 @@ body::before {
 }
 .btn-nav-auth:hover {
   color: #ffffff;
+}
+
+.nav-profile-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-darker);
+  border: 1.5px solid var(--green);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.25);
+  flex-shrink: 0;
+}
+.nav-profile-circle:hover {
+  transform: scale(1.08);
+  border-color: #ffffff;
+  color: #ffffff;
+  box-shadow: 0 0 14px var(--green);
+}
+
+.header-bal-pill {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--green);
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid rgba(0, 255, 0, 0.35);
+  padding: 4px 10px;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
 }
 .btn, .btn-primary, .btn-magenta, .btn-nav-trade {
   font-family: var(--font-mono);
@@ -414,3 +453,89 @@ input:focus, select:focus, textarea:focus {
   display: none;
 }
 .toast.show { display: block; }
+
+/* ========================================================
+   РІВЕНЬ КВАЛІФІКАЦІЇ (НОВАЧОК / PRO) — ШАПКА ТА ПІДКАЗКИ
+   ======================================================== */
+.exp-toggle-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  padding: 5px 12px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.exp-toggle-pill:hover {
+  border-color: var(--cyan);
+  color: #ffffff;
+}
+
+.exp-toggle-pill.beginner {
+  border-color: rgba(0, 240, 255, 0.4);
+  color: var(--cyan);
+  background: rgba(0, 240, 255, 0.08);
+}
+
+.exp-toggle-pill.pro {
+  border-color: rgba(255, 0, 234, 0.4);
+  color: var(--magenta);
+  background: rgba(255, 0, 234, 0.08);
+}
+
+.exp-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50% !important;
+  display: inline-block;
+  background: #64748b;
+}
+
+.exp-toggle-pill.beginner .exp-dot {
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan);
+}
+
+.exp-toggle-pill.pro .exp-dot {
+  background: var(--magenta);
+  box-shadow: 0 0 6px var(--magenta);
+}
+
+/* Навчальні бейджі та підказки для новачка на сторінках */
+.beginner-guide-badge {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--cyan);
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px dashed rgba(0, 240, 255, 0.35);
+  padding: 4px 8px;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.beginner-hint-box {
+  background: rgba(0, 240, 255, 0.05);
+  border-left: 3px solid var(--cyan);
+  padding: 8px 12px;
+  margin: 8px 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #d1d5db;
+  line-height: 1.45;
+}
+
+[data-experience="pro"] .beginner-guide-badge,
+[data-experience="pro"] .beginner-hint-box {
+  display: none !important;
+}
+

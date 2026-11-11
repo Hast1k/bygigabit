@@ -32,10 +32,24 @@
 .profile-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: 28px;
+}
+.settings-col {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 .wallet-card {
   padding: 32px;
+}
+.card {
+  padding: 28px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  transition: border-color 0.15s ease;
+}
+.card:hover {
+  border-color: var(--border-bright);
 }
 .card-head-row {
   display: flex;
@@ -50,6 +64,12 @@
   text-transform: uppercase;
   color: #fff;
   margin-bottom: 4px;
+}
+.card-subtitle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #94a3b8;
+  display: block;
 }
 .wallet-balance-hero {
   background: var(--bg-darker);
@@ -111,51 +131,212 @@
   gap: 12px;
   flex-wrap: wrap;
 }
-.settings-card {
-  padding: 32px;
+
+/* ========================================================
+   ПЕРЕМИКАЧ РІВНЯ КВАЛІФІКАЦІЇ В ПРОФІЛІ
+   ======================================================== */
+.exp-level-switcher {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
-.settings-section-title {
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: #fff;
-  margin-bottom: 4px;
+@media (max-width: 768px) {
+  .exp-level-switcher {
+    grid-template-columns: 1fr;
+  }
 }
-.settings-section-sub {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-dim);
-  margin-bottom: 18px;
+.exp-btn {
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  padding: 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
 }
-.checkbox-row {
+.exp-btn:hover {
+  border-color: var(--cyan);
+}
+.exp-btn.active#profBtnBeginner {
+  border-color: var(--cyan);
+  background: rgba(0, 240, 255, 0.08);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.15);
+}
+.exp-btn.active#profBtnPro {
+  border-color: var(--magenta);
+  background: rgba(255, 0, 234, 0.08);
+  box-shadow: 0 0 16px rgba(255, 0, 234, 0.15);
+}
+.exp-btn-head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-main);
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 6px;
 }
-.checkbox-row input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--magenta);
-  cursor: pointer;
-}
-.user-info-row {
+
+/* ========================================================
+   БЕЗПЕКА ТА 2FA TOGGLE
+   ======================================================== */
+.setting-toggle-row {
   display: flex;
   justify-content: space-between;
-  padding: 12px 0;
+  align-items: center;
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  padding: 18px 22px;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+.setting-toggle-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.setting-toggle-desc {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* CYBERPUNK TOGGLE SWITCH */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+.slider-toggle {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bg-secondary);
+  border: 1.5px solid var(--border-bright);
+  transition: all 0.25s ease;
+}
+.slider-toggle:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--text-dim);
+  transition: all 0.25s ease;
+}
+.switch input:checked + .slider-toggle {
+  background-color: rgba(0, 255, 0, 0.15);
+  border-color: var(--green);
+  box-shadow: 0 0 12px rgba(0, 255, 0, 0.3);
+}
+.switch input:checked + .slider-toggle:before {
+  transform: translateX(24px);
+  background-color: var(--green);
+  box-shadow: 0 0 10px var(--green);
+}
+
+/* USER METADATA BOX */
+.user-meta-box {
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 22px;
   border-bottom: 1px solid var(--border-color);
   font-family: var(--font-mono);
   font-size: 12px;
+  gap: 16px;
 }
-.user-info-label {
+.meta-row:last-child {
+  border-bottom: none;
+}
+.meta-label {
   color: var(--text-dim);
   text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
 }
-.user-info-val {
+.meta-val {
   color: #fff;
   font-weight: 700;
+  word-break: break-all;
+}
+
+/* ========================================================
+   ЗМІНА ПАРОЛЯ
+   ======================================================== */
+.password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.input-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.auth-input {
+  width: 100%;
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 13px 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.auth-input:focus {
+  border-color: var(--magenta);
+  box-shadow: 0 0 10px var(--magenta-glow);
+}
+.btn-save-pass {
+  margin-top: 6px;
+  width: 100%;
+  padding: 14px 24px;
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid var(--border-bright);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-save-pass:hover {
+  background: rgba(255, 0, 234, 0.1);
+  border-color: var(--magenta);
+  color: var(--magenta);
+  box-shadow: -3px 0 0 var(--cyan);
 }

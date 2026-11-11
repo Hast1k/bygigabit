@@ -23,21 +23,27 @@
       <ul class="nav-links">
         <li><a href="/" class="nav-link active">ГОЛОВНА</a></li>
         <li><a href="/chart" class="nav-link">ТЕРМІНАЛ</a></li>
+        <li><a href="/scenarios" class="nav-link">ТРЕНАЖЕР</a></li>
         <li><a href="/analytics" class="nav-link">АНАЛІТИКА</a></li>
-        <li><a href="/profile" class="nav-link">ГАМАНЕЦЬ</a></li>
+        <li><a href="/help" class="nav-link">ДОВІДКА</a></li>
         {% if user and user.role == 'Admin' %}
           <li><a href="/admin" class="nav-link">АДМІНКА</a></li>
         {% endif %}
       </ul>
     </div>
     <div class="nav-right">
+      <div class="exp-toggle-pill beginner" onclick="toggleExperienceLevel()" title="Миттєве перемикання рівня (Новачок / PRO)">
+        <span class="exp-dot"></span>
+        <span class="exp-label">НОВАЧОК</span>
+      </div>
       <div class="status-pill">
         <span class="pulse-dot"></span>
         <span>BYBIT SPOT V5</span>
       </div>
       {% if user %}
-        <a href="/profile" class="btn-nav-auth mono" style="color:var(--green); font-weight:700;">$10,000.00</a>
-        <a href="/profile" class="btn-nav-auth">{{ user.email }}</a>
+        <a href="/profile" class="nav-profile-circle" title="Профіль: {{ user.nickname or user.email }}">
+          <span>{{ (user.nickname or user.email)[0]|upper }}</span>
+        </a>
         <button onclick="handleLogout()" class="btn btn-outline" style="padding:6px 12px; font-size:10px;">ВИЙТИ</button>
       {% else %}
         <a href="/auth" class="btn-nav-auth">ВХІД</a>

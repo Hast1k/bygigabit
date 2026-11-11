@@ -12,9 +12,6 @@
   <script src="/static/js/theme.js"></script>
 </head>
 <body>
-  <div class="top-transmission-bar">
-    INDEPENDENT CRYPTO TERMINAL FROM UKRAINE // 10,000 USDT SIMULATED BALANCE // BYBIT V5 SPOT FEED
-  </div>
   <nav class="navbar">
     <div class="nav-left">
       <a href="/" class="brand">
@@ -24,19 +21,31 @@
       <ul class="nav-links">
         <li><a href="/" class="nav-link">ГОЛОВНА</a></li>
         <li><a href="/chart" class="nav-link">ТЕРМІНАЛ</a></li>
+        <li><a href="/scenarios" class="nav-link">ТРЕНАЖЕР</a></li>
         <li><a href="/analytics" class="nav-link">АНАЛІТИКА</a></li>
-        <li><a href="/profile" class="nav-link active">ГАМАНЕЦЬ</a></li>
+        <li><a href="/help" class="nav-link">ДОВІДКА</a></li>
         {% if user and user.role == 'Admin' %}
           <li><a href="/admin" class="nav-link">АДМІНКА</a></li>
         {% endif %}
       </ul>
     </div>
     <div class="nav-right">
+      <div class="exp-toggle-pill beginner" onclick="toggleExperienceLevel()" title="Миттєве перемикання рівня (Новачок / PRO)">
+        <span class="exp-dot"></span>
+        <span class="exp-label">НОВАЧОК</span>
+      </div>
       <div class="status-pill">
         <span class="pulse-dot"></span>
         <span id="navRoleBadge">TRADER ROLE</span>
       </div>
       <a href="/chart" class="btn btn-primary" style="padding:6px 14px; font-size:11px;">ТЕРМІНАЛ ↗</a>
+      {% if user %}
+        <a href="/profile" class="nav-profile-circle active" title="Профіль: {{ user.nickname or user.email }}">
+          <span>{{ (user.nickname or user.email)[0]|upper }}</span>
+        </a>
+      {% else %}
+        <a href="/auth" class="btn-nav-auth">УВІЙТИ</a>
+      {% endif %}
     </div>
   </nav>
   <main class="profile-container">
@@ -89,57 +98,112 @@
         </div>
       </section>
       <div class="settings-col">
+        <!-- КАРТКА РІВНЯ КВАЛІФІКАЦІЇ -->
         <section class="card">
-          <div class="card-icon-title" style="margin-bottom:16px;">
-            <div>
-              <h3>Безпека та 2FA автентифікація</h3>
-              <span style="font-size:12px; color:#94a3b8;">Захист входу та операцій одноразовими кодами</span>
+          <div class="card-head-row">
+            <div class="card-icon-title">
+              <div>
+                <h3>Рівень кваліфікації трейдера</h3>
+                <span class="card-subtitle">Перемикання між навчальним режимом підказок та біржовим PRO-режимом</span>
+              </div>
             </div>
+            <span id="profExpBadge" class="badge badge-cyan">НОВАЧОК</span>
+          </div>
+          <div class="exp-level-switcher">
+            <button type="button" class="exp-btn active" id="profBtnBeginner" onclick="applyExperienceLevel('beginner', true)">
+              <div class="exp-btn-head">
+                <span class="exp-dot" style="background:var(--cyan); box-shadow:0 0 6px var(--cyan);"></span>
+                <strong style="color:#ffffff; font-size:12px;">НОВАЧОК (ПОЧАТКІВЕЦЬ)</strong>
+              </div>
+              <p style="font-size:11px; color:#94a3b8; margin-top:4px; line-height:1.4;">
+                Навчальний режим: активні бейджі з поясненнями до маржі, кредитного плеча, ціни ліквідації та підказок нейромережі.
+              </p>
+            </button>
+            <button type="button" class="exp-btn" id="profBtnPro" onclick="applyExperienceLevel('pro', true)">
+              <div class="exp-btn-head">
+                <span class="exp-dot" style="background:var(--magenta); box-shadow:0 0 6px var(--magenta);"></span>
+                <strong style="color:#ffffff; font-size:12px;">ДОСВІДЧЕНИЙ (PRO ТРЕЙДЕР)</strong>
+              </div>
+              <p style="font-size:11px; color:#94a3b8; margin-top:4px; line-height:1.4;">
+                Повний функціонал біржового термінала без зайвих спливаючих підказок, швидке розміщення ордерів.
+              </p>
+            </button>
+          </div>
+        </section>
+
+        <!-- КАРТКА БЕЗПЕКИ -->
+        <section class="card">
+          <div class="card-head-row">
+            <div class="card-icon-title">
+              <div>
+                <h3>Безпека та 2FA автентифікація</h3>
+                <span class="card-subtitle">Захист входу та операцій одноразовими кодами</span>
+              </div>
+            </div>
+            <span id="prof2FABadge" class="badge badge-green">АКТИВНИЙ ЗАХИСТ</span>
           </div>
           <div class="setting-toggle-row">
             <div>
-              <strong>Двофакторна перевірка (Email 2FA)</strong>
-              <p style="font-size:12px; color:#94a3b8; margin-top:2px;">
+              <div class="setting-toggle-title">Двофакторна перевірка (Email / TOTP 2FA)</div>
+              <div class="setting-toggle-desc">
                 Вимагати 6-значний код підтвердження при вході в термінал
-              </p>
+              </div>
             </div>
             <label class="switch">
               <input type="checkbox" id="toggle2FA" checked onchange="handle2FAToggle(this.checked)">
               <span class="slider-toggle"></span>
             </label>
           </div>
+          <div id="box2FADetails" class="totp-info-box" style="margin-bottom:20px; background:var(--bg-darker); border:1px solid var(--border-color); padding:16px 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.06em;">Секретний ключ (TOTP Secret):</span>
+              <span class="badge badge-cyan" style="font-size:9px;">RFC 6238 SHA-1</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <input type="text" readonly value="BYGB-7788-X992-SEC" id="totpSecretKey" class="mono" style="background:var(--bg-secondary); border:1px solid var(--border-bright); color:var(--cyan); padding:8px 12px; font-size:12px; font-weight:700; width:100%; outline:none;">
+              <button type="button" class="btn btn-outline" style="padding:8px 14px; font-size:11px; flex-shrink:0;" onclick="copy2FAKey()">Скопіювати</button>
+            </div>
+            <div style="font-family:var(--font-mono); font-size:10px; color:#94a3b8; margin-top:10px; line-height:1.4;">
+              Сумісні додатки: Google Authenticator, Microsoft Authenticator, Authy. Майстер-код для демонстрації: <strong style="color:var(--green);">777888</strong>.
+            </div>
+          </div>
           <div class="user-meta-box">
             <div class="meta-row">
-              <span>Обліковий Email:</span>
-              <strong id="userEmailMeta" class="mono">trader@bygigabit.com</strong>
+              <span class="meta-label">Обліковий Email:</span>
+              <strong id="userEmailMeta" class="meta-val mono">trader@bygigabit.com</strong>
             </div>
             <div class="meta-row">
-              <span>Роль доступу (RBAC):</span>
+              <span class="meta-label">Роль доступу (RBAC):</span>
               <span id="userRoleBadge" class="badge badge-cyan">TRADER</span>
             </div>
             <div class="meta-row">
-              <span>Тип сесії:</span>
-              <strong class="mono" style="color:#10b981;">JWT Bearer Token</strong>
+              <span class="meta-label">Тип сесії:</span>
+              <strong class="meta-val mono" style="color:var(--green);">JWT Bearer Token</strong>
             </div>
           </div>
         </section>
+
+        <!-- КАРТКА ЗМІНИ ПАРОЛЯ -->
         <section class="card">
-          <div class="card-icon-title" style="margin-bottom:16px;">
-            <div>
-              <h3>Зміна пароля</h3>
-              <span style="font-size:12px; color:#94a3b8;">Оновлення безпечного пароля облікового запису</span>
+          <div class="card-head-row">
+            <div class="card-icon-title">
+              <div>
+                <h3>Зміна пароля</h3>
+                <span class="card-subtitle">Оновлення безпечного пароля облікового запису</span>
+              </div>
             </div>
+            <span class="badge badge-cyan">SECURITY</span>
           </div>
-          <form onsubmit="handlePasswordChange(event)">
+          <form onsubmit="handlePasswordChange(event)" class="password-form">
             <div class="form-group">
               <label class="input-label">Поточний пароль</label>
-              <input type="password" class="auth-input" placeholder="••••••••••••" required>
+              <input type="password" class="auth-input" placeholder="Введіть поточний пароль" required autocomplete="current-password">
             </div>
             <div class="form-group">
               <label class="input-label">Новий пароль</label>
-              <input type="password" id="newPass" class="auth-input" placeholder="••••••••••••" required>
+              <input type="password" id="newPass" class="auth-input" placeholder="Мінімум 6 символів" required autocomplete="new-password">
             </div>
-            <button type="submit" class="btn btn-outline" style="width:100%;">
+            <button type="submit" class="btn btn-outline btn-save-pass">
               Зберегти новий пароль
             </button>
           </form>

@@ -229,6 +229,13 @@ async function loadTerminalState() {
       });
     }
 
+    // Обробка сповіщень про виконання лімітних ордерів
+    if (data.filledOrders && data.filledOrders.length > 0) {
+      data.filledOrders.forEach(fo => {
+        showToast(`Лімітний ордер ${fo.order_id} (${fo.symbol} ${fo.side.toUpperCase()}) спрацював за ціною $${Number(fo.price).toLocaleString('en-US')} і перенесений до відкритих позицій!`);
+      });
+    }
+
     // Синхронізація Chaos Mode бекенду
     if (data.chaosActive !== undefined && !userManuallyToggledChaos) {
       syncChaosUI(data.chaosActive);
@@ -343,8 +350,10 @@ async function loadWallet() {
       const eqStr = '$' + data.equity.toLocaleString('en-US', { minimumFractionDigits: 2 });
       const uStr = '$' + data.usedMargin.toLocaleString('en-US', { minimumFractionDigits: 2 });
       const aStr = '$' + data.availableMargin.toLocaleString('en-US', { minimumFractionDigits: 2 });
-      document.getElementById('navWalletBal').textContent = eqStr;
-      document.getElementById('tradeBoxBalance').textContent = 'Баланс: ' + bStr;
+      const navBal = document.getElementById('navWalletBal');
+      if (navBal) navBal.textContent = eqStr;
+      const tbBal = document.getElementById('tradeBoxBalance');
+      if (tbBal) tbBal.textContent = 'Баланс: ' + bStr;
       if (document.getElementById('wEquity')) {
         document.getElementById('wEquity').textContent = eqStr;
         document.getElementById('wBalance').textContent = bStr;
@@ -454,6 +463,9 @@ async function submitOrder() {
         showToast(`Виконано в Chaos Mode: затримка ${data.chaosInfo.latencyMs}мс | Прослизання ціни ${data.chaosInfo.slippagePcnt}% (за $${Number(data.chaosInfo.executedPrice).toLocaleString('en-US')})`, false);
       } else {
         showToast(data.message);
+      }
+      if (orderType === 'limit') {
+        switchBottomTab('orders');
       }
       loadTerminalState();
     } else {

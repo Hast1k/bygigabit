@@ -1,0 +1,561 @@
+/* ========================================================
+   BYGIGABIT TRADING LAB — СЦЕНАРНИЙ ТРЕНАЖЕР
+   ======================================================== */
+
+.trainer-wrapper {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+  width: 100%;
+}
+
+.trainer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.header-text-block {
+  max-width: 820px;
+}
+
+.trainer-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 8px;
+}
+
+.trainer-title {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  line-height: 1.15;
+}
+
+.trainer-desc {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.trainer-score-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 16px 24px;
+  text-align: center;
+  min-width: 200px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.score-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 4px;
+}
+
+.score-numbers {
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.score-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ВКЛАДКИ СЦЕНАРІЇВ */
+.scenario-tabs-nav {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.scenario-tab-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.scenario-tab-btn:hover {
+  border-color: var(--cyan);
+  background: var(--bg-card-hover);
+}
+
+.scenario-tab-btn.active {
+  border-color: var(--cyan);
+  background: rgba(0, 240, 255, 0.08);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.15);
+}
+
+.tab-index {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text-dim);
+  line-height: 1;
+}
+
+.scenario-tab-btn.active .tab-index {
+  color: var(--cyan);
+}
+
+.tab-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-name {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 800;
+  color: #ffffff;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.tab-asset {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.tab-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50% !important;
+  margin-left: auto;
+  background: var(--border-color);
+  transition: all 0.2s;
+}
+
+.tab-status-dot.solved-correct {
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+}
+
+.tab-status-dot.solved-wrong {
+  background: var(--red);
+  box-shadow: 0 0 8px var(--red);
+}
+
+/* РОБОЧА ОБЛАСТЬ */
+.scenario-workspace {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 20px;
+  align-items: start;
+}
+
+.scenario-chart-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.scenario-meta-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 14px 18px;
+}
+
+.scenario-h2 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.scenario-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tag-pill {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-darker);
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.tag-pill.cyan { border-color: rgba(0, 240, 255, 0.4); color: var(--cyan); }
+.tag-pill.magenta { border-color: rgba(255, 0, 234, 0.4); color: var(--magenta); }
+.tag-pill.orange { border-color: rgba(255, 153, 0, 0.4); color: var(--orange); }
+
+.scenario-phase-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 6px 12px;
+  background: rgba(0, 240, 255, 0.1);
+  color: var(--cyan);
+  border: 1px solid var(--cyan);
+  letter-spacing: 0.08em;
+}
+
+.scenario-context-card {
+  background: var(--bg-card);
+  border-left: 3px solid var(--cyan);
+  border-top: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px 16px;
+}
+
+.context-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.context-text {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: #e2e8f0;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ГРАФІК */
+.trainer-chart-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-canvas-wrap {
+  width: 100%;
+  height: 420px;
+}
+
+.chart-watermark-overlay {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  background: rgba(7, 7, 9, 0.75);
+  border: 1px solid var(--border-bright);
+  color: var(--text-dim);
+  pointer-events: none;
+  letter-spacing: 0.08em;
+}
+
+/* ПОКАЗНИКИ ТА ІНДИКАТОРИ */
+.scenario-indicators-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.scen-ind-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.scen-ind-lbl {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.scen-ind-val {
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.scen-ind-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--cyan);
+  line-height: 1.35;
+}
+
+/* ПРАВА ПАНЕЛЬ — ДІЇ ТА РЕЗУЛЬТАТ */
+.scenario-action-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.action-decision-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 20px;
+}
+
+.box-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 800;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.step-num {
+  font-size: 10px;
+  color: var(--cyan);
+}
+
+.decision-prompt {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.big-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.btn-scenario-action {
+  padding: 16px 20px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.action-btn-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.action-btn-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.btn-long {
+  background: rgba(0, 255, 0, 0.08);
+  border-color: var(--green);
+  color: var(--green);
+}
+.btn-long:hover {
+  background: var(--green);
+  color: #000000;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+}
+.btn-long:hover .action-btn-sub { color: #000000; }
+
+.btn-short {
+  background: rgba(255, 0, 0, 0.08);
+  border-color: var(--red);
+  color: var(--red);
+}
+.btn-short:hover {
+  background: var(--red);
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+}
+.btn-short:hover .action-btn-sub { color: #ffffff; }
+
+.decision-note {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1.4;
+  border-top: 1px dashed var(--border-color);
+  padding-top: 10px;
+}
+
+/* КАРТКА РОЗВ'ЯЗКИ (OUTCOME) */
+.outcome-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  padding: 20px;
+  animation: outcomeFadeIn 0.3s ease-out;
+}
+
+@keyframes outcomeFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.outcome-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+
+.outcome-header.win {
+  background: rgba(0, 255, 0, 0.12);
+  border: 1px solid var(--green);
+}
+
+.outcome-header.loss {
+  background: rgba(255, 0, 0, 0.12);
+  border: 1px solid var(--red);
+}
+
+.outcome-verdict-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.outcome-header.win .outcome-verdict-title { color: var(--green); }
+.outcome-header.loss .outcome-verdict-title { color: var(--red); }
+
+.outcome-roi-badge {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.outcome-header.win .outcome-roi-badge { color: var(--green); }
+.outcome-header.loss .outcome-roi-badge { color: var(--red); }
+
+.outcome-title-text {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+.outcome-explanation-box {
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.exp-block-title {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.exp-text {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.key-takeaway-box {
+  background: rgba(255, 153, 0, 0.08);
+  border-left: 3px solid var(--orange);
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+
+.takeaway-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--orange);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.takeaway-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #fed7aa;
+  line-height: 1.45;
+}
+
+.outcome-actions-row {
+  display: flex;
+  gap: 10px;
+}
+
+/* АДАПТИВНІСТЬ ДЛЯ СМАРТФОНІВ ТА ПЛАНШЕТІВ */
+@media (max-width: 1024px) {
+  .scenario-workspace {
+    grid-template-columns: 1fr;
+  }
+  .scenario-tabs-nav {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .scenario-tabs-nav {
+    grid-template-columns: 1fr;
+  }
+  .scenario-indicators-grid {
+    grid-template-columns: 1fr;
+  }
+  .trainer-title {
+    font-size: 24px;
+  }
+}

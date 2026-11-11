@@ -137,3 +137,99 @@
   font-family: var(--font-mono);
   font-size: 11px;
 }
+
+/* ========================================================
+   ВИБІР РІВНЯ КВАЛІФІКАЦІЇ (НОВАЧОК / PRO)
+   ======================================================== */
+.qualification-group {
+  margin-top: 16px;
+  margin-bottom: 20px;
+}
+
+.qualification-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.qual-card {
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  border-radius: 4px;
+}
+
+.qual-card:hover {
+  border-color: var(--cyan);
+  background: rgba(56, 189, 248, 0.04);
+}
+
+.qual-card.active {
+  border-color: var(--cyan);
+  background: rgba(56, 189, 248, 0.08);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.2);
+}
+
+.qual-card.active#qualPro {
+  border-color: var(--magenta);
+  background: rgba(255, 0, 128, 0.08);
+  box-shadow: 0 0 16px rgba(255, 0, 128, 0.2);
+}
+
+.qual-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.qual-icon-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.qual-icon-dot.beginner {
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+}
+
+.qual-icon-dot.pro {
+  background: var(--magenta);
+  box-shadow: 0 0 8px var(--magenta);
+}
+
+.qual-card-title {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 800;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.qual-badge {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 800;
+  padding: 2px 5px;
+  background: rgba(56, 189, 248, 0.2);
+  color: var(--cyan);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  margin-left: auto;
+  border-radius: 3px;
+}
+
+.qual-card-desc {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1.4;
+  margin: 0;
+}
+

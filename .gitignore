@@ -11,4 +11,8 @@ venv/
 .idea/
 .vscode/
 ~$*
+*.tmp
 temp_export.ps1
+.neon
+node_modules/
+.env.local

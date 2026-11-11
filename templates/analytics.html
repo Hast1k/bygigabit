@@ -12,9 +12,6 @@
   <script src="/static/js/theme.js"></script>
 </head>
 <body>
-  <div class="top-transmission-bar">
-    INDEPENDENT CRYPTO TERMINAL FROM UKRAINE // TRADE JOURNAL & ANALYTICS // BYBIT V5 FEED
-  </div>
   <nav class="navbar">
     <div class="nav-left">
       <a href="/" class="brand">
@@ -24,19 +21,31 @@
       <ul class="nav-links">
         <li><a href="/" class="nav-link">ГОЛОВНА</a></li>
         <li><a href="/chart" class="nav-link">ТЕРМІНАЛ</a></li>
+        <li><a href="/scenarios" class="nav-link">ТРЕНАЖЕР</a></li>
         <li><a href="/analytics" class="nav-link active">АНАЛІТИКА</a></li>
-        <li><a href="/profile" class="nav-link">ГАМАНЕЦЬ</a></li>
+        <li><a href="/help" class="nav-link">ДОВІДКА</a></li>
         {% if user and user.role == 'Admin' %}
           <li><a href="/admin" class="nav-link">АДМІНКА</a></li>
         {% endif %}
       </ul>
     </div>
     <div class="nav-right">
+      <div class="exp-toggle-pill beginner" onclick="toggleExperienceLevel()" title="Миттєве перемикання рівня (Новачок / PRO)">
+        <span class="exp-dot"></span>
+        <span class="exp-label">НОВАЧОК</span>
+      </div>
       <div class="status-pill">
         <span class="pulse-dot"></span>
         <span>ANALYTICS LIVE</span>
       </div>
       <a href="/chart" class="btn btn-primary" style="padding:6px 14px; font-size:11px;">НОВА УГОДА ↗</a>
+      {% if user %}
+        <a href="/profile" class="nav-profile-circle" title="Профіль: {{ user.nickname or user.email }}">
+          <span>{{ (user.nickname or user.email)[0]|upper }}</span>
+        </a>
+      {% else %}
+        <a href="/auth" class="btn-nav-auth">УВІЙТИ</a>
+      {% endif %}
     </div>
   </nav>
   <main class="analytics-container">

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ByGigaBit — Довідка, інструкції та база знань</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/common.css">
+  <link rel="stylesheet" href="/static/css/help.css">
+  <script src="/static/js/theme.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="/" class="brand">
+        <span class="brand-title">BYGIGABIT</span>
+        <span class="brand-dept">BOOTLEG DEPT.</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/" class="nav-link">ГОЛОВНА</a></li>
+        <li><a href="/chart" class="nav-link">ТЕРМІНАЛ</a></li>
+        <li><a href="/scenarios" class="nav-link">ТРЕНАЖЕР</a></li>
+        <li><a href="/analytics" class="nav-link">АНАЛІТИКА</a></li>
+        <li><a href="/help" class="nav-link active">ДОВІДКА</a></li>
+        {% if user and user.role == 'Admin' %}
+          <li><a href="/admin" class="nav-link">АДМІНКА</a></li>
+        {% endif %}
+      </ul>
+    </div>
+    <div class="nav-right">
+      <div class="exp-toggle-pill beginner" onclick="toggleExperienceLevel()" title="Миттєве перемикання рівня (Новачок / PRO)">
+        <span class="exp-dot"></span>
+        <span class="exp-label">НОВАЧОК</span>
+      </div>
+      <div class="status-pill">
+        <span class="pulse-dot"></span>
+        <span>HELP & DOCS</span>
+      </div>
+      <a href="/chart" class="btn btn-primary" style="padding:6px 14px; font-size:11px;">ТЕРМІНАЛ ↗</a>
+      {% if user %}
+        <a href="/profile" class="nav-profile-circle" title="Профіль: {{ user.nickname or user.email }}">
+          <span>{{ (user.nickname or user.email)[0]|upper }}</span>
+        </a>
+      {% else %}
+        <a href="/auth" class="btn-nav-auth">УВІЙТИ</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <main class="help-container">
+    <header class="help-header">
+      <div class="help-title-box">
+        <h1>Довідка та інструкція користувача</h1>
+        <p class="help-subtitle">Повний посібник із торгівлі, ризик-менеджменту, 2FA безпеки та AI-індикаторів</p>
+      </div>
+      <div>
+        <a href="/chart" class="btn btn-primary" style="font-size:12px;">Перейти до торгівлі ↗</a>
+      </div>
+    </header>
+
+    <div class="help-controls">
+      <div class="help-search-box">
+        <input type="text" id="helpSearchInput" class="help-search-input" placeholder="Швидкий пошук за темами (ордери, плече, ліквідація, 2FA, AI, PnL)..." oninput="filterHelpContent()">
+      </div>
+      <div class="help-category-pills">
+        <span class="cat-pill active" onclick="jumpToSection('all')">Усі теми</span>
+        <span class="cat-pill" onclick="jumpToSection('sec-orders')">Ордери & Термінал</span>
+        <span class="cat-pill" onclick="jumpToSection('sec-margin')">Маржа & Плече</span>
+        <span class="cat-pill" onclick="jumpToSection('sec-risk')">Ліквідація & PnL</span>
+        <span class="cat-pill" onclick="jumpToSection('sec-security')">Безпека & 2FA</span>
+        <span class="cat-pill" onclick="jumpToSection('sec-ai')">AI Quant Radar</span>
+        <span class="cat-pill" onclick="jumpToSection('sec-scenarios')">Тренажер & Chaos</span>
+        <span class="cat-pill" onclick="jumpToSection('sec-faq')">FAQ (Запитання)</span>
+      </div>
+    </div>
+
+    <div class="help-sections-grid">
+      <!-- РОЗДІЛ 1: ОРДЕРИ ТА ТЕРМІНАЛ -->
+      <section id="sec-orders" class="help-card searchable-card">
+        <div class="help-card-header">
+          <div class="help-card-title">
+            <span class="help-card-num">01</span>
+            <span>Торговий термінал та типи ордерів</span>
+          </div>
+          <span class="badge badge-cyan">ТЕРМІНАЛ V5</span>
+        </div>
+        <div class="help-grid-two">
+          <div class="info-box">
+            <div class="info-box-title">
+              <span>Маркет-ордер (Market Order)</span>
+              <span class="badge badge-green">INSTANT</span>
+            </div>
+            <p class="info-box-text">
+              Миттєве відкриття угоди за найкращою поточною ринковою ціною з книги заявок (Orderbook). Застосовується, коли критично важливо зайти в позицію без зволікань.
+            </p>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">
+              <span>Лімітний ордер (Limit Order)</span>
+              <span class="badge badge-orange">PENDING</span>
+            </div>
+            <p class="info-box-text">
+              Відкладена заявка за фіксованою ціною. Для позиції Long (Buy) ордер виставляється нижче ринку для купівлі на відкаті (або вище ринку на пробій). Заявка зберігається у вкладці «Лімітні ордери» і переходить у відкриті позиції виключно при реальному досягненні ринкової ціни.
+            </p>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">
+              <span>Позиція Long (Купівля)</span>
+              <span class="badge badge-green">BULLISH</span>
+            </div>
+            <p class="info-box-text">
+              Торгівля на підвищення курсу. Прибуток генерується, коли ринкова ціна активу зростає вище точки входу.
+            </p>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">
+              <span>Позиція Short (Продаж)</span>
+              <span class="badge badge-red">BEARISH</span>
+            </div>
+            <p class="info-box-text">
+              Торгівля на падіння курсу. Прибуток генерується, коли ринкова ціна активу опускається нижче точки входу.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- РОЗДІЛ 2: МАРЖА ТА ПЛЕЧЕ -->
+      <section id="sec-margin" class="help-card searchable-card">
+        <div class="help-card-header">
+          <div class="help-card-title">
+            <span class="help-card-num">02</span>
+            <span>Кредитне плече та маржинальні вимоги</span>
+          </div>
+          <span class="badge badge-magenta">LEVERAGE 1x-20x</span>
+        </div>
+        <div class="help-grid-two">
+          <div class="info-box">
+            <div class="info-box-title">Суть кредитного плеча (Leverage)</div>
+            <p class="info-box-text">
+              Кредитне плече — це біржовий мультиплікатор, що збільшує купівельну спроможність вашого депозиту. Наприклад, маючи маржу $100 і плече 10x, ви відкриваєте позицію обсягом $1,000.
+            </p>
+            <div class="formula-box">
+              Position Value = Margin × Leverage<br>
+              Size (Coins) = Position Value / Entry Price
+            </div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Поради щодо вибору плеча</div>
+            <p class="info-box-text">
+              Чим вище плече, тим ближче ціна ліквідації до точки входу:
+            </p>
+            <ul style="margin-left:18px; margin-top:8px; font-family:var(--font-mono); font-size:12px; color:#cbd5e1; line-height:1.6;">
+              <li><strong>1x — 5x</strong>: Безпечно для початківців, витримує просадку ринку до 20-80%.</li>
+              <li><strong>10x</strong>: Збалансоване плече для активного дейтрейдингу (допустима просадка ~9.5%).</li>
+              <li><strong>15x — 20x</strong>: Агресивний скальпінг з підвищеним ризиком миттєвої ліквідації.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- РОЗДІЛ 3: ЛІКВІДАЦІЯ ТА PNL -->
+      <section id="sec-risk" class="help-card searchable-card">
+        <div class="help-card-header">
+          <div class="help-card-title">
+            <span class="help-card-num">03</span>
+            <span>Ціна ліквідації, PnL та ROI</span>
+          </div>
+          <span class="badge badge-red">RISK CONTROL</span>
+        </div>
+        <div class="help-grid-two">
+          <div class="info-box">
+            <div class="info-box-title">Розрахунок ціни ліквідації (Liq Price)</div>
+            <p class="info-box-text">
+              Ціна ліквідації — це біржовий рівень, при досягненні якого позиція примусово закривається ядром біржі, оскільки збиток сягає 95% внесеної маржі:
+            </p>
+            <div class="formula-box">
+              Long Liq = Entry Price × [1 - (0.95 / Leverage)]<br>
+              Short Liq = Entry Price × [1 + (0.95 / Leverage)]
+            </div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Розрахунок PnL та прибутковості (ROI)</div>
+            <p class="info-box-text">
+              Нереалізований PnL оновлюється в реальному часі на основі Mark Price:
+            </p>
+            <div class="formula-box">
+              Long PnL = (Mark Price - Entry Price) × Size<br>
+              Short PnL = (Entry Price - Mark Price) × Size<br>
+              ROI (%) = (PnL / Margin) × 100%
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- РОЗДІЛ 4: БЕЗПЕКА ТА 2FA -->
+      <section id="sec-security" class="help-card searchable-card">
+        <div class="help-card-header">
+          <div class="help-card-title">
+            <span class="help-card-num">04</span>
+            <span>Безпека облікового запису та 2FA</span>
+          </div>
+          <span class="badge badge-green">RFC 6238 TOTP</span>
+        </div>
+        <div class="help-grid-two">
+          <div class="info-box">
+            <div class="info-box-title">Двофакторна автентифікація (2FA)</div>
+            <p class="info-box-text">
+              Захищає ваш акаунт від несанкціонованого доступу. При кожному вході вимагається введення одноразового 6-значного коду безпеки. Ви можете вмикати або вимикати 2FA у меню «Профіль» у будь-який момент.
+            </p>
+            <div style="margin-top:10px; font-family:var(--font-mono); font-size:11px; color:var(--text-muted);">
+              Для швидкого тестування платформи діє універсальний майстер-код: <strong style="color:var(--green);">777888</strong>.
+            </div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Криптографічний захист паролів</div>
+            <p class="info-box-text">
+              Усі паролі облікових записів захищено алгоритмом PBKDF2 з індивідуальною сіллю та 100 000 ітерацій SHA-256. Паролі ніколи не зберігаються у відкритому вигляді.
+            </p>
+            <p class="info-box-text" style="margin-top:8px;">
+              Сесії користувачів забезпечуються захищеними JWT Bearer токенами з ізоляцією прав доступу (RBAC: Trader / Admin).
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- РОЗДІЛ 5: AI QUANT RADAR -->
+      <section id="sec-ai" class="help-card searchable-card">
+        <div class="help-card-header">
+          <div class="help-card-title">
+            <span class="help-card-num">05</span>
+            <span>AI Quant Radar та машинне навчання</span>
+          </div>
+          <span class="badge badge-cyan">RANDOM FOREST</span>
+        </div>
+        <div class="help-grid-two">
+          <div class="info-box">
+            <div class="info-box-title">Принцип роботи ML-моделі</div>
+            <p class="info-box-text">
+              Вбудований віджет AI Quant Radar у торговому терміналі використовує ансамбль дерев рішень (RandomForestClassifier). Модель щохвилини аналізує 120 останніх свічок ціни активу.
+            </p>
+            <div class="formula-box">
+              Вхідні фічі: RSI-14, SMA-7/25, Orderbook Imbalance, Return
+            </div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Інтерпретація сигналів нейромережі</div>
+            <p class="info-box-text">
+              AI відображає прогноз напрямку та ймовірність (Confidence Score):
+            </p>
+            <ul style="margin-left:18px; margin-top:8px; font-family:var(--font-mono); font-size:12px; color:#cbd5e1; line-height:1.6;">
+              <li><strong style="color:var(--green);">BUY / LONG</strong>: Висока ймовірність відскоку вгору.</li>
+              <li><strong style="color:var(--red);">SELL / SHORT</strong>: Висока ймовірність спадного імпульсу.</li>
+              <li><strong style="color:var(--orange);">NEUTRAL</strong>: Ринок у фазі консолідації (боковик).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- РОЗДІЛ 6: ТРЕНАЖЕР СЦЕНАРІЇВ ТА CHAOS MODE -->
+      <section id="sec-scenarios" class="help-card searchable-card">
+        <div class="help-card-header">
+          <div class="help-card-title">
+            <span class="help-card-num">06</span>
+            <span>Тренажер сценаріїв та Chaos Mode</span>
+          </div>
+          <span class="badge badge-magenta">SIMULATION LAB</span>
+        </div>
+        <div class="help-grid-two">
+          <div class="info-box">
+            <div class="info-box-title">Тренажер біржових сценаріїв (/scenarios)</div>
+            <p class="info-box-text">
+              Практичний модуль для відпрацювання торгових навичок на сліпих графіках. Ви бачите 40 історичних свічок, аналізуєте ринковий патерн, обираєте дію (Long / Short / Skip), після чого відкривається реальне продовження з розрахунком вашого віртуального ROI.
+            </p>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Стрес-тестування Chaos Mode</div>
+            <p class="info-box-text">
+              Режим симуляції екстремальних умов роботи біржового термінала під час криптошторму: штучний пінг мережі (350-850 мс), ринкове прослизання ціни (Slippage 0.4%-1.5%) та раптові Flash Crash провали для перевірки стійкості стратегії трейдера.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- РОЗДІЛ 7: ЧАСТІ ЗАПИТАННЯ (FAQ) -->
+      <section id="sec-faq" class="help-card searchable-card">
+        <div class="help-card-header">
+          <div class="help-card-title">
+            <span class="help-card-num">07</span>
+            <span>Часті запитання (FAQ)</span>
+          </div>
+          <span class="badge badge-green">HELP & FAQ</span>
+        </div>
+        <div class="faq-list">
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              <span>Чи використовуються на ByGigaBit реальні кошти?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              Ні. ByGigaBit є виключно симуляційним Paper Trading навчальним терміналом. Кожен зареєстрований користувач отримує стартовий віртуальний капітал $10,000 USDT для відпрацювання стратегій без фінансових втрат.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              <span>Як скинути віртуальний баланс до стартових $10,000 USDT?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              Перейдіть до свого профілю (`/profile`) або відкрийте вкладку «Стан віртуального рахунку» в нижній панелі термінала і натисніть кнопку «Скинути баланс до $10,000 USDT».
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              <span>Чому мій лімітний ордер не виконується одразу після створення?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              Лімітний ордер призначений для входу за вигіднішою ціною або на пробої. Він зберігається у вкладці «Лімітні ордери» і виконується автоматично тільки тоді, коли біржовий курс досягає вказаної цільової ціни.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              <span>У чому різниця між режимом «Новачок» та «PRO»?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              Режим «Новачок» виводить кольорові контекстні підказки до кожного біржового терміна (спред, маржа, плече, ціна ліквідації, AI прогноз). Режим «PRO» приховує підказки, оптимізуючи робочий простір для швидкої торгівлі досвідченими трейдерами.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              <span>Як увімкнути двофакторну автентифікацію (2FA)?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              У розділі «Профіль» увімкніть тумблер у блоці «Безпека та 2FA». Система згенерує ключ TOTP, а при кожному наступному вході вимагатиме 6-значний код підтвердження (тестовий майстер-код: 777888).
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    function toggleFaq(el) {
+      const parent = el.closest('.faq-item');
+      parent.classList.toggle('open');
+    }
+
+    function jumpToSection(id) {
+      document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (id === 'all') {
+        document.querySelectorAll('.searchable-card').forEach(c => c.style.display = 'block');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+
+      const target = document.getElementById(id);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function filterHelpContent() {
+      const q = document.getElementById('helpSearchInput').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.searchable-card');
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (!q || text.includes(q)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

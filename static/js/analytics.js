@@ -51,8 +51,8 @@ function drawEquityCurve(points) {
   let svgHtml = `
     <defs>
       <linearGradient id="eqGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#10b981" stop-opacity="0.3"/>
-        <stop offset="100%" stop-color="#10b981" stop-opacity="0.0"/>
+        <stop offset="0%" stop-color="#00FF00" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="#00FF00" stop-opacity="0.0"/>
       </linearGradient>
     </defs>
     <!-- Горизонтальні лінії сітки -->
@@ -63,7 +63,7 @@ function drawEquityCurve(points) {
     <text x="${pad + 4}" y="${h - pad - 6}" fill="#64748b" font-size="11" font-family="JetBrains Mono">$${Math.round(minBal).toLocaleString()}</text>
     <!-- Заливка та лінія -->
     <path d="${areaD}" fill="url(#eqGrad)"/>
-    <path d="${pathD}" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="${pathD}" fill="none" stroke="#00FF00" stroke-width="2.5" stroke-linecap="round"/>
   `;
   coords.forEach(c => {
     svgHtml += `
@@ -80,9 +80,10 @@ function applyFilters() {
   const tbody = document.getElementById('journalTableBody');
   tbody.innerHTML = '';
   let filtered = allHistory.filter(item => {
+    const isWin = item.isWin !== undefined ? item.isWin : ((item.pnl || 0) >= 0);
     if (filterSide !== 'all' && item.side !== filterSide) return false;
-    if (filterResult === 'win' && !item.isWin) return false;
-    if (filterResult === 'loss' && item.isWin) return false;
+    if (filterResult === 'win' && !isWin) return false;
+    if (filterResult === 'loss' && isWin) return false;
     return true;
   });
   if (filtered.length === 0) {
@@ -90,22 +91,29 @@ function applyFilters() {
     return;
   }
   filtered.forEach(h => {
-    const isWin = h.isWin;
+    const isWin = h.isWin !== undefined ? h.isWin : ((h.pnl || 0) >= 0);
     const sign = isWin ? '+' : '';
     const color = isWin ? 'var(--green)' : 'var(--red)';
+    const entryP = Number(h.entryPrice ?? h.price ?? 0);
+    const exitP = Number(h.exitPrice ?? h.closePrice ?? 0);
+    const margin = Number(h.margin ?? 0);
+    const leverage = h.leverage ?? 10;
+    const pnl = Number(h.pnl ?? 0);
+    const roi = Number(h.roi ?? 0);
+    const timeStr = h.closedAt ?? h.time ?? '--';
     const tr = document.createElement('tr');
     tr.className = 'mono';
     tr.innerHTML = `
       <td style="color:#94a3b8;">${h.id}</td>
       <td><strong>${h.symbol}</strong></td>
       <td><span class="badge ${h.side === 'long' ? 'badge-green' : 'badge-red'}">${h.side.toUpperCase()}</span></td>
-      <td>$${h.entryPrice.toLocaleString('en-US', { minimumFractionDigits: 1 })}</td>
-      <td>$${h.exitPrice.toLocaleString('en-US', { minimumFractionDigits: 1 })}</td>
-      <td>$${h.margin.toFixed(2)}</td>
-      <td>${h.leverage}x</td>
-      <td style="color:${color}; font-weight:700;">${sign}$${h.pnl.toFixed(2)}</td>
-      <td style="color:${color}; font-weight:700;">${sign}${h.roi.toFixed(2)}%</td>
-      <td style="font-size:11px; color:#94a3b8;">${h.closedAt}</td>
+      <td>$${entryP.toLocaleString('en-US', { minimumFractionDigits: 1 })}</td>
+      <td>$${exitP.toLocaleString('en-US', { minimumFractionDigits: 1 })}</td>
+      <td>$${margin.toFixed(2)}</td>
+      <td>${leverage}x</td>
+      <td style="color:${color}; font-weight:700;">${sign}$${pnl.toFixed(2)}</td>
+      <td style="color:${color}; font-weight:700;">${sign}${roi.toFixed(2)}%</td>
+      <td style="font-size:11px; color:#94a3b8;">${timeStr}</td>
     `;
     tbody.appendChild(tr);
   });

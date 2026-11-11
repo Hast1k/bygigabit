@@ -12,6 +12,7 @@ from pybit.unified_trading import HTTP
 import uvicorn
 import ml_service
 import database
+import scenarios_data
 
 API_KEY = os.getenv("BYBIT_API_KEY", "pTRtHhIA6TD0eqyeB3")
 API_SECRET = os.getenv("BYBIT_API_SECRET", "MDncLofTbAsBhk2EWhTagfLj4y6BHdGj4k44")
@@ -49,7 +50,14 @@ def get_current_user(request: Request) -> Optional[Dict[str, Any]]:
             token = auth_header[7:].strip()
 
     if token:
-        return database.db_get_user_by_session(token)
+        user = database.db_get_user_by_session(token)
+        if user:
+            cookie_exp = request.cookies.get("bygigabit_exp_level")
+            if cookie_exp in ["beginner", "pro"]:
+                user["experienceLevel"] = cookie_exp
+            else:
+                user["experienceLevel"] = user.get("experienceLevel", "beginner") or "beginner"
+            return user
     return None
 
 
@@ -131,6 +139,31 @@ def page_admin(request: Request):
         request=request,
         name="admin.html",
         context={"active_page": "admin", "user": user}
+    )
+
+
+@app.get("/scenarios", response_class=HTMLResponse)
+@app.get("/trainer", response_class=HTMLResponse)
+def page_scenarios(request: Request):
+    """Навчальний тренажер біржових сценаріїв для студентів та новачків."""
+    user = get_current_user(request)
+    return templates.TemplateResponse(
+        request=request,
+        name="scenarios.html",
+        context={"active_page": "scenarios", "user": user}
+    )
+
+
+@app.get("/help", response_class=HTMLResponse)
+@app.get("/guide", response_class=HTMLResponse)
+@app.get("/faq", response_class=HTMLResponse)
+def page_help(request: Request):
+    """Довідник користувача, база знань та FAQ біржового термінала ByGigaBit."""
+    user = get_current_user(request)
+    return templates.TemplateResponse(
+        request=request,
+        name="help.html",
+        context={"active_page": "help", "user": user}
     )
 
 
@@ -244,6 +277,8 @@ chaos_state = {
 
 # Черга сповіщень про автоліквідації для користувачів: user_id -> List[Dict]
 liquidation_notifications: Dict[int, List[Dict[str, Any]]] = {}
+# Черга сповіщень про спрацювання лімітних ордерів: user_id -> List[Dict]
+order_fill_notifications: Dict[int, List[Dict[str, Any]]] = {}
 
 
 def get_symbol_mark_price(symbol: str) -> float:
@@ -325,15 +360,33 @@ def check_and_execute_liquidations_sync():
                 continue
 
             side = ord_obj["side"]
-            target_p = ord_obj["orderPrice"]
+            target_p = float(ord_obj["orderPrice"])
+            raw_init = ord_obj.get("initialPrice")
+            initial_p = float(raw_init) if raw_init is not None else None
             should_fill = False
 
-            if side == "buy" and curr_p <= target_p:
-                should_fill = True
+            if side == "buy":
                 exec_side = "long"
-            elif side == "sell" and curr_p >= target_p:
-                should_fill = True
+                if initial_p is not None and target_p < initial_p:
+                    # Звичайна лімітна покупка на спаді (нижче ціни розміщення): очікуємо падіння до цілі
+                    should_fill = (curr_p <= target_p)
+                elif initial_p is not None and target_p > initial_p:
+                    # Стоп/пробійна покупка (вище ціни розміщення): очікуємо зростання до цілі
+                    should_fill = (curr_p >= target_p)
+                else:
+                    # initial_p невідомий або target_p == initial_p:
+                    # Запобігаємо миттєвому помилковому виконанню на поточному тіку
+                    should_fill = False
+            elif side == "sell":
                 exec_side = "short"
+                if initial_p is not None and target_p > initial_p:
+                    # Звичайний лімітний продаж на зростанні (вище ціни розміщення): очікуємо зростання до цілі
+                    should_fill = (curr_p >= target_p)
+                elif initial_p is not None and target_p < initial_p:
+                    # Стоп/пробійний продаж на спаді (нижче ціни розміщення): очікуємо падіння до цілі
+                    should_fill = (curr_p <= target_p)
+                else:
+                    should_fill = False
 
             if should_fill:
                 user_id = ord_obj["user_id"]
@@ -346,8 +399,9 @@ def check_and_execute_liquidations_sync():
                 else:
                     liq_p = round(exec_p * (1 + (0.95 / lev)), 1)
 
+                pos_id = f"POS-{int(time.time() * 1000) % 100000}"
                 new_pos = {
-                    "id": f"POS-{int(time.time() * 1000) % 100000}",
+                    "id": pos_id,
                     "symbol": sym,
                     "side": exec_side,
                     "entryPrice": exec_p,
@@ -361,6 +415,18 @@ def check_and_execute_liquidations_sync():
                     "openedAt": time.strftime("%Y-%m-%d %H:%M:%S")
                 }
                 database.db_save_position(user_id, new_pos)
+
+                if user_id not in order_fill_notifications:
+                    order_fill_notifications[user_id] = []
+                order_fill_notifications[user_id].append({
+                    "order_id": ord_obj["id"],
+                    "pos_id": pos_id,
+                    "symbol": sym,
+                    "side": exec_side,
+                    "price": exec_p,
+                    "size": ord_obj["size"],
+                    "time": time.strftime("%Y-%m-%d %H:%M:%S")
+                })
     except Exception as e:
         print(f"[Liquidation Engine Error]: {e}")
 
@@ -645,6 +711,8 @@ def get_terminal_state(request: Request):
 
     # Сповіщення про примусові ліквідації для цього користувача
     notifications = liquidation_notifications.pop(user["id"], [])
+    # Сповіщення про виконані лімітні ордери
+    filled_orders = order_fill_notifications.pop(user["id"], [])
 
     is_any_crash = any(c["expires_at"] > time.time() for c in chaos_state["flash_crash"].values())
 
@@ -654,6 +722,7 @@ def get_terminal_state(request: Request):
         "limitOrders": orders,
         "history": history,
         "liquidations": notifications,
+        "filledOrders": filled_orders,
         "chaosActive": chaos_state["enabled"] or is_any_crash
     }
 
@@ -738,6 +807,10 @@ def create_terminal_order(request: Request, payload: Dict[str, Any] = Body(...))
             "chaosInfo": chaos_info
         }
     else:
+        # Фіксуємо точну актуальну ринкову ціну на момент розміщення ордера
+        mark_p = get_symbol_mark_price(symbol)
+        init_p = mark_p if mark_p > 0 else current_price
+
         ord_id = f"ORD-{int(time.time() * 1000) % 100000}"
         new_ord = {
             "id": ord_id,
@@ -745,6 +818,7 @@ def create_terminal_order(request: Request, payload: Dict[str, Any] = Body(...))
             "side": "buy" if side == "long" else "sell",
             "orderType": "limit",
             "orderPrice": limit_price,
+            "initialPrice": init_p,
             "margin": margin,
             "leverage": leverage,
             "size": size,
@@ -1005,8 +1079,84 @@ def auth_me(request: Request):
             "email": user["email"],
             "role": user["role"],
             "balance": user.get("balance", STARTING_BALANCE),
+            "experienceLevel": user.get("experienceLevel", "beginner"),
             "twoFactor": user.get("twoFactor", True)
         }
+    }
+
+
+@app.post("/api/user/experience")
+def set_experience_level(request: Request, payload: Dict[str, Any] = Body(...)):
+    """Оновлення рівня кваліфікації користувача (Новачок / Pro) в один клік."""
+    user = get_current_user(request)
+    level = str(payload.get("level", "beginner")).lower().strip()
+    valid_level = "pro" if level in ["pro", "experienced", "advanced"] else "beginner"
+
+    if user:
+        database.db_update_user_experience(user["id"], valid_level)
+
+    resp = JSONResponse(content={
+        "ok": True,
+        "experienceLevel": valid_level,
+        "label": "Досвідчений (PRO)" if valid_level == "pro" else "Новачок (Початківець)"
+    })
+    resp.set_cookie(
+        key="bygigabit_exp_level",
+        value=valid_level,
+        max_age=86400 * 30,
+        httponly=False,
+        samesite="lax",
+        path="/"
+    )
+    return resp
+
+
+@app.post("/api/user/2fa")
+def toggle_user_2fa(request: Request, payload: Dict[str, Any] = Body(...)):
+    """Увімкнення або вимкнення 2FA для авторизованого користувача."""
+    user = get_current_user(request)
+    if not user:
+        return JSONResponse(status_code=401, content={"ok": False, "error": "Потрібна авторизація"})
+
+    enabled = bool(payload.get("twoFactor", True))
+    updated_user = database.db_update_user_2fa(user["id"], enabled)
+    if not updated_user:
+        return {"ok": False, "error": "Не вдалося оновити статус 2FA"}
+
+    status_txt = "увімкнено" if enabled else "вимкнено"
+    return {
+        "ok": True,
+        "twoFactor": updated_user.get("twoFactor", True),
+        "message": f"Двофакторну автентифікацію (2FA) успішно {status_txt}"
+    }
+
+
+@app.get("/api/scenarios/list")
+def api_scenarios_list():
+    """Отримання списку навчальних сценаріїв."""
+    return {"ok": True, "scenarios": scenarios_data.get_all_scenarios_meta()}
+
+
+@app.post("/api/scenarios/reveal")
+def api_scenarios_reveal(payload: Dict[str, Any] = Body(...)):
+    """Перевірка рішення користувача в сценарії та добудова свічок."""
+    scenario_id = int(payload.get("scenarioId", 1))
+    user_action = str(payload.get("action", "")).lower().strip()
+    res = scenarios_data.get_scenario_resolution(scenario_id)
+    if not res.get("ok"):
+        return JSONResponse(status_code=404, content={"ok": False, "error": "Сценарій не знайдено"})
+
+    correct_action = res["correctAction"]
+    is_correct = (user_action == correct_action)
+    user_roi = res["longRoi"] if user_action == "long" else res["shortRoi"]
+
+    return {
+        "ok": True,
+        "isCorrect": is_correct,
+        "userAction": user_action,
+        "correctAction": correct_action,
+        "userRoi": user_roi,
+        "resolution": res
     }
 
 
@@ -1016,6 +1166,7 @@ def auth_login(payload: Dict[str, Any] = Body(...)):
     email = payload.get("email", "").strip()
     password = payload.get("password", "")
     code_2fa = payload.get("code2fa", "").strip()
+    exp_pref = payload.get("experienceLevel")
 
     if not email or not password:
         return {"ok": False, "error": "Вкажіть пошту та пароль"}
@@ -1023,10 +1174,17 @@ def auth_login(payload: Dict[str, Any] = Body(...)):
     target_user = database.db_get_user_by_email(email)
     if not target_user:
         role = "Admin" if "admin" in email.lower() else "Trader"
-        target_user = database.db_create_user(email=email, password=password, role=role, balance=STARTING_BALANCE)
+        default_exp = exp_pref if exp_pref in ["beginner", "pro"] else "beginner"
+        target_user = database.db_create_user(email=email, password=password, role=role, balance=STARTING_BALANCE, experience_level=default_exp)
 
     if target_user.get("isBlocked", False):
         return {"ok": False, "error": "Ваш акаунт заблоковано адміністратором"}
+
+    if exp_pref in ["beginner", "pro"]:
+        database.db_update_user_experience(target_user["id"], exp_pref)
+        target_user["experienceLevel"] = exp_pref
+
+    user_exp = target_user.get("experienceLevel", "beginner") or "beginner"
 
     if target_user.get("twoFactor", True) and not code_2fa:
         return {
@@ -1047,7 +1205,9 @@ def auth_login(payload: Dict[str, Any] = Body(...)):
         "user": {
             "id": target_user["id"],
             "email": target_user["email"],
-            "role": target_user["role"]
+            "role": target_user["role"],
+            "experienceLevel": user_exp,
+            "twoFactor": target_user.get("twoFactor", True)
         },
         "message": f"Успішний вхід як {target_user['role']}!"
     })
@@ -1059,6 +1219,14 @@ def auth_login(payload: Dict[str, Any] = Body(...)):
         samesite="lax",
         path="/"
     )
+    resp.set_cookie(
+        key="bygigabit_exp_level",
+        value=user_exp,
+        max_age=86400 * 30,
+        httponly=False,
+        samesite="lax",
+        path="/"
+    )
     return resp
 
 
@@ -1066,7 +1234,11 @@ def auth_login(payload: Dict[str, Any] = Body(...)):
 def auth_register(payload: Dict[str, Any] = Body(...)):
     """Реєстрація нового користувача з миттєвою авторизацією у БД."""
     email = payload.get("email", "").strip()
+    nickname = payload.get("nickname", "").strip()
     password = payload.get("password", "")
+    exp_level = payload.get("experienceLevel", "beginner")
+    if exp_level not in ["beginner", "pro"]:
+        exp_level = "beginner"
 
     if not email or len(password) < 6:
         return {"ok": False, "error": "Вкажіть коректний email та пароль не менше 6 символів"}
@@ -1076,7 +1248,14 @@ def auth_register(payload: Dict[str, Any] = Body(...)):
         return {"ok": False, "error": "Користувач із такою поштою вже зареєстрований"}
 
     role = "Admin" if "admin" in email.lower() else "Trader"
-    new_user = database.db_create_user(email=email, password=password, role=role, balance=STARTING_BALANCE)
+    new_user = database.db_create_user(
+        email=email,
+        password=password,
+        role=role,
+        balance=STARTING_BALANCE,
+        experience_level=exp_level,
+        nickname=nickname
+    )
 
     session_token = f"sess_{int(time.time())}_{secrets.token_hex(12)}"
     database.db_save_session(session_token, new_user["id"])
@@ -1087,7 +1266,9 @@ def auth_register(payload: Dict[str, Any] = Body(...)):
         "user": {
             "id": new_user["id"],
             "email": new_user["email"],
-            "role": new_user["role"]
+            "nickname": new_user.get("nickname") or email.split("@")[0],
+            "role": new_user["role"],
+            "experienceLevel": exp_level
         },
         "message": "Реєстрація успішна! Доступ до біржового термінала відкрито, $10,000 нараховано."
     })
@@ -1095,6 +1276,14 @@ def auth_register(payload: Dict[str, Any] = Body(...)):
         key="bygigabit_session",
         value=session_token,
         max_age=86400 * 7,
+        httponly=False,
+        samesite="lax",
+        path="/"
+    )
+    resp.set_cookie(
+        key="bygigabit_exp_level",
+        value=exp_level,
+        max_age=86400 * 30,
         httponly=False,
         samesite="lax",
         path="/"

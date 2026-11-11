@@ -18,9 +18,6 @@
   </script>
 </head>
 <body>
-  <div class="top-transmission-bar">
-    INDEPENDENT CRYPTO TERMINAL FROM UKRAINE // 10,000 USDT SIMULATED BALANCE // BYBIT V5 SPOT FEED
-  </div>
   <nav class="navbar">
     <div class="nav-left">
       <a href="/" class="brand">
@@ -30,19 +27,31 @@
       <ul class="nav-links">
         <li><a href="/" class="nav-link">ГОЛОВНА</a></li>
         <li><a href="/chart" class="nav-link active">ТЕРМІНАЛ</a></li>
+        <li><a href="/scenarios" class="nav-link">ТРЕНАЖЕР</a></li>
         <li><a href="/analytics" class="nav-link">АНАЛІТИКА</a></li>
-        <li><a href="/profile" class="nav-link">ГАМАНЕЦЬ</a></li>
+        <li><a href="/help" class="nav-link">ДОВІДКА</a></li>
         {% if user and user.role == 'Admin' %}
           <li><a href="/admin" class="nav-link">АДМІНКА</a></li>
         {% endif %}
       </ul>
     </div>
     <div class="nav-right">
+      <div class="exp-toggle-pill beginner" onclick="toggleExperienceLevel()" title="Миттєве перемикання рівня (Новачок / PRO)">
+        <span class="exp-dot"></span>
+        <span class="exp-label">НОВАЧОК</span>
+      </div>
       <div class="status-pill">
         <span class="pulse-dot"></span>
         <span>BYBIT SPOT V5 LIVE</span>
       </div>
-      <a href="/profile" class="btn-nav-auth mono" id="navWalletBal" style="color:var(--green); font-weight:800;">$10,000.00</a>
+      <span class="header-bal-pill mono" id="navWalletBal" title="Поточний реальний баланс">$10,000.00</span>
+      {% if user %}
+        <a href="/profile" class="nav-profile-circle" title="Профіль: {{ user.nickname or user.email }}">
+          <span>{{ (user.nickname or user.email)[0]|upper }}</span>
+        </a>
+      {% else %}
+        <a href="/auth" class="btn-nav-auth">УВІЙТИ</a>
+      {% endif %}
     </div>
   </nav>
   <header class="ticker-bar">
@@ -294,6 +303,7 @@
             </div>
           </div>
           <div id="aiReasonVal" class="ai-reason-text">Ініціалізація моделі ByGigaBit AI...</div>
+          <div class="beginner-guide-badge">Підказка для новачка: RandomForest оцінює ймовірність відскоку або продовження руху на базі RSI та SMA.</div>
         </div>
       </div>
       <div class="side-box">
@@ -301,6 +311,7 @@
           <span>Книга ордерів (Order Book)</span>
           <span style="font-size:11px; color:#38bdf8;">Bybit V5</span>
         </div>
+        <div class="beginner-guide-badge" style="margin-bottom:6px;">Стакан: Зверху заявки на продаж (Asks), знизу на купівлю (Bids). Спред — різниця цін.</div>
         <div class="ob-header">
           <span>Ціна (USDT)</span>
           <span>Кількість (<span id="obBaseAsset">BTC</span>)</span>
@@ -317,7 +328,6 @@
       <div class="side-box">
         <div class="box-title">
           <span>Оформлення угоди</span>
-          <span id="tradeBoxBalance" style="font-size:11px; color:#10b981;">Баланс: $10,000</span>
         </div>
         <div class="trade-tabs">
           <div id="tabLong" class="trade-tab long active" onclick="setTradeSide('long')">Long / Купити</div>
@@ -349,6 +359,7 @@
           <div class="slider-container">
             <input id="leverageSlider" type="range" class="slider" min="1" max="20" value="10" oninput="onLeverageChange(this.value)">
           </div>
+          <div class="beginner-guide-badge">Плече (Leverage): Множник обсягу. Для новачків безпечно 1x-5x. Плече 10x-20x збільшує ризик ліквідації при невеликому коливанні ціни.</div>
         </div>
         <div class="calc-summary-box">
           <div class="calc-row">
@@ -363,6 +374,7 @@
             <span>Ціна ліквідації:</span>
             <strong id="calcLiqPrice" class="mono" style="color:#ef4444;">$72,400</strong>
           </div>
+          <div class="beginner-guide-badge" style="border-color:rgba(239,68,68,0.4); color:#fca5a5; background:rgba(239,68,68,0.06);">Ціна ліквідації: Рівень, при досягненні якого біржа закриє угоду через вичерпання маржі.</div>
         </div>
         <button id="btnSubmitTrade" class="btn-submit-trade buy" onclick="submitOrder()">
           Відкрити Long позицію

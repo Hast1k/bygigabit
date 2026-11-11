@@ -1,14 +1,19 @@
 import os
 import time
 from typing import Optional, List, Dict, Any
+from dotenv import load_dotenv
 from sqlalchemy import (
-    create_engine, Column, Integer, String, Float, Boolean, ForeignKey, Text, select, update, delete
+    create_engine, Column, Integer, String, Float, Boolean, ForeignKey, Text, select, update, delete, text
 )
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship, Session
 
+# Завантажуємо конфігурацію Neon з .env.local або .env
+load_dotenv(".env.local")
+load_dotenv(".env")
+
 raw_db_url = os.getenv("DATABASE_URL", "sqlite:///./bygigabit.db")
 
-# Render видає postgres:// або postgresql://
+# Render та Neon видають postgres:// або postgresql://
 # Вказуємо postgresql+psycopg2:// для надійного драйвера psycopg2-binary
 if raw_db_url.startswith("postgres://"):
     raw_db_url = raw_db_url.replace("postgres://", "postgresql+psycopg2://", 1)
@@ -32,23 +37,30 @@ class UserModel(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     email = Column(String(255), unique=True, index=True, nullable=False)
+    nickname = Column(String(100), nullable=True)
     password = Column(String(255), nullable=False)
     role = Column(String(50), default="Trader", nullable=False)
     twoFactor = Column(Boolean, default=True, nullable=False)
     balance = Column(Float, default=10000.0, nullable=False)
     tradesCount = Column(Integer, default=0, nullable=False)
+    experienceLevel = Column(String(20), default="beginner", nullable=False)
     isBlocked = Column(Boolean, default=False, nullable=False)
     registeredAt = Column(String(50), nullable=False)
 
     def to_dict(self) -> Dict[str, Any]:
+        nick = getattr(self, "nickname", None)
+        if not nick and self.email:
+            nick = self.email.split("@")[0]
         return {
             "id": self.id,
             "email": self.email,
+            "nickname": nick or "Trader",
             "password": self.password,
             "role": self.role,
             "twoFactor": self.twoFactor,
             "balance": round(self.balance, 2),
             "tradesCount": self.tradesCount,
+            "experienceLevel": getattr(self, "experienceLevel", "beginner") or "beginner",
             "isBlocked": self.isBlocked,
             "registeredAt": self.registeredAt,
         }
@@ -105,6 +117,7 @@ class LimitOrderModel(Base):
     side = Column(String(20), nullable=False)
     orderType = Column(String(50), default="limit", nullable=False)
     orderPrice = Column(Float, nullable=False)
+    initialPrice = Column(Float, nullable=True)
     margin = Column(Float, nullable=False)
     leverage = Column(Integer, nullable=False)
     size = Column(Float, nullable=False)
@@ -118,6 +131,7 @@ class LimitOrderModel(Base):
             "side": self.side,
             "orderType": self.orderType,
             "orderPrice": self.orderPrice,
+            "initialPrice": getattr(self, "initialPrice", None),
             "margin": self.margin,
             "leverage": self.leverage,
             "size": self.size,
@@ -144,24 +158,40 @@ class OrderHistoryModel(Base):
     time = Column(String(50), nullable=False)
 
     def to_dict(self) -> Dict[str, Any]:
+        is_win = (self.pnl >= 0)
         return {
             "id": self.id,
             "symbol": self.symbol,
             "side": self.side,
             "orderType": self.orderType,
             "price": self.price,
+            "entryPrice": self.price,
             "closePrice": self.closePrice,
+            "exitPrice": self.closePrice,
             "margin": self.margin,
             "leverage": self.leverage,
-            "pnl": self.pnl,
-            "roi": self.roi,
+            "pnl": round(self.pnl, 2),
+            "roi": round(self.roi, 2),
+            "isWin": is_win,
             "status": self.status,
             "time": self.time,
+            "closedAt": self.time,
         }
 
 
 def init_db():
     Base.metadata.create_all(bind=engine)
+    # Безпечне додавання колонок до існуючої БД
+    try:
+        with engine.connect() as conn:
+            conn.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS "experienceLevel" VARCHAR(20) DEFAULT \'beginner\''))
+            conn.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS "nickname" VARCHAR(100)'))
+            conn.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS "twoFactor" BOOLEAN DEFAULT TRUE'))
+            conn.execute(text('ALTER TABLE limit_orders ADD COLUMN IF NOT EXISTS "initialPrice" FLOAT'))
+            conn.commit()
+    except Exception:
+        pass
+
     with SessionLocal() as db:
         admin = db.query(UserModel).filter(UserModel.email == "admin@bygigabit.com").first()
         if not admin:
@@ -172,6 +202,7 @@ def init_db():
                 twoFactor=True,
                 balance=25000.0,
                 tradesCount=115,
+                experienceLevel="pro",
                 isBlocked=False,
                 registeredAt="2026-10-10 09:00"
             )
@@ -186,6 +217,7 @@ def init_db():
                 twoFactor=True,
                 balance=10000.0,
                 tradesCount=4,
+                experienceLevel="beginner",
                 isBlocked=False,
                 registeredAt="2026-10-15 14:22"
             )
@@ -207,20 +239,50 @@ def db_get_user_by_id(user_id: int) -> Optional[Dict[str, Any]]:
         return user.to_dict() if user else None
 
 
-def db_create_user(email: str, password: str, role: str = "Trader", balance: float = 10000.0) -> Dict[str, Any]:
+def db_create_user(email: str, password: str, role: str = "Trader", balance: float = 10000.0, experience_level: str = "beginner", nickname: Optional[str] = None) -> Dict[str, Any]:
     with SessionLocal() as db:
         now_str = time.strftime("%Y-%m-%d %H:%M")
+        valid_exp = "pro" if experience_level in ["pro", "experienced", "advanced"] else "beginner"
+        clean_nick = (nickname or "").strip()
+        if not clean_nick and email:
+            clean_nick = email.split("@")[0]
         user = UserModel(
             email=email.lower().strip(),
+            nickname=clean_nick,
             password=password,
             role=role,
             twoFactor=True,
             balance=balance,
             tradesCount=0,
+            experienceLevel=valid_exp,
             isBlocked=False,
             registeredAt=now_str
         )
         db.add(user)
+        db.commit()
+        db.refresh(user)
+        return user.to_dict()
+
+
+def db_update_user_experience(user_id: int, level: str) -> Optional[Dict[str, Any]]:
+    with SessionLocal() as db:
+        user = db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not user:
+            return None
+        valid_exp = "pro" if level in ["pro", "experienced", "advanced"] else "beginner"
+        user.experienceLevel = valid_exp
+        db.commit()
+        db.refresh(user)
+        return user.to_dict()
+
+
+def db_update_user_2fa(user_id: int, enabled: bool) -> Optional[Dict[str, Any]]:
+    """Оновлення статусу двофакторної автентифікації (2FA) користувача."""
+    with SessionLocal() as db:
+        user = db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not user:
+            return None
+        user.twoFactor = bool(enabled)
         db.commit()
         db.refresh(user)
         return user.to_dict()
@@ -348,6 +410,7 @@ def db_save_limit_order(user_id: int, order_data: Dict[str, Any]):
             side=order_data["side"],
             orderType=order_data.get("orderType", "limit"),
             orderPrice=order_data["orderPrice"],
+            initialPrice=order_data.get("initialPrice"),
             margin=order_data["margin"],
             leverage=order_data["leverage"],
             size=order_data["size"],

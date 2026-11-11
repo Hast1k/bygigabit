@@ -12,9 +12,6 @@
   <script src="/static/js/theme.js"></script>
 </head>
 <body>
-  <div class="top-transmission-bar">
-    INDEPENDENT CRYPTO TERMINAL FROM UKRAINE // AUTH GATEWAY // BYBIT V5 SPOT FEED
-  </div>
   <nav class="navbar">
     <div class="nav-left">
       <a href="/" class="brand">
@@ -24,8 +21,9 @@
       <ul class="nav-links">
         <li><a href="/" class="nav-link">ГОЛОВНА</a></li>
         <li><a href="/chart" class="nav-link">ТЕРМІНАЛ</a></li>
+        <li><a href="/scenarios" class="nav-link">ТРЕНАЖЕР</a></li>
         <li><a href="/analytics" class="nav-link">АНАЛІТИКА</a></li>
-        <li><a href="/profile" class="nav-link">ГАМАНЕЦЬ</a></li>
+        <li><a href="/help" class="nav-link">ДОВІДКА</a></li>
         {% if user and user.role == 'Admin' %}
           <li><a href="/admin" class="nav-link">АДМІНКА</a></li>
         {% endif %}
@@ -36,6 +34,11 @@
         <span class="pulse-dot"></span>
         <span>JWT & 2FA PROTECTED</span>
       </div>
+      {% if user %}
+        <a href="/profile" class="nav-profile-circle" title="Профіль: {{ user.nickname or user.email }}">
+          <span>{{ (user.nickname or user.email)[0]|upper }}</span>
+        </a>
+      {% endif %}
     </div>
   </nav>
   <main class="auth-wrapper">
@@ -50,6 +53,10 @@
         <button id="tabRegister" class="auth-tab" onclick="switchAuthMode('register')">Реєстрація (Register)</button>
       </div>
       <form id="authMainForm" onsubmit="handleMainSubmit(event)">
+        <div id="nicknameGroup" class="form-group" style="display:none;">
+          <label class="input-label" for="authNickname">Нікнейм (Позивний трейдера)</label>
+          <input type="text" id="authNickname" class="auth-input" placeholder="Наприклад: CyberWolf">
+        </div>
         <div class="form-group">
           <label class="input-label" for="authEmail">Електронна пошта (Email)</label>
           <input type="email" id="authEmail" class="auth-input" placeholder="trader@bygigabit.com" required value="trader@bygigabit.com">
@@ -61,6 +68,27 @@
         <div id="repeatPasswordGroup" class="form-group" style="display:none;">
           <label class="input-label" for="authPasswordRepeat">Повторіть пароль</label>
           <input type="password" id="authPasswordRepeat" class="auth-input" placeholder="••••••••••••">
+        </div>
+        <div class="form-group qualification-group" id="qualificationGroup">
+          <label class="input-label">Рівень кваліфікації трейдера</label>
+          <div class="qualification-cards">
+            <div class="qual-card active" id="qualBeginner" onclick="selectQualification('beginner')">
+              <div class="qual-card-header">
+                <span class="qual-icon-dot beginner"></span>
+                <span class="qual-card-title">Новачок</span>
+                <span class="qual-badge">РЕКОМЕНДОВАНО</span>
+              </div>
+              <p class="qual-card-desc">Початківець: потрібні підказки, спрощений режим, пояснення індикаторів та ризиків.</p>
+            </div>
+            <div class="qual-card" id="qualPro" onclick="selectQualification('pro')">
+              <div class="qual-card-header">
+                <span class="qual-icon-dot pro"></span>
+                <span class="qual-card-title">Досвідчений</span>
+              </div>
+              <p class="qual-card-desc">Активний трейдер: повний біржовий функціонал, швидкі угоди, без зайвих підказок.</p>
+            </div>
+          </div>
+          <input type="hidden" id="selectedQualification" value="beginner">
         </div>
         <div class="quick-credentials">
           <span>Швидкий вибір ролі (RBAC):</span>
