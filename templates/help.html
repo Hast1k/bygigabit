@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ByGigaBit — Довідка, інструкції та база знань</title>
+  <title>ByGigaBit — Довідник біржових термінів та понять</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
@@ -36,7 +36,7 @@
       </div>
       <div class="status-pill">
         <span class="pulse-dot"></span>
-        <span>HELP & DOCS</span>
+        <span>GLOSSARY & TERMS</span>
       </div>
       <a href="/chart" class="btn btn-primary" style="padding:6px 14px; font-size:11px;">ТЕРМІНАЛ ↗</a>
       {% if user %}
@@ -52,306 +52,606 @@
   <main class="help-container">
     <header class="help-header">
       <div class="help-title-box">
-        <h1>Довідка та інструкція користувача</h1>
-        <p class="help-subtitle">Повний посібник із торгівлі, ризик-менеджменту, 2FA безпеки та AI-індикаторів</p>
+        <h1>Біржовий довідник та визначення термінів</h1>
+        <p class="help-subtitle">Детальне роз'яснення кожного біржового поняття, розрахунку, назви та числа простими словами</p>
       </div>
       <div>
-        <a href="/chart" class="btn btn-primary" style="font-size:12px;">Перейти до торгівлі ↗</a>
+        <a href="/chart" class="btn btn-primary" style="font-size:12px;">Перейти до термінала ↗</a>
       </div>
     </header>
 
     <div class="help-controls">
       <div class="help-search-box">
-        <input type="text" id="helpSearchInput" class="help-search-input" placeholder="Швидкий пошук за темами (ордери, плече, ліквідація, 2FA, AI, PnL)..." oninput="filterHelpContent()">
+        <input type="text" id="helpSearchInput" class="help-search-input" placeholder="Швидкий пошук терміна (маржа, плече, ліквідація, pnl, size, 2fa, rsi, спред)..." oninput="filterHelpContent()">
       </div>
       <div class="help-category-pills">
-        <span class="cat-pill active" onclick="jumpToSection('all')">Усі теми</span>
-        <span class="cat-pill" onclick="jumpToSection('sec-orders')">Ордери & Термінал</span>
-        <span class="cat-pill" onclick="jumpToSection('sec-margin')">Маржа & Плече</span>
-        <span class="cat-pill" onclick="jumpToSection('sec-risk')">Ліквідація & PnL</span>
+        <span class="cat-pill active" onclick="jumpToSection('all')">Усі визначення</span>
+        <span class="cat-pill" onclick="jumpToSection('sec-market')">Основи ринку</span>
+        <span class="cat-pill" onclick="jumpToSection('sec-orders')">Ордери & Позиції</span>
+        <span class="cat-pill" onclick="jumpToSection('sec-margin')">Маржа & Плече & Size</span>
+        <span class="cat-pill" onclick="jumpToSection('sec-liquidation')">Ліквідація, PnL & ROI</span>
         <span class="cat-pill" onclick="jumpToSection('sec-security')">Безпека & 2FA</span>
-        <span class="cat-pill" onclick="jumpToSection('sec-ai')">AI Quant Radar</span>
-        <span class="cat-pill" onclick="jumpToSection('sec-scenarios')">Тренажер & Chaos</span>
-        <span class="cat-pill" onclick="jumpToSection('sec-faq')">FAQ (Запитання)</span>
+        <span class="cat-pill" onclick="jumpToSection('sec-ai')">Штучний інтелект (AI)</span>
+        <span class="cat-pill" onclick="jumpToSection('sec-stress')">Тренажер & Chaos Mode</span>
       </div>
     </div>
 
     <div class="help-sections-grid">
-      <!-- РОЗДІЛ 1: ОРДЕРИ ТА ТЕРМІНАЛ -->
-      <section id="sec-orders" class="help-card searchable-card">
+
+      <!-- РОЗДІЛ 1: ОСНОВИ РИНКУ ТА СТАКАНИ ЗАЯВОК -->
+      <section id="sec-market" class="help-card searchable-card">
         <div class="help-card-header">
           <div class="help-card-title">
             <span class="help-card-num">01</span>
-            <span>Торговий термінал та типи ордерів</span>
+            <span>Основи біржового ринку та стакан заявок</span>
           </div>
-          <span class="badge badge-cyan">ТЕРМІНАЛ V5</span>
+          <span class="badge badge-cyan">MARKET CORE</span>
         </div>
-        <div class="help-grid-two">
-          <div class="info-box">
-            <div class="info-box-title">
-              <span>Маркет-ордер (Market Order)</span>
-              <span class="badge badge-green">INSTANT</span>
+        <div class="terms-stack">
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Торгова пара (Symbol / Pair)</span>
+              <span class="badge badge-cyan">BTCUSDT</span>
             </div>
-            <p class="info-box-text">
-              Миттєве відкриття угоди за найкращою поточною ринковою ціною з книги заявок (Orderbook). Застосовується, коли критично важливо зайти в позицію без зволікань.
+            <p class="def-plain-desc">
+              <strong>Торгова пара</strong> — це два активи, які обмінюються один на одного. Перша монета називається <strong>базовою</strong> (те, що ви купуєте або продаєте, наприклад <strong>BTC</strong> — Bitcoin), а друга — <strong>котируваною</strong> (валюта, в якій вимірюється ціна, наприклад <strong>USDT</strong> — цифровий долар Tether). Напис <strong>BTCUSDT = $70,000</strong> означає, що один біткоїн коштує 70 тисяч доларів.
             </p>
           </div>
-          <div class="info-box">
-            <div class="info-box-title">
-              <span>Лімітний ордер (Limit Order)</span>
-              <span class="badge badge-orange">PENDING</span>
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Книга заявок або Стакан (Orderbook)</span>
+              <span class="badge badge-magenta">ASKS & BIDS</span>
             </div>
-            <p class="info-box-text">
-              Відкладена заявка за фіксованою ціною. Для позиції Long (Buy) ордер виставляється нижче ринку для купівлі на відкаті (або вище ринку на пробій). Заявка зберігається у вкладці «Лімітні ордери» і переходить у відкриті позиції виключно при реальному досягненні ринкової ціни.
+            <p class="def-plain-desc">
+              <strong>Стакан заявок</strong> — це живий список усіх відкритих заявок трейдерів на біржі в поточну секунду. Він поділений на дві частини:
             </p>
-          </div>
-          <div class="info-box">
-            <div class="info-box-title">
-              <span>Позиція Long (Купівля)</span>
-              <span class="badge badge-green">BULLISH</span>
+            <div class="breakdown-box">
+              <div class="breakdown-title">Складові біржового стакана:</div>
+              <ul class="breakdown-items">
+                <li class="breakdown-item">
+                  <span class="item-badge" style="color:var(--red); border-color:var(--red);">Asks (Аски / Червоні)</span>
+                  <span class="item-desc"><strong>Продавці</strong>. Список заявок людей, які бажають продати монету. Вони розміщені вгорі за спаданням ціни. Найнижчий Ask — це найвигідніша ціна, за якою ви можете купити просто зараз.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge" style="color:var(--green); border-color:var(--green);">Bids (Біди / Зелені)</span>
+                  <span class="item-desc"><strong>Покупці</strong>. Список заявок людей, які бажають купити монету. Вони розміщені внизу за зростанням ціни. Найвищий Bid — це найвища ціна, за якою ви можете продати просто зараз.</span>
+                </li>
+              </ul>
             </div>
-            <p class="info-box-text">
-              Торгівля на підвищення курсу. Прибуток генерується, коли ринкова ціна активу зростає вище точки входу.
-            </p>
           </div>
-          <div class="info-box">
-            <div class="info-box-title">
-              <span>Позиція Short (Продаж)</span>
-              <span class="badge badge-red">BEARISH</span>
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Спред (Spread)</span>
+              <span class="badge badge-orange">РІЗНИЦЯ ЦІН</span>
             </div>
-            <p class="info-box-text">
-              Торгівля на падіння курсу. Прибуток генерується, коли ринкова ціна активу опускається нижче точки входу.
+            <p class="def-plain-desc">
+              <strong>Спред</strong> — це різниця в доларах між найнижчою ціною, за якою продавець готовий віддати монету (Best Ask), і найвищою ціною, яку покупець готовий за неї заплатити (Best Bid).
             </p>
+            <div class="example-box">
+              <div class="example-title">Приклад із життя:</div>
+              <p class="example-text">
+                Якщо в обміннику найкраща пропозиція на продаж біткоїна становить <strong>$68,502</strong>, а на купівлю готові взяти за <strong>$68,500</strong>, то різниця в <strong>$2</strong> є спредом. Чим менший спред, тим активніший ринок (вища ліквідність) і тим дешевше здійснювати угоди.
+              </p>
+            </div>
           </div>
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Ціна Mark (Mark Price) vs Ціна входу (Entry Price)</span>
+              <span class="badge badge-green">PRICING</span>
+            </div>
+            <p class="def-plain-desc">
+              У терміналі використовуються два ключові значення ціни:
+            </p>
+            <div class="breakdown-box">
+              <div class="breakdown-title">Розшифровка понять:</div>
+              <ul class="breakdown-items">
+                <li class="breakdown-item">
+                  <span class="item-badge">Entry Price (Ціна входу)</span>
+                  <span class="item-desc">Ціна, за якою ви відкрили свою позицію. Вона залишається незмінною протягом усього часу, поки угода відкрита.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge">Mark Price (Ціна маркування)</span>
+                  <span class="item-desc">Справжня актуальна ціна активу на ринку просто зараз. За цією ціною біржа щосекунди перераховує ваш поточний прибуток або збиток і визначає, чи не наблизились ви до ліквідації.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
         </div>
       </section>
 
-      <!-- РОЗДІЛ 2: МАРЖА ТА ПЛЕЧЕ -->
-      <section id="sec-margin" class="help-card searchable-card">
+      <!-- РОЗДІЛ 2: ТИПИ ОРДЕРІВ ТА НАПРЯМКИ УГОД -->
+      <section id="sec-orders" class="help-card searchable-card">
         <div class="help-card-header">
           <div class="help-card-title">
             <span class="help-card-num">02</span>
-            <span>Кредитне плече та маржинальні вимоги</span>
+            <span>Типи ордерів та напрямки торгівлі (Long і Short)</span>
           </div>
-          <span class="badge badge-magenta">LEVERAGE 1x-20x</span>
+          <span class="badge badge-magenta">TRADE TYPES</span>
         </div>
-        <div class="help-grid-two">
-          <div class="info-box">
-            <div class="info-box-title">Суть кредитного плеча (Leverage)</div>
-            <p class="info-box-text">
-              Кредитне плече — це біржовий мультиплікатор, що збільшує купівельну спроможність вашого депозиту. Наприклад, маючи маржу $100 і плече 10x, ви відкриваєте позицію обсягом $1,000.
+        <div class="terms-stack">
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Позиція Long (Лонг / Купівля на зростання)</span>
+              <span class="badge badge-green">LONG</span>
+            </div>
+            <p class="def-plain-desc">
+              <strong>Long (довга позиція)</strong> — це ставка на те, що ціна монети буде <strong>зростати</strong>. Ви купуєте актив за поточною ціною з надією продати його дорожче.
             </p>
-            <div class="formula-box">
-              Position Value = Margin × Leverage<br>
-              Size (Coins) = Position Value / Entry Price
+            <div class="example-box">
+              <div class="example-title">Як це працює словами:</div>
+              <p class="example-text">
+                Ви відкриваєте Long по біткоїну за ціною <strong>$65,000</strong>. Якщо ціна піднімається до <strong>$70,000</strong>, різниця у <strong>$5,000</strong> за кожну монету стає вашим чистим прибутком. Якщо ж ціна падає до $60,000 — ви отримуєте збиток.
+              </p>
             </div>
           </div>
-          <div class="info-box">
-            <div class="info-box-title">Поради щодо вибору плеча</div>
-            <p class="info-box-text">
-              Чим вище плече, тим ближче ціна ліквідації до точки входу:
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Позиція Short (Шорт / Продаж на падіння)</span>
+              <span class="badge badge-red">SHORT</span>
+            </div>
+            <p class="def-plain-desc">
+              <strong>Short (коротка позиція)</strong> — це ставка на те, що ціна монети буде <strong>падати</strong>. Трейдери заробляють гроші на обвалі ринку.
             </p>
-            <ul style="margin-left:18px; margin-top:8px; font-family:var(--font-mono); font-size:12px; color:#cbd5e1; line-height:1.6;">
-              <li><strong>1x — 5x</strong>: Безпечно для початківців, витримує просадку ринку до 20-80%.</li>
-              <li><strong>10x</strong>: Збалансоване плече для активного дейтрейдингу (допустима просадка ~9.5%).</li>
-              <li><strong>15x — 20x</strong>: Агресивний скальпінг з підвищеним ризиком миттєвої ліквідації.</li>
-            </ul>
+            <div class="example-box">
+              <div class="example-title">Як це працює простими словами (без магії):</div>
+              <p class="example-text">
+                Біржа умовно позичає вам 1 біткоїн, коли він коштує <strong>$70,000</strong>, і ви одразу продаєте його на ринку, отримуючи $70,000 готівкою. Коли ринок падає до <strong>$60,000</strong>, ви відкуповуєте 1 біткоїн назад за $60,000 і повертаєте борг біржі. Залишок у <strong>$10,000</strong> ви забираєте собі як прибуток. Якщо ж ринок пішов угору — ви у збитку.
+              </p>
+            </div>
           </div>
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Маркет-ордер (Market Order)</span>
+              <span class="badge badge-green">РИНКОВИЙ ВХІД</span>
+            </div>
+            <p class="def-plain-desc">
+              <strong>Маркет-ордер</strong> — наказ біржі: «Купи або продай просто зараз за будь-якою найкращою ціною, яка є в стакані». Він виконується миттєво (за мілісекунди) і одразу перетворюється на відкриту позицію. Мінус — у моменти шторму на ринку ціна може змінитися на соті частки секунди (прослизання).
+            </p>
+          </div>
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Лімітний ордер (Limit Order)</span>
+              <span class="badge badge-orange">ВІДКЛАДЕНИЙ ВХІД</span>
+            </div>
+            <p class="def-plain-desc">
+              <strong>Лімітний ордер</strong> — наказ біржі: «Не відкривай угоду зараз, а зачекай, поки ціна дійде до моєї позначки».
+            </p>
+            <div class="breakdown-box">
+              <div class="breakdown-title">Як працює лімітний ордер на практиці:</div>
+              <ul class="breakdown-items">
+                <li class="breakdown-item">
+                  <span class="item-badge" style="color:var(--green); border-color:var(--green);">Купівля нижче ринку</span>
+                  <span class="item-desc">Біткоїн зараз $68,000, але ви вважаєте, що це дорого. Ви ставите лімітний ордер на купівлю (Long) за ціною <strong>$65,000</strong>. Ордер додається у вкладку «Лімітні ордери» і спокійно чекає. Тільки якщо курс опуститься до $65,000, біржа виконає заявку і перенесе її у відкриті позиції.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge" style="color:var(--cyan); border-color:var(--cyan);">Купівля на пробій (вище ринку)</span>
+                  <span class="item-desc">Якщо ви ставите купівлю за ціною $70,000 при поточному ринку $68,000, ордер спрацює лише тоді, коли ціна підніметься і проб'є рівень $70,000.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
         </div>
       </section>
 
-      <!-- РОЗДІЛ 3: ЛІКВІДАЦІЯ ТА PNL -->
-      <section id="sec-risk" class="help-card searchable-card">
+      <!-- РОЗДІЛ 3: МАРЖА, ПЛЕЧЕ ТА РОЗМІР ПОЗИЦІЇ (SIZE) -->
+      <section id="sec-margin" class="help-card searchable-card">
         <div class="help-card-header">
           <div class="help-card-title">
             <span class="help-card-num">03</span>
-            <span>Ціна ліквідації, PnL та ROI</span>
+            <span>Маржа, Кредитне плече та Обсяг позиції (Size)</span>
           </div>
-          <span class="badge badge-red">RISK CONTROL</span>
+          <span class="badge badge-cyan">MARGIN & LEVERAGE</span>
         </div>
-        <div class="help-grid-two">
-          <div class="info-box">
-            <div class="info-box-title">Розрахунок ціни ліквідації (Liq Price)</div>
-            <p class="info-box-text">
-              Ціна ліквідації — це біржовий рівень, при досягненні якого позиція примусово закривається ядром біржі, оскільки збиток сягає 95% внесеної маржі:
+        <div class="terms-stack">
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Маржа (Margin)</span>
+              <span class="badge badge-green">ЗАСТАВА</span>
+            </div>
+            <p class="def-plain-desc">
+              <strong>Маржа</strong> — це ваші особисті гроші, які ви виділяєте зі свого балансу під конкретну угоду як <strong>заставу</strong>. Якщо угода виявиться збитковою, біржа компенсуватиме втрати виключно з цієї суми. Ви ніколи не можете втратити більше, ніж виділена маржа (це називається ізольованою маржею).
             </p>
-            <div class="formula-box">
-              Long Liq = Entry Price × [1 - (0.95 / Leverage)]<br>
-              Short Liq = Entry Price × [1 + (0.95 / Leverage)]
+            <div class="breakdown-box">
+              <div class="breakdown-title">Статуси маржі у вашому гаманці:</div>
+              <ul class="breakdown-items">
+                <li class="breakdown-item">
+                  <span class="item-badge">Used Margin (Задіяна маржа)</span>
+                  <span class="item-desc">Гроші, які просто зараз заблоковані у ваших відкритих угодах як страховий депозит.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge">Available Margin (Вільна маржа)</span>
+                  <span class="item-desc">Залишок коштів на балансі, який ви можете вільно використати для відкриття нових позицій або зняти.</span>
+                </li>
+              </ul>
             </div>
           </div>
-          <div class="info-box">
-            <div class="info-box-title">Розрахунок PnL та прибутковості (ROI)</div>
-            <p class="info-box-text">
-              Нереалізований PnL оновлюється в реальному часі на основі Mark Price:
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Кредитне плече (Leverage)</span>
+              <span class="badge badge-magenta">МНОЖНИК 1x-20x</span>
+            </div>
+            <p class="def-plain-desc">
+              <strong>Кредитне плече</strong> — це множник купівельної спроможності, який біржа надає вам під заставу вашої маржі. Значення записується як <strong>2x, 5x, 10x, 20x</strong>.
             </p>
-            <div class="formula-box">
-              Long PnL = (Mark Price - Entry Price) × Size<br>
-              Short PnL = (Entry Price - Mark Price) × Size<br>
-              ROI (%) = (PnL / Margin) × 100%
+            <div class="example-box">
+              <div class="example-title">Простий приклад словами:</div>
+              <p class="example-text">
+                У вас є <strong>$100</strong> маржі. Якщо ви обираєте плече <strong>10x</strong>, біржа помножує ваші $100 на 10. Таким чином, ви купуєте криптовалюти на <strong>$1,000</strong>. Весь прибуток ви забираєте собі так, ніби вклали власну $1,000, але й ризик зростає рівно в 10 разів.
+              </p>
             </div>
           </div>
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Обсяг позиції (Size) — що означає це число</span>
+              <span class="badge badge-cyan">COINS COUNT</span>
+            </div>
+            <p class="def-plain-desc">
+              <strong>Size (Розмір)</strong> — це фізична кількість монет криптовалюти (наприклад, <strong>0.1450 BTC</strong> або <strong>2.50 ETH</strong>), яку ви фактично контролюєте у цій угоді.
+            </p>
+            <div class="breakdown-box">
+              <div class="breakdown-title">Як розраховується Size словами (пояснення кожного кроку):</div>
+              <ul class="breakdown-items">
+                <li class="breakdown-item">
+                  <span class="item-badge">Крок 1: Загальна вартість</span>
+                  <span class="item-desc">Множимо вашу <strong>Маржу</strong> (наприклад, $500) на вибране <strong>Плече</strong> (наприклад, 10x). Отримуємо суму угоди: <strong>$5,000</strong>.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge">Крок 2: Ділення на ціну</span>
+                  <span class="item-desc">Ділимо загальну суму ($5,000) на <strong>Ціну одного біткоїна</strong> (наприклад, $68,695). Отримуємо <strong>0.0728 BTC</strong>. Це і є ваш <strong>Size</strong>.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
         </div>
       </section>
 
-      <!-- РОЗДІЛ 4: БЕЗПЕКА ТА 2FA -->
-      <section id="sec-security" class="help-card searchable-card">
+      <!-- РОЗДІЛ 4: ЛІКВІДАЦІЯ, РОЗРАХУНОК PNL ТА ROI -->
+      <section id="sec-liquidation" class="help-card searchable-card">
         <div class="help-card-header">
           <div class="help-card-title">
             <span class="help-card-num">04</span>
-            <span>Безпека облікового запису та 2FA</span>
+            <span>Ліквідація, Розрахунок PnL та Відсоток прибутку (ROI)</span>
           </div>
-          <span class="badge badge-green">RFC 6238 TOTP</span>
+          <span class="badge badge-red">RISK & MATH</span>
         </div>
-        <div class="help-grid-two">
-          <div class="info-box">
-            <div class="info-box-title">Двофакторна автентифікація (2FA)</div>
-            <p class="info-box-text">
-              Захищає ваш акаунт від несанкціонованого доступу. При кожному вході вимагається введення одноразового 6-значного коду безпеки. Ви можете вмикати або вимикати 2FA у меню «Профіль» у будь-який момент.
+        <div class="terms-stack">
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Ліквідація (Liquidation) та Ціна ліквідації</span>
+              <span class="badge badge-red">ПРИМУСОВЕ ЗАКРИТТЯ</span>
+            </div>
+            <p class="def-plain-desc">
+              <strong>Ліквідація</strong> — це ситуація, коли ціна пішла проти вашої позиції настільки сильно, що накопичений збиток майже повністю вичерпав вашу маржу (заставу). У цей момент торгове ядро біржі автоматично закриває вашу позицію, щоб захистити систему від боргу.
             </p>
-            <div style="margin-top:10px; font-family:var(--font-mono); font-size:11px; color:var(--text-muted);">
-              Для швидкого тестування платформи діє універсальний майстер-код: <strong style="color:var(--green);">777888</strong>.
+
+            <div class="breakdown-box">
+              <div class="breakdown-title">Детальне пояснення кожного символу та цифри в розрахунку ліквідації:</div>
+              <ul class="breakdown-items">
+                <li class="breakdown-item">
+                  <span class="item-badge">Ціна входу</span>
+                  <span class="item-desc">Початкова вартість монети в момент відкриття угоди. Розрахунок ведеться від цієї базової точки.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge">Число 1</span>
+                  <span class="item-desc">Означає 100% від ціни входу (початковий капітал позиції).</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge">Число 0.95</span>
+                  <span class="item-desc"><strong>Біржовий поріг втрати (95%)</strong>. Біржа не чекає, поки ваш баланс стане абсолютним нулем (-100%). Вона закриває позицію, коли збиток досягає 95% від внесеної маржі. Залишок у <strong>5% (0.05)</strong> є обов'язковим страховим буфером біржі на випадок різкого стрибка ціни та для покриття комісій за примусове закриття.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge">Ділення на Плече</span>
+                  <span class="item-desc">Чому 0.95 ділиться на кредитне плече? Тому що плече прискорює втрати! При плечі <strong>1x</strong> вам потрібен спад ціни на 95%, щоб збанкрутувати. А при плечі <strong>10x</strong> формула ділить 0.95 на 10, що дорівнює <strong>0.095 (тобто лише 9.5%)</strong>! Це означає: якщо ринок упаде всього на 9.5%, ваша позиція буде ліквідована.</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="example-box danger">
+              <div class="example-title">Конкретний приклад для Long із плечем 10x:</div>
+              <p class="example-text">
+                Ви зайшли в Long по біткоїну за ціною <strong>$70,000</strong> з плечем 10x. Допустиме падіння становить 9.5% ($70,000 × 0.095 = $6,650). Віднімаємо це від ціни входу: <strong>$70,000 - $6,650 = $63,350</strong>. Як тільки ринкова ціна торкнеться $63,350 — настане ліквідація.
+              </p>
             </div>
           </div>
-          <div class="info-box">
-            <div class="info-box-title">Криптографічний захист паролів</div>
-            <p class="info-box-text">
-              Усі паролі облікових записів захищено алгоритмом PBKDF2 з індивідуальною сіллю та 100 000 ітерацій SHA-256. Паролі ніколи не зберігаються у відкритому вигляді.
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">PnL (Profit and Loss / Прибуток або Збиток)</span>
+              <span class="badge badge-green">ФІНАНСОВИЙ РЕЗУЛЬТАТ</span>
+            </div>
+            <p class="def-plain-desc">
+              <strong>PnL</strong> — це ваш фінансовий результат у доларах (USDT). Він показує, скільки грошей ви заробили або втратили просто зараз.
             </p>
-            <p class="info-box-text" style="margin-top:8px;">
-              Сесії користувачів забезпечуються захищеними JWT Bearer токенами з ізоляцією прав доступу (RBAC: Trader / Admin).
-            </p>
+            <div class="breakdown-box">
+              <div class="breakdown-title">Пояснення розрахунку словами:</div>
+              <ul class="breakdown-items">
+                <li class="breakdown-item">
+                  <span class="item-badge">Для Long</span>
+                  <span class="item-desc">Беремо <strong>Поточну ціну</strong> і віднімаємо від неї <strong>Ціну входу</strong>. Якщо результат додатний — ви в плюсі. Потім множимо цю різницю на <strong>Size (кількість ваших монет)</strong>. Отримуємо точний заробіток у доларах.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge">Для Short</span>
+                  <span class="item-desc">Беремо <strong>Ціну входу</strong> і віднімаємо від неї <strong>Поточну ціну</strong>. Якщо ціна впала — результат додатний (ви заробили на падінні). Множимо різницю на <strong>Size</strong> і отримуємо прибуток.</span>
+                </li>
+              </ul>
+            </div>
           </div>
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">ROI (Return on Investment / Відсоток дохідності)</span>
+              <span class="badge badge-cyan">PERCENT %</span>
+            </div>
+            <p class="def-plain-desc">
+              <strong>ROI</strong> показує прибутковість у відсотках відносно <strong>ваших власних вкладених грошей (маржі)</strong>, а не від усього обсягу з плечем.
+            </p>
+            <div class="example-box">
+              <div class="example-title">Чому плече збільшує відсотки (пояснення на пальцях):</div>
+              <p class="example-text">
+                Ви вклали своїх <strong>$100 маржі</strong> з плечем <strong>10x</strong> (обсяг $1,000). Ціна біткоїна зросла лише на <strong>2%</strong>. На всю суму в $1,000 прибуток склав $20. Але відносно ваших власних $100 ці $20 становлять <strong>+20% ROI</strong>! Проте якщо ціна впаде на 2%, ваш ROI стане <strong>-20%</strong>.
+              </p>
+            </div>
+          </div>
+
         </div>
       </section>
 
-      <!-- РОЗДІЛ 5: AI QUANT RADAR -->
-      <section id="sec-ai" class="help-card searchable-card">
+      <!-- РОЗДІЛ 5: БЕЗПЕКА ТА 2FA -->
+      <section id="sec-security" class="help-card searchable-card">
         <div class="help-card-header">
           <div class="help-card-title">
             <span class="help-card-num">05</span>
-            <span>AI Quant Radar та машинне навчання</span>
+            <span>Безпека облікового запису та Двофакторна автентифікація</span>
           </div>
-          <span class="badge badge-cyan">RANDOM FOREST</span>
+          <span class="badge badge-green">SECURITY & 2FA</span>
         </div>
-        <div class="help-grid-two">
-          <div class="info-box">
-            <div class="info-box-title">Принцип роботи ML-моделі</div>
-            <p class="info-box-text">
-              Вбудований віджет AI Quant Radar у торговому терміналі використовує ансамбль дерев рішень (RandomForestClassifier). Модель щохвилини аналізує 120 останніх свічок ціни активу.
+        <div class="terms-stack">
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">2FA (Двофакторна автентифікація)</span>
+              <span class="badge badge-green">ДВА РІВНІ ЗАХИСТУ</span>
+            </div>
+            <p class="def-plain-desc">
+              <strong>Двофакторна автентифікація (2FA)</strong> — це метод захисту, при якому для входу в акаунт потрібно підтвердити особу двома різними способами:
             </p>
-            <div class="formula-box">
-              Вхідні фічі: RSI-14, SMA-7/25, Orderbook Imbalance, Return
+            <div class="breakdown-box">
+              <div class="breakdown-title">Два фактори безпеки:</div>
+              <ul class="breakdown-items">
+                <li class="breakdown-item">
+                  <span class="item-badge">Фактор 1 (Те, що ви знаєте)</span>
+                  <span class="item-desc">Ваш звичайний пароль від облікового запису.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge">Фактор 2 (Те, що ви маєте)</span>
+                  <span class="item-desc">Одноразовий 6-значний код підтвердження, який генерується на вашому пристрої або надсилається на пошту. Навіть якщо зловмисник якимось чином дізнається ваш пароль, без коду 2FA він не зможе увійти у ваш термінал.</span>
+                </li>
+              </ul>
             </div>
           </div>
-          <div class="info-box">
-            <div class="info-box-title">Інтерпретація сигналів нейромережі</div>
-            <p class="info-box-text">
-              AI відображає прогноз напрямку та ймовірність (Confidence Score):
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">TOTP та Секретний ключ (Secret Key)</span>
+              <span class="badge badge-cyan">RFC 6238</span>
+            </div>
+            <p class="def-plain-desc">
+              <strong>TOTP (Time-based One-Time Password)</strong> — міжнародний криптографічний стандарт генерації кодів, що змінюються кожні 30 секунд.
             </p>
-            <ul style="margin-left:18px; margin-top:8px; font-family:var(--font-mono); font-size:12px; color:#cbd5e1; line-height:1.6;">
-              <li><strong style="color:var(--green);">BUY / LONG</strong>: Висока ймовірність відскоку вгору.</li>
-              <li><strong style="color:var(--red);">SELL / SHORT</strong>: Висока ймовірність спадного імпульсу.</li>
-              <li><strong style="color:var(--orange);">NEUTRAL</strong>: Ринок у фазі консолідації (боковик).</li>
-            </ul>
+            <div class="breakdown-box">
+              <div class="breakdown-title">Як це влаштовано:</div>
+              <ul class="breakdown-items">
+                <li class="breakdown-item">
+                  <span class="item-badge">Секретний ключ</span>
+                  <span class="item-desc">Унікальний набір символів (наприклад, <code>BYGB-7788-X992-SEC</code>), який зберігається у вашому додатку автентифікаторі (Google Authenticator, Microsoft Authenticator) та на сервері.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge">Часовий інтервал 30с</span>
+                  <span class="item-desc">Сервер і додаток щосекунди звіряють однаковий математичний алгоритм на основі поточного часу. Кожен код діє лише 30 секунд і після цього назавжди згорає.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge">Майстер-код платформи</span>
+                  <span class="item-desc">Для швидкої навчальної демонстрації на ByGigaBit налаштовано універсальний тестовий код <strong>777888</strong>.</span>
+                </li>
+              </ul>
+            </div>
           </div>
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Хешування паролів (PBKDF2 SHA-256)</span>
+              <span class="badge badge-magenta">КРИПТОГРАФІЯ</span>
+            </div>
+            <p class="def-plain-desc">
+              На платформі ByGigaBit паролі користувачів <strong>ніколи не зберігаються у звичайному текстовому вигляді</strong>. Вони перетворюються на незворотний криптографічний хеш із використанням алгоритму PBKDF2, індивідуальної солі (salt) та 100 000 повторних раундів шифрування SHA-256. Навіть при повному перехопленні бази даних відновити справжній пароль неможливо.
+            </p>
+          </div>
+
         </div>
       </section>
 
-      <!-- РОЗДІЛ 6: ТРЕНАЖЕР СЦЕНАРІЇВ ТА CHAOS MODE -->
-      <section id="sec-scenarios" class="help-card searchable-card">
+      <!-- РОЗДІЛ 6: ШТУЧНИЙ ІНТЕЛЕКТ (AI QUANT RADAR) -->
+      <section id="sec-ai" class="help-card searchable-card">
         <div class="help-card-header">
           <div class="help-card-title">
             <span class="help-card-num">06</span>
-            <span>Тренажер сценаріїв та Chaos Mode</span>
+            <span>Штучний інтелект (AI Quant Radar) та технічні індикатори</span>
           </div>
-          <span class="badge badge-magenta">SIMULATION LAB</span>
+          <span class="badge badge-cyan">MACHINE LEARNING</span>
         </div>
-        <div class="help-grid-two">
-          <div class="info-box">
-            <div class="info-box-title">Тренажер біржових сценаріїв (/scenarios)</div>
-            <p class="info-box-text">
-              Практичний модуль для відпрацювання торгових навичок на сліпих графіках. Ви бачите 40 історичних свічок, аналізуєте ринковий патерн, обираєте дію (Long / Short / Skip), після чого відкривається реальне продовження з розрахунком вашого віртуального ROI.
+        <div class="terms-stack">
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">AI Quant Radar та модель RandomForest</span>
+              <span class="badge badge-cyan">АНСАМБЛЬ ДЕРЕВ</span>
+            </div>
+            <p class="def-plain-desc">
+              <strong>AI Quant Radar</strong> — це автономний модуль машинного навчання прямо у вікні графіка. Він використовує класифікатор <strong>RandomForest (Випадковий ліс)</strong> — алгоритм, який одночасно опитує 100 віртуальних дерев рішень і знаходить серед них спільну згоду щодо подальшого руху ціни.
             </p>
           </div>
-          <div class="info-box">
-            <div class="info-box-title">Стрес-тестування Chaos Mode</div>
-            <p class="info-box-text">
-              Режим симуляції екстремальних умов роботи біржового термінала під час криптошторму: штучний пінг мережі (350-850 мс), ринкове прослизання ціни (Slippage 0.4%-1.5%) та раптові Flash Crash провали для перевірки стійкості стратегії трейдера.
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Індикатор RSI (Relative Strength Index)</span>
+              <span class="badge badge-green">ІНДЕКС СИЛИ</span>
+            </div>
+            <p class="def-plain-desc">
+              <strong>RSI (Індекс відносної сили)</strong> — індикатор у діапазоні від 0 до 100, який показує, наскільки агресивно монету скуповують чи скидають за останні 14 періодів.
             </p>
+            <div class="breakdown-box">
+              <div class="breakdown-title">Значення RSI простими словами:</div>
+              <ul class="breakdown-items">
+                <li class="breakdown-item">
+                  <span class="item-badge" style="color:var(--red); border-color:var(--red);">RSI вище 70 (Перекупленість)</span>
+                  <span class="item-desc">Ціна росла занадто стрімко, покупці видихаються, висока ймовірність зупинки або розвороту вниз.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge" style="color:var(--green); border-color:var(--green);">RSI нижче 30 (Перепроданість)</span>
+                  <span class="item-desc">Ціна падала занадто агресивно, продавці вичерпали сили, висока ймовірність відскоку вгору.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge">RSI від 40 до 60</span>
+                  <span class="item-desc">Збалансований ринок без явного перекосу сил.</span>
+                </li>
+              </ul>
+            </div>
           </div>
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Індикатор SMA (Simple Moving Average / Ковзна середня)</span>
+              <span class="badge badge-orange">СЕРЕДНЯ ЦІНА</span>
+            </div>
+            <p class="def-plain-desc">
+              <strong>SMA</strong> — це середня лінія ціни за певний проміжок часу. Вона згладжує випадковий ринковий шум і показує справжній загальний тренд:
+            </p>
+            <div class="breakdown-box">
+              <div class="breakdown-title">Дві ковзні середні на платформі:</div>
+              <ul class="breakdown-items">
+                <li class="breakdown-item">
+                  <span class="item-badge">SMA-7 (Швидка лінія)</span>
+                  <span class="item-desc">Середня ціна за останні 7 свічок. Вона миттєво реагує на найсвіжіші рухи курсу.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge">SMA-25 (Повільна лінія)</span>
+                  <span class="item-desc">Середня ціна за 25 свічок. Вона показує довгостроковий основний напрямок ринку. Коли швидка SMA-7 перетинає повільну SMA-25 знизу вгору — це класичний сигнал на купівлю (золотий хрест).</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Сигнали AI: BUY, SELL, NEUTRAL та Confidence</span>
+              <span class="badge badge-magenta">СИГНАЛИ НЕЙРОМЕРЕЖІ</span>
+            </div>
+            <p class="def-plain-desc">
+              Нейромережа щохвилини аналізує ці показники та формує один із трьох статусів:
+            </p>
+            <div class="breakdown-box">
+              <ul class="breakdown-items">
+                <li class="breakdown-item">
+                  <span class="item-badge" style="color:var(--green); border-color:var(--green);">BUY / LONG</span>
+                  <span class="item-desc">Переважна більшість дерев моделі вказують на високу ймовірність висхідного імпульсу.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge" style="color:var(--red); border-color:var(--red);">SELL / SHORT</span>
+                  <span class="item-desc">Більшість дерев прогнозують швидкий спад ціни.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge" style="color:var(--orange); border-color:var(--orange);">NEUTRAL</span>
+                  <span class="item-desc">Невизначеність або боковик (флет). Ознак сильного тренду не виявлено.</span>
+                </li>
+                <li class="breakdown-item">
+                  <span class="item-badge">Confidence Score (%)</span>
+                  <span class="item-desc">Рівень впевненості моделі. Наприклад, 78% означає, що 78 зі 100 віртуальних дерев моделі проголосували за цей напрямок.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
         </div>
       </section>
 
-      <!-- РОЗДІЛ 7: ЧАСТІ ЗАПИТАННЯ (FAQ) -->
-      <section id="sec-faq" class="help-card searchable-card">
+      <!-- РОЗДІЛ 7: ТРЕНАЖЕР СЦЕНАРІЇВ ТА CHAOS MODE -->
+      <section id="sec-stress" class="help-card searchable-card">
         <div class="help-card-header">
           <div class="help-card-title">
             <span class="help-card-num">07</span>
-            <span>Часті запитання (FAQ)</span>
+            <span>Тренажер сценаріїв та стрес-тестування Chaos Mode</span>
           </div>
-          <span class="badge badge-green">HELP & FAQ</span>
+          <span class="badge badge-magenta">SIMULATION LAB</span>
         </div>
-        <div class="faq-list">
-          <div class="faq-item">
-            <div class="faq-question" onclick="toggleFaq(this)">
-              <span>Чи використовуються на ByGigaBit реальні кошти?</span>
-              <span class="faq-icon">+</span>
+        <div class="terms-stack">
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Тренажер біржових сценаріїв (/scenarios)</span>
+              <span class="badge badge-cyan">ПРАКТИКА БЕЗ РИЗИКУ</span>
             </div>
-            <div class="faq-answer">
-              Ні. ByGigaBit є виключно симуляційним Paper Trading навчальним терміналом. Кожен зареєстрований користувач отримує стартовий віртуальний капітал $10,000 USDT для відпрацювання стратегій без фінансових втрат.
-            </div>
+            <p class="def-plain-desc">
+              <strong>Тренажер</strong> — це режим тренування на історичних фрагментах графіка, де права частина цілеспрямовано прихована від очей користувача. Ви аналізуєте ситуацію за попередніми 40 свічками, обираєте дію (Long, Short або Пропустити), після чого графік розкривається, показує майбутні 20 свічок та розраховує ваш підсумковий віртуальний результат.
+            </p>
           </div>
-          <div class="faq-item">
-            <div class="faq-question" onclick="toggleFaq(this)">
-              <span>Як скинути віртуальний баланс до стартових $10,000 USDT?</span>
-              <span class="faq-icon">+</span>
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Прослизання ціни (Slippage)</span>
+              <span class="badge badge-orange">SLIPPAGE</span>
             </div>
-            <div class="faq-answer">
-              Перейдіть до свого профілю (`/profile`) або відкрийте вкладку «Стан віртуального рахунку» в нижній панелі термінала і натисніть кнопку «Скинути баланс до $10,000 USDT».
-            </div>
+            <p class="def-plain-desc">
+              <strong>Прослизання</strong> — це біржове явище, коли реальна ціна, за якою відкрилася ваша угода, дещо відрізняється від тієї ціни, яку ви бачили на екрані в момент натискання кнопки. Це трапляється під час сильних новин та різких стрибків, коли заявки в стакані розкуповують за частку секунди.
+            </p>
           </div>
-          <div class="faq-item">
-            <div class="faq-question" onclick="toggleFaq(this)">
-              <span>Чому мій лімітний ордер не виконується одразу після створення?</span>
-              <span class="faq-icon">+</span>
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Мережева затримка (Latency / Пінг)</span>
+              <span class="badge badge-magenta">NETWORK PING</span>
             </div>
-            <div class="faq-answer">
-              Лімітний ордер призначений для входу за вигіднішою ціною або на пробої. Він зберігається у вкладці «Лімітні ордери» і виконується автоматично тільки тоді, коли біржовий курс досягає вказаної цільової ціни.
-            </div>
+            <p class="def-plain-desc">
+              <strong>Затримка (Latency)</strong> — це час у мілісекундах (наприклад, 450 мс), необхідний сигналу від вашого браузера, щоб дійти через інтернет до сервера біржі та бути обробленим у торговому ядрі.
+            </p>
           </div>
-          <div class="faq-item">
-            <div class="faq-question" onclick="toggleFaq(this)">
-              <span>У чому різниця між режимом «Новачок» та «PRO»?</span>
-              <span class="faq-icon">+</span>
+
+          <div class="def-box">
+            <div class="def-header">
+              <span class="def-name">Chaos Mode (Режим стрес-тестування біржі)</span>
+              <span class="badge badge-red">STRESS TEST</span>
             </div>
-            <div class="faq-answer">
-              Режим «Новачок» виводить кольорові контекстні підказки до кожного біржового терміна (спред, маржа, плече, ціна ліквідації, AI прогноз). Режим «PRO» приховує підказки, оптимізуючи робочий простір для швидкої торгівлі досвідченими трейдерами.
-            </div>
+            <p class="def-plain-desc">
+              <strong>Chaos Mode</strong> — спеціальна функція навчального термінала, яка штучно симулює екстремальне навантаження біржі: генерує реалістичну затримку мережі (350–850 мс), ринкове прослизання котирувань (0.4%–1.5%) та раптові спалахи волатильності (Flash Crash). Це дає змогу трейдеру перевірити свою холоднокровність та роботу ризик-менеджменту в умовах справжнього хаосу.
+            </p>
           </div>
-          <div class="faq-item">
-            <div class="faq-question" onclick="toggleFaq(this)">
-              <span>Як увімкнути двофакторну автентифікацію (2FA)?</span>
-              <span class="faq-icon">+</span>
-            </div>
-            <div class="faq-answer">
-              У розділі «Профіль» увімкніть тумблер у блоці «Безпека та 2FA». Система згенерує ключ TOTP, а при кожному наступному вході вимагатиме 6-значний код підтвердження (тестовий майстер-код: 777888).
-            </div>
-          </div>
+
         </div>
       </section>
+
     </div>
   </main>
 
   <script>
-    function toggleFaq(el) {
-      const parent = el.closest('.faq-item');
-      parent.classList.toggle('open');
-    }
-
     function jumpToSection(id) {
       document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
-      event.target.classList.add('active');
+      if (event && event.target) {
+        event.target.classList.add('active');
+      }
 
       if (id === 'all') {
         document.querySelectorAll('.searchable-card').forEach(c => c.style.display = 'block');
