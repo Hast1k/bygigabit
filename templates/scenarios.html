@@ -70,49 +70,32 @@
       <div class="trainer-score-card">
         <div class="score-label">РЕЗУЛЬТАТ ТРЕНУВАННЯ</div>
         <div class="score-numbers mono">
-          <span id="scoreCorrect" style="color:var(--green);">0</span> / <span id="scoreTotal">4</span>
+          <span id="scoreCorrect" style="color:var(--green);">0</span> / <span id="scoreTotal">0</span>
         </div>
         <div class="score-sub">правильних рішень</div>
       </div>
     </header>
 
-    <!-- ВКЛАДКИ СЦЕНАРІЇВ -->
-    <div class="scenario-tabs-nav">
-      <div class="scenario-tab-btn active" id="tabScenario1" onclick="switchScenario(1)">
-        <span class="tab-index mono">01</span>
-        <div class="tab-info">
-          <span class="tab-name">Перекупленість (RSI)</span>
-          <span class="tab-asset mono">BTC / USDT</span>
+    <!-- ЛІНІЙНА НАВІГАЦІЯ СЦЕНАРІЇВ (ТІЛЬКИ ПОПЕРЕДНІЙ / НАСТУПНИЙ) -->
+    <div class="scenario-stepper-bar">
+      <button type="button" class="btn btn-outline btn-step" id="btnPrevScenario" onclick="goToPrevScenario()" disabled>
+        &larr; ПОПЕРЕДНІЙ СЦЕНАРІЙ
+      </button>
+
+      <div class="stepper-center-block">
+        <div class="stepper-indicator mono">
+          <span class="step-label">СЦЕНАРІЙ:</span>
+          <strong id="currentScenarioNum" class="step-current-num">#1</strong>
         </div>
-        <span class="tab-status-dot" id="dotScenario1"></span>
+        <div class="stepper-badges">
+          <span class="step-mode-badge" id="stepModeBadge">РЕАЛЬНІ ДАНІ BYBIT</span>
+          <span class="step-status-badge waiting" id="stepStatusBadge">ОЧІКУЄ РІШЕННЯ</span>
+        </div>
       </div>
 
-      <div class="scenario-tab-btn" id="tabScenario2" onclick="switchScenario(2)">
-        <span class="tab-index mono">02</span>
-        <div class="tab-info">
-          <span class="tab-name">Підтримка SMA-50</span>
-          <span class="tab-asset mono">ETH / USDT</span>
-        </div>
-        <span class="tab-status-dot" id="dotScenario2"></span>
-      </div>
-
-      <div class="scenario-tab-btn" id="tabScenario3" onclick="switchScenario(3)">
-        <span class="tab-index mono">03</span>
-        <div class="tab-info">
-          <span class="tab-name">Пробій об'єму</span>
-          <span class="tab-asset mono">SOL / USDT</span>
-        </div>
-        <span class="tab-status-dot" id="dotScenario3"></span>
-      </div>
-
-      <div class="scenario-tab-btn" id="tabScenario4" onclick="switchScenario(4)">
-        <span class="tab-index mono">04</span>
-        <div class="tab-info">
-          <span class="tab-name">Хибний пробій</span>
-          <span class="tab-asset mono">TON / USDT</span>
-        </div>
-        <span class="tab-status-dot" id="dotScenario4"></span>
-      </div>
+      <button type="button" class="btn btn-primary btn-step" id="btnNextScenario" onclick="goToNextScenario()">
+        НАСТУПНИЙ СЦЕНАРІЙ &rarr;
+      </button>
     </div>
 
     <!-- ГОЛОВНА РОБОЧА ОБЛАСТЬ СЦЕНАРІЮ -->
@@ -216,8 +199,8 @@
             <button class="btn btn-outline" style="flex:1;" onclick="retryScenario()">
               Спробувати знову
             </button>
-            <button class="btn btn-primary" style="flex:1;" id="btnNextScenario" onclick="goToNextScenario()">
-              Наступний сценарій ↗
+            <button class="btn btn-primary" style="flex:1;" id="btnOutcomeNext" onclick="goToNextScenario()">
+              Наступний сценарій &rarr;
             </button>
           </div>
         </div>

@@ -83,85 +83,112 @@
   margin-top: 4px;
 }
 
-/* ВКЛАДКИ СЦЕНАРІЇВ */
-.scenario-tabs-nav {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.scenario-tab-btn {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  padding: 14px 16px;
+/* ЛІНІЙНИЙ СТЕППЕР НАВІГАЦІЇ СЦЕНАРІЇВ */
+.scenario-stepper-bar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 12px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
-.scenario-tab-btn:hover {
-  border-color: var(--cyan);
-  background: var(--bg-card-hover);
-}
-
-.scenario-tab-btn.active {
-  border-color: var(--cyan);
-  background: rgba(0, 240, 255, 0.08);
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.15);
-}
-
-.tab-index {
-  font-size: 18px;
-  font-weight: 900;
-  color: var(--text-dim);
-  line-height: 1;
-}
-
-.scenario-tab-btn.active .tab-index {
-  color: var(--cyan);
-}
-
-.tab-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.tab-name {
+.btn-step {
+  padding: 10px 20px;
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
-  color: #ffffff;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  line-height: 1.2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.tab-asset {
-  font-size: 10px;
+.btn-step:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(1);
+}
+
+.stepper-center-block {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.stepper-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-label {
+  font-size: 11px;
   color: var(--text-dim);
-  margin-top: 2px;
+  letter-spacing: 0.1em;
 }
 
-.tab-status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50% !important;
-  margin-left: auto;
-  background: var(--border-color);
-  transition: all 0.2s;
+.step-current-num {
+  font-size: 20px;
+  color: var(--cyan);
+  font-weight: 900;
 }
 
-.tab-status-dot.solved-correct {
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green);
+.stepper-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.tab-status-dot.solved-wrong {
-  background: var(--red);
-  box-shadow: 0 0 8px var(--red);
+.step-mode-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  background: rgba(0, 240, 255, 0.1);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.step-status-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+}
+
+.step-status-badge.waiting {
+  color: var(--orange, #f59e0b);
+  border-color: rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.step-status-badge.correct {
+  color: var(--green);
+  border-color: rgba(0, 255, 0, 0.4);
+  background: rgba(0, 255, 0, 0.1);
+}
+
+.step-status-badge.wrong {
+  color: var(--red);
+  border-color: rgba(255, 42, 85, 0.4);
+  background: rgba(255, 42, 85, 0.1);
 }
 
 /* РОБОЧА ОБЛАСТЬ */

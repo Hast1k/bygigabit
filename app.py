@@ -1132,9 +1132,12 @@ def toggle_user_2fa(request: Request, payload: Dict[str, Any] = Body(...)):
 
 
 @app.get("/api/scenarios/list")
-def api_scenarios_list():
-    """Отримання списку навчальних сценаріїв."""
-    return {"ok": True, "scenarios": scenarios_data.get_all_scenarios_meta()}
+@app.get("/api/scenarios/next")
+def api_scenarios_next():
+    """Отримання або генерація випадкового сценарію на базі історії Bybit."""
+    session = get_session()
+    scenario = scenarios_data.generate_bybit_scenario(session)
+    return {"ok": True, "scenario": scenarios_data.scenario_to_meta(scenario)}
 
 
 @app.post("/api/scenarios/reveal")
@@ -1148,7 +1151,13 @@ def api_scenarios_reveal(payload: Dict[str, Any] = Body(...)):
 
     correct_action = res["correctAction"]
     is_correct = (user_action == correct_action)
-    user_roi = res["longRoi"] if user_action == "long" else res["shortRoi"]
+
+    if user_action == "skip":
+        user_roi = 0.0
+    elif user_action == "long":
+        user_roi = res["longRoi"]
+    else:
+        user_roi = res["shortRoi"]
 
     return {
         "ok": True,
