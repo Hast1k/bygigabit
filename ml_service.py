@@ -91,8 +91,12 @@ def analyze_and_predict(candles: list) -> dict:
         current_features = clean_df.iloc[[-1]][feature_cols]
         probs = clf.predict_proba(current_features)[0]
         
-        prob_down = round(float(probs[0]) * 100, 1)
-        prob_up = round(float(probs[1]) * 100, 1)
+        if len(clf.classes_) == 1:
+            prob_up = 100.0 if clf.classes_[0] == 1 else 0.0
+            prob_down = 100.0 - prob_up
+        else:
+            prob_down = round(float(probs[0]) * 100, 1)
+            prob_up = round(float(probs[1]) * 100, 1)
         
         # Визначаємо сигнал
         if prob_up >= 55.0:

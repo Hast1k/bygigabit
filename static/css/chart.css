@@ -643,48 +643,6 @@ body {
   background: var(--red-bg);
 }
 
-/* Light Theme Overrides */
-[data-theme="light"] .symbol-select-btn,
-body.light-theme .symbol-select-btn {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-}
-
-[data-theme="light"] .pair-dropdown-menu,
-body.light-theme .pair-dropdown-menu {
-  background: #ffffff;
-  border-color: #cbd5e1;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-}
-
-[data-theme="light"] .pair-dropdown-header,
-[data-theme="light"] .pair-filter-tabs,
-body.light-theme .pair-dropdown-header,
-body.light-theme .pair-filter-tabs {
-  background: #f8fafc;
-  border-color: #e2e8f0;
-}
-
-[data-theme="light"] .pair-search-input,
-body.light-theme .pair-search-input {
-  background: #ffffff;
-  border-color: #cbd5e1;
-  color: #0f172a;
-}
-
-[data-theme="light"] .pair-coin-badge,
-body.light-theme .pair-coin-badge {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-  color: #0284c7;
-}
-
-[data-theme="light"] .pair-list-item:hover,
-body.light-theme .pair-list-item:hover {
-  background: #f8fafc;
-}
-
-
 /* AI QUANT RADAR WIDGET */
 .ai-radar-box {
   background: var(--bg-card);

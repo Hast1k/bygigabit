@@ -3,7 +3,7 @@ import time
 from typing import Optional, List, Dict, Any
 from dotenv import load_dotenv
 from sqlalchemy import (
-    create_engine, Column, Integer, String, Float, Boolean, ForeignKey, Text, select, update, delete, text
+    create_engine, Column, Integer, String, Float, Boolean, ForeignKey, Text, select, update, delete, text, event
 )
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship, Session
 
@@ -28,6 +28,13 @@ engine = create_engine(
     pool_pre_ping=True
 )
 
+@event.listens_for(engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    if raw_db_url.startswith("sqlite"):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -46,6 +53,11 @@ class UserModel(Base):
     experienceLevel = Column(String(20), default="beginner", nullable=False)
     isBlocked = Column(Boolean, default=False, nullable=False)
     registeredAt = Column(String(50), nullable=False)
+
+    sessions = relationship("SessionModel", cascade="all, delete-orphan", backref="user", passive_deletes=True)
+    positions = relationship("PositionModel", cascade="all, delete-orphan", backref="user", passive_deletes=True)
+    limit_orders = relationship("LimitOrderModel", cascade="all, delete-orphan", backref="user", passive_deletes=True)
+    order_history = relationship("OrderHistoryModel", cascade="all, delete-orphan", backref="user", passive_deletes=True)
 
     def to_dict(self) -> Dict[str, Any]:
         nick = getattr(self, "nickname", None)
@@ -199,7 +211,7 @@ def init_db():
                 email="admin@bygigabit.com",
                 password="SecurePass123!",
                 role="Admin",
-                twoFactor=True,
+                twoFactor=False,
                 balance=25000.0,
                 tradesCount=115,
                 experienceLevel="pro",
@@ -207,6 +219,8 @@ def init_db():
                 registeredAt="2026-10-10 09:00"
             )
             db.add(admin)
+        else:
+            admin.twoFactor = False
 
         trader = db.query(UserModel).filter(UserModel.email == "trader@bygigabit.com").first()
         if not trader:
@@ -214,7 +228,7 @@ def init_db():
                 email="trader@bygigabit.com",
                 password="SecurePass123!",
                 role="Trader",
-                twoFactor=True,
+                twoFactor=False,
                 balance=10000.0,
                 tradesCount=4,
                 experienceLevel="beginner",
@@ -222,6 +236,8 @@ def init_db():
                 registeredAt="2026-10-15 14:22"
             )
             db.add(trader)
+        else:
+            trader.twoFactor = False
         db.commit()
 
 
@@ -239,19 +255,21 @@ def db_get_user_by_id(user_id: int) -> Optional[Dict[str, Any]]:
         return user.to_dict() if user else None
 
 
-def db_create_user(email: str, password: str, role: str = "Trader", balance: float = 10000.0, experience_level: str = "beginner", nickname: Optional[str] = None) -> Dict[str, Any]:
+def db_create_user(email: str, password: str, role: str = "Trader", balance: float = 10000.0, experience_level: str = "beginner", nickname: Optional[str] = None, two_factor: Optional[bool] = None) -> Dict[str, Any]:
     with SessionLocal() as db:
         now_str = time.strftime("%Y-%m-%d %H:%M")
         valid_exp = "pro" if experience_level in ["pro", "experienced", "advanced"] else "beginner"
         clean_nick = (nickname or "").strip()
         if not clean_nick and email:
             clean_nick = email.split("@")[0]
+        is_test_account = email.lower().strip() in ["admin@bygigabit.com", "trader@bygigabit.com"]
+        resolved_2fa = two_factor if two_factor is not None else (False if is_test_account else True)
         user = UserModel(
             email=email.lower().strip(),
             nickname=clean_nick,
             password=password,
             role=role,
-            twoFactor=True,
+            twoFactor=resolved_2fa,
             balance=balance,
             tradesCount=0,
             experienceLevel=valid_exp,
@@ -313,6 +331,17 @@ def db_toggle_user_block(user_id: int) -> Optional[Dict[str, Any]]:
         db.commit()
         db.refresh(user)
         return user.to_dict()
+
+
+def db_delete_user(user_id: int) -> bool:
+    """Видалення користувача та каскадне видалення всіх зв'язаних даних."""
+    with SessionLocal() as db:
+        user = db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not user:
+            return False
+        db.delete(user)
+        db.commit()
+        return True
 
 
 def db_get_all_users() -> List[Dict[str, Any]]:

@@ -189,11 +189,20 @@ def scenario_to_meta(scenario: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def get_all_scenarios_meta() -> List[Dict[str, Any]]:
+    """Повертає мета-дані сценаріїв без відкриття майбутніх свічок."""
+    if not _scenarios_cache:
+        for i in range(1, 5):
+            generate_fallback_scenario(i)
+    return [scenario_to_meta(s) for s in _scenarios_cache.values()]
+
+
 def get_scenario_resolution(scenario_id: int) -> Dict[str, Any]:
     """Повертає розв'язку та майбутні свічки для обраного сценарію."""
     scen = _scenarios_cache.get(scenario_id)
     if not scen:
-        # Створюємо резерв, якщо кеш було скинуто
+        if scenario_id < 1 or scenario_id > 10:
+            return {"ok": False, "error": "Сценарій не знайдено"}
         scen = generate_fallback_scenario(scenario_id)
 
     return {

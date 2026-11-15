@@ -21,10 +21,9 @@ function initTrainerChart() {
   }
 
   container.innerHTML = '';
-  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-  const bgColor = isLight ? '#ffffff' : '#0d0d10';
-  const textColor = isLight ? '#475569' : '#94a3b8';
-  const gridColor = isLight ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.04)';
+  const bgColor = '#0d0d10';
+  const textColor = '#94a3b8';
+  const gridColor = 'rgba(255, 255, 255, 0.04)';
 
   try {
     chart = LightweightCharts.createChart(container, {
@@ -41,9 +40,9 @@ function initTrainerChart() {
         horzLines: { color: gridColor }
       },
       crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
-      rightPriceScale: { borderColor: isLight ? '#e2e8f0' : '#26262e' },
+      rightPriceScale: { borderColor: '#26262e' },
       timeScale: {
-        borderColor: isLight ? '#e2e8f0' : '#26262e',
+        borderColor: '#26262e',
         timeVisible: true,
         secondsVisible: false
       }
@@ -72,22 +71,6 @@ function initTrainerChart() {
 
   window.addEventListener('resize', () => {
     if (chart && container) chart.applyOptions({ width: container.clientWidth });
-  });
-
-  window.addEventListener('themechange', (e) => {
-    const light = e.detail && e.detail.theme === 'light';
-    if (chart) {
-      chart.applyOptions({
-        layout: {
-          background: { color: light ? '#ffffff' : '#0d0d10' },
-          textColor: light ? '#475569' : '#94a3b8'
-        },
-        grid: {
-          vertLines: { color: light ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.04)' },
-          horzLines: { color: light ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.04)' }
-        }
-      });
-    }
   });
 }
 

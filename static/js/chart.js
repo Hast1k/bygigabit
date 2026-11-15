@@ -15,27 +15,26 @@ function formatPrice(p) {
   if (p >= 1) return p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
   return p.toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 6 });
 }
-function getChartThemeOptions(theme) {
-  const isLight = theme === 'light';
+function getChartThemeOptions() {
   return {
     layout: {
-      background: { type: 'solid', color: isLight ? '#ffffff' : '#111827' },
-      textColor: isLight ? '#475569' : '#9ca3af',
+      background: { type: 'solid', color: '#111827' },
+      textColor: '#9ca3af',
       fontSize: 12,
     },
     grid: {
-      vertLines: { color: isLight ? '#e2e8f0' : '#1f293d' },
-      horzLines: { color: isLight ? '#e2e8f0' : '#1f293d' },
+      vertLines: { color: '#1f293d' },
+      horzLines: { color: '#1f293d' },
     },
     rightPriceScale: {
-      borderColor: isLight ? '#cbd5e1' : '#1f293d',
+      borderColor: '#1f293d',
       scaleMargins: {
         top: 0.1,
         bottom: 0.25,
       },
     },
     timeScale: {
-      borderColor: isLight ? '#cbd5e1' : '#1f293d',
+      borderColor: '#1f293d',
       timeVisible: true,
       secondsVisible: false,
     },
@@ -45,8 +44,7 @@ function initChart() {
   const container = document.getElementById('chartContainer');
   if (!container || typeof LightweightCharts === 'undefined') return;
   container.innerHTML = '';
-  const currentTheme = localStorage.getItem('bygigabit_theme') || 'dark';
-  const themeOpts = getChartThemeOptions(currentTheme);
+  const themeOpts = getChartThemeOptions();
   chart = LightweightCharts.createChart(container, {
     width: container.clientWidth,
     height: container.clientHeight || 480,
@@ -54,11 +52,6 @@ function initChart() {
     crosshair: {
       mode: LightweightCharts.CrosshairMode.Normal,
     },
-  });
-  window.addEventListener('themechange', (e) => {
-    if (chart) {
-      chart.applyOptions(getChartThemeOptions(e.detail.theme));
-    }
   });
   candleSeries = chart.addCandlestickSeries({
     upColor: '#00FF00',

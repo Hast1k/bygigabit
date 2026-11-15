@@ -116,32 +116,11 @@ async function toggleBlockUser(userId) {
     showToast('Помилка сервера при зміні статусу');
   }
 }
-function updateChartColors(theme) {
-  if (typeof Chart === 'undefined') return;
-  const isLight = theme === 'light';
-  Chart.defaults.color = isLight ? '#475569' : '#94a3af';
-  Chart.defaults.borderColor = isLight ? '#e2e8f0' : '#1f293d';
-  const gridColor = isLight ? 'rgba(226, 232, 240, 0.8)' : 'rgba(31, 41, 61, 0.5)';
-  if (areaChartInstance) {
-    areaChartInstance.options.scales.x.grid.color = gridColor;
-    areaChartInstance.options.scales.y.grid.color = gridColor;
-    areaChartInstance.update();
-  }
-  if (barChartInstance) {
-    barChartInstance.options.scales.y.grid.color = gridColor;
-    barChartInstance.update();
-  }
-}
 function initCharts() {
   if (typeof Chart === 'undefined') return;
-  const currentTheme = localStorage.getItem('bygigabit_theme') || 'dark';
-  const isLight = currentTheme === 'light';
-  Chart.defaults.color = isLight ? '#475569' : '#94a3af';
-  Chart.defaults.borderColor = isLight ? '#e2e8f0' : '#1f293d';
+  Chart.defaults.color = '#94a3af';
+  Chart.defaults.borderColor = '#1f293d';
   Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
-  window.addEventListener('themechange', (e) => {
-    updateChartColors(e.detail.theme);
-  });
   const ctxArea = document.getElementById('adminAreaChart');
   if (ctxArea) {
     areaChartInstance = new Chart(ctxArea, {

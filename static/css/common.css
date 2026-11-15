@@ -260,19 +260,6 @@ body::before {
   color: var(--magenta);
   box-shadow: -3px 0 0 var(--cyan);
 }
-.btn-theme-toggle {
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-dim);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  padding: 5px 8px;
-  cursor: pointer;
-}
-.btn-theme-toggle:hover {
-  border-color: var(--cyan);
-  color: var(--cyan);
-}
 .card, .market-card, .feature-card, .chart-panel, .order-card, .metric-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
