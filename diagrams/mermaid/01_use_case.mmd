@@ -1,0 +1,56 @@
+flowchart LR
+    subgraph Users ["Актори"]
+        Guest["Гість (Неавторизований)"]
+        Trader["Трейдер (Автентифікований)"]
+        Admin["Адміністратор (RBAC)"]
+        Bybit["Bybit V5 Market API"]
+    end
+
+    subgraph Auth ["Автентифікація та Безпека"]
+        UC1["Реєстрація та вхід"]
+        UC2["Двоетапна перевірка (TOTP 2FA)"]
+        UC3["Відновлення доступу (Email код)"]
+        UC4["Керування профілем"]
+    end
+
+    subgraph Trade ["Торгівля та Ризик-контроль"]
+        UC5["Перегляд свічкового графіка"]
+        UC6["Відкриття позиції (Market 1x-20x)"]
+        UC7["Виставлення лімітного ордера"]
+        UC8["Закриття позиції та фіксація PnL"]
+        UC9["Автоматична ліквідація (Margin Call)"]
+    end
+
+    subgraph Train ["Навчання та Кількісний аналіз"]
+        UC10["Тренажер (25-свічкові кейси)"]
+        UC11["Стрес-тестування (Chaos Mode)"]
+        UC12["ML-прогнозування (AI Quant Radar)"]
+        UC13["Журнал операцій та крива капіталу"]
+    end
+
+    subgraph AdminBlock ["Панель Адміністратора"]
+        UC14["Перегляд списку користувачів"]
+        UC15["Блокування/розблокування акаунтів"]
+        UC16["Моніторинг системної статистики"]
+    end
+
+    Guest --> UC1
+    Guest --> UC3
+    Trader --> UC2
+    Trader --> UC4
+    Trader --> UC5
+    Trader --> UC6
+    Trader --> UC7
+    Trader --> UC8
+    Trader --> UC10
+    Trader --> UC11
+    Trader --> UC12
+    Trader --> UC13
+    Admin --> UC14
+    Admin --> UC15
+    Admin --> UC16
+
+    Bybit --> UC5
+    Bybit --> UC6
+    UC6 -.->|include| UC9
+    UC1 -.->|extend| UC2

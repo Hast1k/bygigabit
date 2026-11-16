@@ -4,13 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ByGigaBit — Авторизація & 2FA Безпека</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/common.css">
   <link rel="stylesheet" href="/static/css/auth.css">
   <script src="/static/js/theme.js"></script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <nav class="navbar">
@@ -42,6 +40,7 @@
       {% endif %}
     </div>
   </nav>
+
   <main class="auth-wrapper">
     <div class="auth-card">
       <div class="auth-header">
@@ -49,28 +48,34 @@
         <h2 id="authTitle">Вхід у ByGigaBit</h2>
         <p id="authSubtitle">Введіть дані для доступу до віртуального рахунку та торгівлі</p>
       </div>
+
       <div class="auth-tabs">
         <button id="tabLogin" class="auth-tab active" onclick="switchAuthMode('login')">Вхід (Login)</button>
         <button id="tabRegister" class="auth-tab" onclick="switchAuthMode('register')">Реєстрація (Register)</button>
       </div>
+
       <form id="authMainForm" onsubmit="handleMainSubmit(event)">
         <div id="nicknameGroup" class="form-group" style="display:none;">
           <label class="input-label" for="authNickname">Нікнейм (Позивний трейдера)</label>
           <input type="text" id="authNickname" class="auth-input" placeholder="Наприклад: CyberWolf">
         </div>
+
         <div class="form-group">
           <label class="input-label" for="authEmail">Електронна пошта (Email)</label>
-          <input type="email" id="authEmail" class="auth-input" placeholder="name@example.com" required>
+          <input type="email" id="authEmail" class="auth-input" placeholder="trader@bygigabit.com" required value="trader@bygigabit.com">
         </div>
+
         <div class="form-group">
           <label class="input-label" for="authPassword">Пароль</label>
-          <input type="password" id="authPassword" class="auth-input" placeholder="Введіть ваш пароль" required>
+          <input type="password" id="authPassword" class="auth-input" placeholder="••••••••••••" required value="SecurePass123!">
         </div>
+
         <div id="repeatPasswordGroup" class="form-group" style="display:none;">
           <label class="input-label" for="authPasswordRepeat">Повторіть пароль</label>
-          <input type="password" id="authPasswordRepeat" class="auth-input" placeholder="Повторіть введений пароль">
+          <input type="password" id="authPasswordRepeat" class="auth-input" placeholder="••••••••••••">
         </div>
-        <div class="form-group qualification-group" id="qualificationGroup" style="display:none;">
+
+        <div class="form-group qualification-group" id="qualificationGroup">
           <label class="input-label">Рівень кваліфікації трейдера</label>
           <div class="qualification-cards">
             <div class="qual-card active" id="qualBeginner" onclick="selectQualification('beginner')">
@@ -91,52 +96,102 @@
           </div>
           <input type="hidden" id="selectedQualification" value="beginner">
         </div>
+
+        <div class="quick-credentials">
+          <span>Швидкий вибір ролі (RBAC):</span>
+          <div class="role-tags">
+            <span class="role-tag" onclick="fillCreds('trader@bygigabit.com', 'Trader')">Трейдер (Trader)</span>
+            <span class="role-tag" onclick="fillCreds('admin@bygigabit.com', 'Admin')">Адміністратор (Admin)</span>
+          </div>
+        </div>
+
         <button type="submit" id="btnSubmitAuth" class="btn btn-primary btn-auth-submit">
-          Увійти в термінал
+          Продовжити вхід
         </button>
 
-        <div class="auth-divider">
+        <!-- РОЗДІЛЮВАЧ ТА ВХІД ЧЕРЕЗ GOOGLE -->
+        <div class="auth-separator">
           <span>АБО</span>
         </div>
 
-        <button type="button" id="btnGoogleAuth" class="btn btn-google-auth" onclick="startGoogleAuth()">
-          <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        <button type="button" class="btn-google-auth" onclick="startGoogleAuth()">
+          <svg class="google-svg" width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
           </svg>
-          <span id="googleBtnText">Продовжити через Google</span>
+          <span>Увійти через Google</span>
         </button>
-        <div id="g_id_onload"
-             data-client_id="{{ google_client_id }}"
-             data-callback="handleGoogleCredentialResponse"
-             data-auto_prompt="false">
-        </div>
       </form>
+
+      <!-- КРОК 2FA ПІДТВЕРДЖЕННЯ -->
       <div id="auth2FAStep" class="step-2fa" style="display:none;">
         <div class="two-factor-banner">
           <div>
             <strong>Двофакторна автентифікація (2FA)</strong>
-            <p id="twoFactorSubtitle" style="font-size:12px; color:#94a3b8; margin-top:4px;">
-              Одноразовий 6-значний код безпеки надіслано на вашу пошту <strong id="twoFactorTargetEmail" style="color:#38bdf8;"></strong>
+            <p style="font-size:12px; color:#94a3b8; margin-top:2px;">
+              Введіть 6-значний код із Google Authenticator або резервний код з пошти
             </p>
           </div>
         </div>
         <div class="form-group" style="margin-top:16px;">
-          <label class="input-label" for="input2FACode">Введіть 6-значний код із листа</label>
-          <input type="text" id="input2FACode" class="auth-input mono code-input" maxlength="6" placeholder="______" autofocus autocomplete="one-time-code">
-          <p style="font-size:11px; color:#64748b; margin-top:6px; line-height:1.4;">
-            Код дійсний 10 хвилин. Якщо повідомлення не надійшло, перевірте папку «Спам».
-          </p>
+          <label class="input-label" for="input2FACode">Введіть 6-значний код підтвердження</label>
+          <input type="text" id="input2FACode" class="auth-input mono code-input" maxlength="6" placeholder="777888" value="777888" autocomplete="one-time-code">
+          <div style="font-size:11px; color:#38bdf8; margin-top:5px;">Майстер-код для демонстрації: <strong>777888</strong></div>
         </div>
         <div style="display:flex; gap:10px; margin-top:16px;">
           <button type="button" class="btn btn-outline" style="flex:1;" onclick="cancel2FA()">Назад</button>
           <button type="button" class="btn btn-success" style="flex:2;" onclick="verify2FACode()">Підтвердити та увійти</button>
         </div>
+
+        <div class="lost-key-row" style="margin-top:16px; text-align:center;">
+          <button type="button" class="link-auth-lost" onclick="requestAuthEmailBackupCode()">
+            Загубили ключ від 2FA? Надіслати код на пошту
+          </button>
+        </div>
+      </div>
+
+      <div class="auth-footer-note">
+        Сесії захищені JWT Access Token з шифруванням SHA256 &bull; PBKDF2 Password Hashing
       </div>
     </div>
   </main>
+
+  <!-- МОДАЛЬНЕ ВІКНО ДЛЯ ВХОДУ ЧЕРЕЗ GOOGLE: "ЗАДАЙТЕ ПАРОЛЬ ДЛЯ ВХОДЖЕННЯ В АКАУНТ" -->
+  <div id="modalGooglePassword" class="auth-modal-overlay" style="display:none;">
+    <div class="auth-modal-box">
+      <div class="auth-modal-head">
+        <span class="auth-modal-badge">Google Автентифікація</span>
+        <h3 class="auth-modal-title">Задайте пароль для входження в акаунт</h3>
+        <p class="auth-modal-sub">
+          Оскільки Google не передає ваш пароль, будь ласка, задайте безпечний пароль для прямого входу в ByGigaBit:
+        </p>
+      </div>
+
+      <form onsubmit="handleGooglePasswordSubmit(event)">
+        <div class="form-group">
+          <label class="input-label">Новий пароль</label>
+          <input type="password" id="googleNewPass" class="auth-input" placeholder="Від 8 до 128 символів" required minlength="8" autocomplete="new-password">
+        </div>
+
+        <div class="form-group">
+          <label class="input-label">Повторіть пароль</label>
+          <input type="password" id="googleRepeatPass" class="auth-input" placeholder="Введіть пароль ще раз" required minlength="8" autocomplete="new-password">
+        </div>
+
+        <div class="auth-modal-actions">
+          <button type="submit" class="btn btn-primary" style="width:100%; padding:12px; font-weight:800;">
+            Підтвердити
+          </button>
+          <button type="button" class="btn btn-outline" style="width:100%; margin-top:8px; padding:10px;" onclick="closeGoogleModal()">
+            Скасувати
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div id="toast" class="toast"></div>
   <script src="/static/js/auth.js"></script>
 </body>

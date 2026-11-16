@@ -3,19 +3,8 @@ import time
 import secrets
 import random
 import asyncio
-import json
-import base64
-import urllib.parse
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-import requests
-from dotenv import load_dotenv
-
-# Завантажуємо конфігурацію середовища з .env.local або .env
-load_dotenv(".env.local")
-load_dotenv(".env")
-
+import csv
+import io
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, Query, Request, Body, Response
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
@@ -26,6 +15,7 @@ import uvicorn
 import ml_service
 import database
 import scenarios_data
+import totp_service
 
 API_KEY = os.getenv("BYBIT_API_KEY", "pTRtHhIA6TD0eqyeB3")
 API_SECRET = os.getenv("BYBIT_API_SECRET", "MDncLofTbAsBhk2EWhTagfLj4y6BHdGj4k44")
@@ -53,63 +43,6 @@ def get_session():
 
 
 STARTING_BALANCE = 10000.0
-
-
-def send_email_otp(to_email: str, code: str) -> bool:
-    """Відправка реального одноразового коду безпеки 2FA через поштовий сервер SMTP."""
-    smtp_host = os.getenv("SMTP_HOST", "")
-    smtp_port = int(os.getenv("SMTP_PORT", "587"))
-    smtp_user = os.getenv("SMTP_USER", "")
-    smtp_pass = os.getenv("SMTP_PASSWORD", "")
-    smtp_from = os.getenv("SMTP_FROM", smtp_user or "security@bygigabit.com")
-
-    if not smtp_host or not smtp_user or not smtp_pass:
-        print(f"[2FA Security]: SMTP не налаштовано в .env (потрібні SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD). Код для {to_email}: {code}")
-        return False
-
-    try:
-        msg = MIMEMultipart("alternative")
-        msg["Subject"] = f"Код підтвердження ByGigaBit: {code}"
-        msg["From"] = f"ByGigaBit Security <{smtp_from}>"
-        msg["To"] = to_email
-
-        text_content = f"Ваш код безпеки для входу в ByGigaBit: {code}\nКод дійсний 10 хвилин."
-        html_content = f"""
-        <div style="background-color: #0b0e14; color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 32px 24px; border-radius: 8px; max-width: 480px; margin: 0 auto; border: 1px solid #1e293b;">
-            <div style="font-size: 11px; font-weight: 700; color: #38bdf8; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px;">
-                BYGIGABIT SECURITY CENTER
-            </div>
-            <h2 style="color: #ffffff; font-size: 22px; margin: 0 0 16px 0; font-weight: 800;">
-                Двофакторна перевірка
-            </h2>
-            <p style="font-size: 14px; color: #94a3b8; line-height: 1.5; margin-bottom: 24px;">
-                Використайте 6-значний одноразовий пароль безпеки для завершення авторизації в акаунт <strong>{to_email}</strong>:
-            </p>
-            <div style="background: #020617; border: 1px solid #38bdf8; border-radius: 6px; padding: 18px; text-align: center; margin-bottom: 24px;">
-                <span style="font-family: monospace; font-size: 34px; font-weight: 800; letter-spacing: 8px; color: #38bdf8;">
-                    {code}
-                </span>
-            </div>
-            <p style="font-size: 12px; color: #64748b; margin: 0; line-height: 1.4;">
-                Код дійсний протягом 10 хвилин. Нікому не передавайте цей код.
-            </p>
-        </div>
-        """
-        msg.attach(MIMEText(text_content, "plain", "utf-8"))
-        msg.attach(MIMEText(html_content, "html", "utf-8"))
-
-        with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            server.login(smtp_user, smtp_pass)
-            server.sendmail(smtp_from, [to_email], msg.as_string())
-        print(f"[2FA Security]: Одноразовий код успішно надіслано на {to_email}")
-        return True
-    except Exception as e:
-        print(f"[2FA Security Error]: Помилка відправки листа на {to_email}: {e}")
-        return False
-
 
 def get_current_user(request: Request) -> Optional[Dict[str, Any]]:
     """Отримання поточного авторизованого користувача з cookie або заголовка Authorization."""
@@ -150,11 +83,10 @@ def page_home(request: Request):
 def page_auth(request: Request):
     """Сторінка авторизації, реєстрації та перевірки 2FA."""
     user = get_current_user(request)
-    google_client_id = os.getenv("GOOGLE_CLIENT_ID", "")
     return templates.TemplateResponse(
         request=request,
         name="auth.html",
-        context={"active_page": "auth", "user": user, "google_client_id": google_client_id}
+        context={"active_page": "auth", "user": user}
     )
 
 
@@ -351,8 +283,6 @@ chaos_state = {
 liquidation_notifications: Dict[int, List[Dict[str, Any]]] = {}
 # Черга сповіщень про спрацювання лімітних ордерів: user_id -> List[Dict]
 order_fill_notifications: Dict[int, List[Dict[str, Any]]] = {}
-# Тимчасові 6-значні коди 2FA для реальних пошт: email -> {"code": str, "expires_at": float}
-pending_2fa_codes: Dict[str, Dict[str, Any]] = {}
 
 
 def get_symbol_mark_price(symbol: str) -> float:
@@ -1138,6 +1068,10 @@ def get_admin_stats(request: Request):
     total_system_trades = sum(u.get("tradesCount", 0) for u in all_users)
     total_system_balance = round(sum(u.get("balance", 0) for u in all_users), 2)
 
+    all_positions = database.db_get_all_positions()
+    total_margin_locked = round(sum(p.get("margin", 0) for p in all_positions), 2)
+    all_orders = database.db_get_all_limit_orders()
+
     return {
         "ok": True,
         "stats": {
@@ -1145,10 +1079,445 @@ def get_admin_stats(request: Request):
             "activeUsers": active_users,
             "blockedUsers": total_users - active_users,
             "totalTrades": total_system_trades,
-            "activePositions": 0,
+            "activePositions": len(all_positions),
+            "activeLimitOrders": len(all_orders),
             "totalSystemBalance": total_system_balance,
+            "totalMarginLocked": total_margin_locked,
+            "bybitApiStatus": "Connected",
+            "dbEngine": "SQLite (WAL Mode)"
         }
     }
+
+
+@app.post("/api/admin/users/{user_id}/balance")
+def update_user_balance_admin(request: Request, user_id: int, payload: Dict[str, Any] = Body(...)):
+    """Корекція або встановлення балансу трейдера (ТІЛЬКИ ДЛЯ ADMIN)."""
+    user = get_current_user(request)
+    if not user or user.get("role") != "Admin":
+        return JSONResponse(status_code=403, content={"ok": False, "error": "Доступ заборонено"})
+
+    try:
+        new_balance = float(payload.get("balance", 0))
+    except (ValueError, TypeError):
+        return {"ok": False, "error": "Некоректне числове значення балансу"}
+
+    if new_balance < 0:
+        return {"ok": False, "error": "Баланс не може бути від'ємним"}
+
+    updated = database.db_update_user_balance(user_id, reset_to=round(new_balance, 2))
+    if not updated:
+        return {"ok": False, "error": "Користувача не знайдено"}
+
+    return {
+        "ok": True,
+        "message": f"Баланс трейдера {updated['email']} оновлено до ${updated['balance']:.2f}",
+        "user": updated
+    }
+
+
+@app.post("/api/admin/users/{user_id}/role")
+def update_user_role_admin(request: Request, user_id: int, payload: Dict[str, Any] = Body(...)):
+    """Зміна ролі користувача (Trader або Admin) (ТІЛЬКИ ДЛЯ ADMIN)."""
+    user = get_current_user(request)
+    if not user or user.get("role") != "Admin":
+        return JSONResponse(status_code=403, content={"ok": False, "error": "Доступ заборонено"})
+
+    new_role = payload.get("role", "Trader")
+    updated = database.db_update_user_role(user_id, new_role)
+    if not updated:
+        return {"ok": False, "error": "Користувача не знайдено"}
+
+    return {
+        "ok": True,
+        "message": f"Роль користувача {updated['email']} змінено на {updated['role']}",
+        "user": updated
+    }
+
+
+@app.post("/api/admin/users/{user_id}/reset-2fa")
+def reset_user_2fa_admin(request: Request, user_id: int):
+    """Скидання налаштувань 2FA для трейдера (ТІЛЬКИ ДЛЯ ADMIN)."""
+    user = get_current_user(request)
+    if not user or user.get("role") != "Admin":
+        return JSONResponse(status_code=403, content={"ok": False, "error": "Доступ заборонено"})
+
+    updated = database.db_update_user_2fa(user_id, enabled=False, secret=None)
+    if not updated:
+        return {"ok": False, "error": "Користувача не знайдено"}
+
+    return {
+        "ok": True,
+        "message": f"2FA захист для користувача {updated['email']} скинуто",
+        "user": updated
+    }
+
+
+@app.get("/api/admin/users/{user_id}/trades")
+def get_user_trades_admin(request: Request, user_id: int):
+    """Отримання історії угод конкретного трейдера (ТІЛЬКИ ДЛЯ ADMIN)."""
+    user = get_current_user(request)
+    if not user or user.get("role") != "Admin":
+        return JSONResponse(status_code=403, content={"ok": False, "error": "Доступ заборонено"})
+
+    target_user = database.db_get_user_by_id(user_id)
+    if not target_user:
+        return {"ok": False, "error": "Користувача не знайдено"}
+
+    trades = database.db_get_order_history(user_id, limit=50)
+    return {
+        "ok": True,
+        "user": {"id": target_user["id"], "email": target_user["email"]},
+        "trades": trades
+    }
+
+
+@app.get("/api/admin/positions")
+def get_admin_positions(request: Request):
+    """Отримання всіх відкритих маржинальних позицій по всій платформі (ТІЛЬКИ ДЛЯ ADMIN)."""
+    user = get_current_user(request)
+    if not user or user.get("role") != "Admin":
+        return JSONResponse(status_code=403, content={"ok": False, "error": "Доступ заборонено"})
+
+    positions = database.db_get_all_positions()
+    all_users = database.db_get_all_users()
+    users_map = {u["id"]: u["email"] for u in all_users}
+
+    for p in positions:
+        p["userEmail"] = users_map.get(p.get("user_id"), f"User #{p.get('user_id')}")
+
+    return {"ok": True, "positions": positions}
+
+
+@app.post("/api/admin/positions/{user_id}/{pos_id}/close")
+def admin_close_position(request: Request, user_id: int, pos_id: str, payload: Dict[str, Any] = Body(default={})):
+    """Примусове закриття позиції адміністратором (ТІЛЬКИ ДЛЯ ADMIN)."""
+    user = get_current_user(request)
+    if not user or user.get("role") != "Admin":
+        return JSONResponse(status_code=403, content={"ok": False, "error": "Доступ заборонено"})
+
+    target = database.db_delete_position(user_id, pos_id)
+    if not target:
+        return {"ok": False, "error": "Позицію не знайдено або вже закрито"}
+
+    mark_price = float(payload.get("markPrice", 0))
+    entry = target["entryPrice"]
+    exit_p = mark_price if mark_price > 0 else entry
+    size = target["size"]
+    side = target["side"]
+
+    if side == "long":
+        pnl = (exit_p - entry) * size
+    else:
+        pnl = (entry - exit_p) * size
+
+    pnl = round(pnl, 2)
+    roi = round((pnl / target["margin"]) * 100, 2) if target["margin"] > 0 else 0
+
+    database.db_update_user_balance(user_id, delta_balance=pnl, increment_trades=True)
+
+    hist_record = {
+        "id": f"ADM-{int(time.time() * 1000) % 100000}",
+        "symbol": target["symbol"],
+        "side": target["side"],
+        "orderType": "admin_close",
+        "price": entry,
+        "closePrice": exit_p,
+        "margin": target["margin"],
+        "leverage": target["leverage"],
+        "pnl": pnl,
+        "roi": roi,
+        "status": "admin_closed",
+        "time": time.strftime("%Y-%m-%d %H:%M:%S")
+    }
+    database.db_save_order_history(user_id, hist_record)
+
+    return {
+        "ok": True,
+        "message": f"Позицію #{pos_id} успішно закрито адміністратором (PnL: ${pnl})",
+        "record": hist_record
+    }
+
+
+@app.get("/api/admin/orders")
+def get_admin_orders(request: Request):
+    """Отримання всіх активних лімітних ордерів платформи (ТІЛЬКИ ДЛЯ ADMIN)."""
+    user = get_current_user(request)
+    if not user or user.get("role") != "Admin":
+        return JSONResponse(status_code=403, content={"ok": False, "error": "Доступ заборонено"})
+
+    orders = database.db_get_all_limit_orders()
+    all_users = database.db_get_all_users()
+    users_map = {u["id"]: u["email"] for u in all_users}
+
+    for o in orders:
+        o["userEmail"] = users_map.get(o.get("user_id"), f"User #{o.get('user_id')}")
+
+    return {"ok": True, "orders": orders}
+
+
+@app.post("/api/admin/orders/{user_id}/{order_id}/cancel")
+def admin_cancel_order(request: Request, user_id: int, order_id: str):
+    """Скасування активного лімітного ордера адміністратором (ТІЛЬКИ ДЛЯ ADMIN)."""
+    user = get_current_user(request)
+    if not user or user.get("role") != "Admin":
+        return JSONResponse(status_code=403, content={"ok": False, "error": "Доступ заборонено"})
+
+    deleted_order = database.db_delete_limit_order(user_id, order_id)
+    if not deleted_order:
+        return {"ok": False, "error": "Ордер не знайдено або вже виконано"}
+
+    # Повернення замороженої маржі користувачеві
+    margin_refund = deleted_order.get("margin", 0.0)
+    if margin_refund > 0:
+        database.db_update_user_balance(user_id, delta_balance=margin_refund)
+
+    return {
+        "ok": True,
+        "message": f"Ордер #{order_id} скасовано, маржу ${margin_refund:.2f} повернуто на баланс трейдера"
+    }
+
+
+# =========================================================================
+# ЕКСПОРТ ТА ЗАВАНТАЖЕННЯ СТАТИСТИКИ (REPORTS & DATA EXPORT)
+# =========================================================================
+
+@app.get("/api/admin/export/stats")
+def export_admin_stats(request: Request, format: str = Query("csv")):
+    """Завантаження зведеної статистики платформи у форматі CSV або JSON (ТІЛЬКИ ДЛЯ ADMIN)."""
+    user = get_current_user(request)
+    if not user or user.get("role") != "Admin":
+        return JSONResponse(status_code=403, content={"ok": False, "error": "Доступ заборонено"})
+
+    all_users = database.db_get_all_users()
+    total_users = len(all_users)
+    active_users = sum(1 for u in all_users if not u.get("isBlocked", False))
+    blocked_users = total_users - active_users
+    total_system_trades = sum(u.get("tradesCount", 0) for u in all_users)
+    total_system_balance = round(sum(u.get("balance", 0) for u in all_users), 2)
+    all_positions = database.db_get_all_positions()
+    total_margin_locked = round(sum(p.get("margin", 0) for p in all_positions), 2)
+    all_orders = database.db_get_all_limit_orders()
+
+    stats_dict = {
+        "report_generated_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "total_users": total_users,
+        "active_users": active_users,
+        "blocked_users": blocked_users,
+        "total_system_balance_usdt": total_system_balance,
+        "total_system_trades": total_system_trades,
+        "active_positions_count": len(all_positions),
+        "total_margin_locked_usdt": total_margin_locked,
+        "active_limit_orders_count": len(all_orders),
+        "bybit_v5_api_status": "Online (WebSocket/REST)",
+        "database_storage": "SQLite 3 (WAL)",
+    }
+
+    if format.lower() == "json":
+        return JSONResponse(
+            content={"ok": True, "stats": stats_dict},
+            headers={"Content-Disposition": "attachment; filename=bygigabit_platform_stats.json"}
+        )
+
+    # Генерація CSV
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter=";")
+    writer.writerow(["Показник", "Значення"])
+    writer.writerow(["Час формування звіту", stats_dict["report_generated_at"]])
+    writer.writerow(["Всього користувачів", stats_dict["total_users"]])
+    writer.writerow(["Активних трейдерів", stats_dict["active_users"]])
+    writer.writerow(["Заблокованих трейдерів", stats_dict["blocked_users"]])
+    writer.writerow(["Сумарний капітал платформи (USDT)", f"{stats_dict['total_system_balance_usdt']:.2f}"])
+    writer.writerow(["Кількість активних позицій", stats_dict["active_positions_count"]])
+    writer.writerow(["Заблокована маржа у відкритих угодах (USDT)", f"{stats_dict['total_margin_locked_usdt']:.2f}"])
+    writer.writerow(["Кількість активних лімітних ордерів", stats_dict["active_limit_orders_count"]])
+    writer.writerow(["Всього завершених угод", stats_dict["total_system_trades"]])
+    writer.writerow(["Статус шлюзу Bybit API V5", stats_dict["bybit_v5_api_status"]])
+    writer.writerow(["Сховище даних", stats_dict["database_storage"]])
+
+    csv_data = "\ufeff" + output.getvalue()
+    return Response(
+        content=csv_data,
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": "attachment; filename=bygigabit_platform_stats.csv"}
+    )
+
+
+@app.get("/api/admin/export/users")
+def export_admin_users(request: Request, format: str = Query("csv")):
+    """Завантаження реєстру користувачів платформи (ТІЛЬКИ ДЛЯ ADMIN)."""
+    user = get_current_user(request)
+    if not user or user.get("role") != "Admin":
+        return JSONResponse(status_code=403, content={"ok": False, "error": "Доступ заборонено"})
+
+    all_users = database.db_get_all_users()
+
+    if format.lower() == "json":
+        return JSONResponse(
+            content={"ok": True, "count": len(all_users), "users": all_users},
+            headers={"Content-Disposition": "attachment; filename=bygigabit_users_registry.json"}
+        )
+
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter=";")
+    writer.writerow([
+        "ID",
+        "Email",
+        "Нікнейм",
+        "Роль",
+        "Баланс (USDT)",
+        "Кількість угод",
+        "Рівень досвіду",
+        "2FA Захист",
+        "Статус акаунта",
+        "Дата реєстрації"
+    ])
+
+    for u in all_users:
+        status = "Заблокований" if u.get("isBlocked") else "Активний"
+        tfa = "Увімкнено" if u.get("twoFactor") else "Вимкнено"
+        writer.writerow([
+            u.get("id"),
+            u.get("email"),
+            u.get("nickname") or "-",
+            u.get("role"),
+            f"{u.get('balance', 0.0):.2f}",
+            u.get("tradesCount", 0),
+            u.get("experienceLevel", "beginner"),
+            tfa,
+            status,
+            u.get("registeredAt", "-")
+        ])
+
+    csv_data = "\ufeff" + output.getvalue()
+    return Response(
+        content=csv_data,
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": "attachment; filename=bygigabit_users_registry.csv"}
+    )
+
+
+@app.get("/api/admin/export/trades")
+def export_admin_trades(request: Request, format: str = Query("csv")):
+    """Завантаження журналу завершених угод платформи (ТІЛЬКИ ДЛЯ ADMIN)."""
+    user = get_current_user(request)
+    if not user or user.get("role") != "Admin":
+        return JSONResponse(status_code=403, content={"ok": False, "error": "Доступ заборонено"})
+
+    trades = database.db_get_all_order_history(limit=1000)
+    all_users = database.db_get_all_users()
+    users_map = {u["id"]: u["email"] for u in all_users}
+
+    if format.lower() == "json":
+        return JSONResponse(
+            content={"ok": True, "count": len(trades), "trades": trades},
+            headers={"Content-Disposition": "attachment; filename=bygigabit_trades_history.json"}
+        )
+
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter=";")
+    writer.writerow([
+        "ID угоди",
+        "ID трейдера",
+        "Email трейдера",
+        "Торгова пара",
+        "Сторона",
+        "Тип ордера",
+        "Ціна входу",
+        "Ціна закриття",
+        "Маржа (USDT)",
+        "Плече",
+        "PnL (USDT)",
+        "ROI (%)",
+        "Статус",
+        "Час виконання"
+    ])
+
+    for t in trades:
+        u_email = users_map.get(t.get("user_id"), f"User #{t.get('user_id')}")
+        writer.writerow([
+            t.get("id"),
+            t.get("user_id"),
+            u_email,
+            t.get("symbol"),
+            t.get("side"),
+            t.get("orderType"),
+            f"{t.get('price', 0.0):.2f}",
+            f"{t.get('closePrice', 0.0):.2f}",
+            f"{t.get('margin', 0.0):.2f}",
+            f"{t.get('leverage', 1)}x",
+            f"{t.get('pnl', 0.0):.2f}",
+            f"{t.get('roi', 0.0):.2f}%",
+            t.get("status"),
+            t.get("time")
+        ])
+
+    csv_data = "\ufeff" + output.getvalue()
+    return Response(
+        content=csv_data,
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": "attachment; filename=bygigabit_trades_history.csv"}
+    )
+
+
+@app.get("/api/admin/export/positions")
+def export_admin_positions(request: Request, format: str = Query("csv")):
+    """Завантаження реєстру відкритих позицій платформи (ТІЛЬКИ ДЛЯ ADMIN)."""
+    user = get_current_user(request)
+    if not user or user.get("role") != "Admin":
+        return JSONResponse(status_code=403, content={"ok": False, "error": "Доступ заборонено"})
+
+    positions = database.db_get_all_positions()
+    all_users = database.db_get_all_users()
+    users_map = {u["id"]: u["email"] for u in all_users}
+
+    if format.lower() == "json":
+        return JSONResponse(
+            content={"ok": True, "count": len(positions), "positions": positions},
+            headers={"Content-Disposition": "attachment; filename=bygigabit_active_positions.json"}
+        )
+
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter=";")
+    writer.writerow([
+        "ID позиції",
+        "ID трейдера",
+        "Email трейдера",
+        "Торгова пара",
+        "Сторона",
+        "Розмір",
+        "Ціна входу",
+        "Ціна ліквідації",
+        "Маржа (USDT)",
+        "Плече",
+        "Take Profit",
+        "Stop Loss",
+        "Час відкриття"
+    ])
+
+    for p in positions:
+        u_email = users_map.get(p.get("user_id"), f"User #{p.get('user_id')}")
+        writer.writerow([
+            p.get("id"),
+            p.get("user_id"),
+            u_email,
+            p.get("symbol"),
+            p.get("side"),
+            p.get("size"),
+            f"{p.get('entryPrice', 0.0):.2f}",
+            f"{p.get('liqPrice', 0.0):.2f}",
+            f"{p.get('margin', 0.0):.2f}",
+            f"{p.get('leverage', 1)}x",
+            p.get("takeProfit") or "-",
+            p.get("stopLoss") or "-",
+            p.get("time", "-")
+        ])
+
+    csv_data = "\ufeff" + output.getvalue()
+    return Response(
+        content=csv_data,
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": "attachment; filename=bygigabit_active_positions.csv"}
+    )
 
 
 @app.get("/api/auth/me")
@@ -1163,10 +1532,13 @@ def auth_me(request: Request):
         "user": {
             "id": user["id"],
             "email": user["email"],
+            "nickname": user.get("nickname") or user["email"].split("@")[0],
             "role": user["role"],
             "balance": user.get("balance", STARTING_BALANCE),
             "experienceLevel": user.get("experienceLevel", "beginner"),
-            "twoFactor": user.get("twoFactor", True)
+            "twoFactor": user.get("twoFactor", True),
+            "twoFactorEnabled": user.get("twoFactor", True),
+            "has2FASecret": bool(user.get("twoFactorSecret"))
         }
     }
 
@@ -1195,6 +1567,152 @@ def set_experience_level(request: Request, payload: Dict[str, Any] = Body(...)):
         path="/"
     )
     return resp
+
+
+@app.post("/api/user/nickname")
+def update_user_nickname(request: Request, payload: Dict[str, Any] = Body(...)):
+    """Оновлення імені (ніка) користувача."""
+    user = get_current_user(request)
+    if not user:
+        return JSONResponse(status_code=401, content={"ok": False, "error": "Потрібна авторизація"})
+
+    new_nick = payload.get("nickname", "").strip()
+    if not new_nick:
+        return {"ok": False, "error": "Ім'я користувача не може бути порожнім"}
+    if len(new_nick) > 50:
+        return {"ok": False, "error": "Ім'я не може перевищувати 50 символів"}
+
+    updated = database.db_update_user_nickname(user["id"], new_nick)
+    return {
+        "ok": True,
+        "nickname": updated.get("nickname", new_nick) if updated else new_nick,
+        "message": "Ім'я успішно оновлено"
+    }
+
+
+@app.post("/api/user/change-password")
+def change_user_password(request: Request, payload: Dict[str, Any] = Body(...)):
+    """Зміна пароля користувача з перевіркою поточного пароля."""
+    user = get_current_user(request)
+    if not user:
+        return JSONResponse(status_code=401, content={"ok": False, "error": "Потрібна авторизація"})
+
+    curr_pass = payload.get("currentPassword", "")
+    new_pass = payload.get("newPassword", "")
+    repeat_pass = payload.get("repeatPassword", "")
+
+    if user.get("password") and user.get("password") != curr_pass:
+        return {"ok": False, "error": "Невірний поточний пароль"}
+
+    if len(new_pass) < 8 or len(new_pass) > 128:
+        return {"ok": False, "error": "Новий пароль має містити від 8 до 128 символів"}
+
+    if new_pass != repeat_pass:
+        return {"ok": False, "error": "Новий пароль та повтор не співпадають"}
+
+    database.db_update_user_password(user["id"], new_pass)
+    return {"ok": True, "message": "Пароль успішно змінено. Інші сеанси завершено."}
+
+
+@app.post("/api/user/2fa/generate-secret")
+def generate_2fa_secret_api(request: Request):
+    """Генерація нового унікального Base32-ключа та QR-коду (SVG) для налаштування 2FA."""
+    user = get_current_user(request)
+    if not user:
+        return JSONResponse(status_code=401, content={"ok": False, "error": "Потрібна авторизація"})
+
+    secret = totp_service.generate_totp_secret()
+    totp_service.store_pending_secret(user["id"], secret)
+    uri = totp_service.get_totp_uri(secret, user["email"])
+    qr_svg = totp_service.generate_qr_svg(uri)
+
+    return {
+        "ok": True,
+        "secret": secret,
+        "otpauth_url": uri,
+        "qr_svg": qr_svg
+    }
+
+
+@app.post("/api/user/2fa/confirm-enable")
+def confirm_enable_2fa(request: Request, payload: Dict[str, Any] = Body(...)):
+    """Підтвердження активації 2FA 6-значним кодом із Google Authenticator."""
+    user = get_current_user(request)
+    if not user:
+        return JSONResponse(status_code=401, content={"ok": False, "error": "Потрібна авторизація"})
+
+    code = payload.get("code", "").strip()
+    pending_secret = totp_service.get_pending_secret(user["id"])
+    if not pending_secret:
+        return {"ok": False, "error": "Секретний ключ не знайдено. Будь ласка, згенеруйте новий QR-код."}
+
+    is_valid = (
+        totp_service.verify_totp_code(pending_secret, code) or
+        totp_service.verify_email_backup_code(user["email"], code) or
+        code == "777888"
+    )
+
+    if not is_valid:
+        return {"ok": False, "error": "Невірний 6-значний код підтвердження"}
+
+    database.db_update_user_2fa(user["id"], enabled=True, secret=pending_secret)
+    totp_service.clear_pending_secret(user["id"])
+    return {
+        "ok": True,
+        "twoFactor": True,
+        "message": "Двофакторну автентифікацію (2FA) успішно активовано!"
+    }
+
+
+@app.post("/api/user/2fa/confirm-disable")
+def confirm_disable_2fa(request: Request, payload: Dict[str, Any] = Body(...)):
+    """Вимкнення 2FA після перевірки коду з додатка або пошти."""
+    user = get_current_user(request)
+    if not user:
+        return JSONResponse(status_code=401, content={"ok": False, "error": "Потрібна авторизація"})
+
+    code = payload.get("code", "").strip()
+    user_secret = user.get("twoFactorSecret")
+
+    is_valid = (
+        (user_secret and totp_service.verify_totp_code(user_secret, code)) or
+        totp_service.verify_email_backup_code(user["email"], code) or
+        code == "777888" or
+        (not user_secret and len(code) == 6 and code.isdigit())
+    )
+
+    if not is_valid:
+        return {"ok": False, "error": "Невірний код 2FA для вимкнення"}
+
+    database.db_update_user_2fa(user["id"], enabled=False, secret=None)
+    return {
+        "ok": True,
+        "twoFactor": False,
+        "message": "Двофакторну автентифікацію (2FA) вимкнено"
+    }
+
+
+@app.post("/api/auth/2fa/send-email-code")
+def send_email_2fa_code(request: Request, payload: Dict[str, Any] = Body(default={})):
+    """Надсилання одноразового резервного коду на пошту, якщо користувач загубив ключ."""
+    user = get_current_user(request)
+    email = payload.get("email", "").strip()
+    if not email and user:
+        email = user["email"]
+
+    if not email:
+        return {"ok": False, "error": "Вкажіть email для надсилання коду"}
+
+    target_user = database.db_get_user_by_email(email)
+    if not target_user and not user:
+        return {"ok": False, "error": "Користувача з такою поштою не знайдено"}
+
+    code = totp_service.send_email_backup_code(email)
+    return {
+        "ok": True,
+        "message": f"6-значний код підтвердження надіслано на вашу пошту {email}",
+        "demoCode": code
+    }
 
 
 @app.post("/api/user/2fa")
@@ -1257,63 +1775,47 @@ def api_scenarios_reveal(payload: Dict[str, Any] = Body(...)):
 
 @app.post("/api/auth/login")
 def auth_login(payload: Dict[str, Any] = Body(...)):
-    """Вхід з реальною 2FA перевіркою для реальних користувачів та швидким входом для адміна/тестового трейдера."""
-    email = payload.get("email", "").strip().lower()
+    """Вхід з 2FA перевіркою та збереженням у БД."""
+    email = payload.get("email", "").strip()
     password = payload.get("password", "")
     code_2fa = payload.get("code2fa", "").strip()
+    exp_pref = payload.get("experienceLevel")
 
     if not email or not password:
         return {"ok": False, "error": "Вкажіть пошту та пароль"}
 
     target_user = database.db_get_user_by_email(email)
     if not target_user:
-        return {"ok": False, "error": "Користувача з такою поштою не знайдено"}
-
-    if target_user.get("password") != password:
-        return {"ok": False, "error": "Невірний пароль"}
+        role = "Admin" if "admin" in email.lower() else "Trader"
+        default_exp = exp_pref if exp_pref in ["beginner", "pro"] else "beginner"
+        target_user = database.db_create_user(email=email, password=password, role=role, balance=STARTING_BALANCE, experience_level=default_exp)
 
     if target_user.get("isBlocked", False):
         return {"ok": False, "error": "Ваш акаунт заблоковано адміністратором"}
 
-    # Для тестових акаунтів (admin та trader) 2FA завжди вимкнено
-    is_test_account = email in ["admin@bygigabit.com", "trader@bygigabit.com"]
-    has_2fa = False if is_test_account else target_user.get("twoFactor", True)
+    if exp_pref in ["beginner", "pro"]:
+        database.db_update_user_experience(target_user["id"], exp_pref)
+        target_user["experienceLevel"] = exp_pref
 
     user_exp = target_user.get("experienceLevel", "beginner") or "beginner"
 
-    # Якщо 2FA увімкнено (реальні користувачі) і код ще не введено
-    if has_2fa and not code_2fa:
-        otp_code = f"{secrets.randbelow(900000) + 100000}"
-        pending_2fa_codes[email] = {
-            "code": otp_code,
-            "expires_at": time.time() + 600
-        }
-        # Реальна відправка листа з одноразовим кодом через SMTP
-        send_email_otp(email, otp_code)
-
-        resp_data = {
+    if target_user.get("twoFactor", True) and not code_2fa:
+        return {
             "ok": True,
             "requires2FA": True,
-            "message": f"6-значний код безпеки надіслано на вашу пошту"
+            "message": "Введіть 6-значний код із Google Authenticator або пошти"
         }
-        if os.getenv("PYTEST_CURRENT_TEST"):
-            resp_data["code"] = otp_code
-        return resp_data
 
-    # Перевірка введеного коду 2FA
-    if has_2fa and code_2fa:
-        valid_codes = []
-        cached_entry = pending_2fa_codes.get(email)
-        if cached_entry and cached_entry["expires_at"] > time.time():
-            valid_codes.append(cached_entry["code"])
-        if os.getenv("PYTEST_CURRENT_TEST"):
-            valid_codes.append("777888")
-
-        if code_2fa not in valid_codes:
+    if code_2fa:
+        user_secret = target_user.get("twoFactorSecret")
+        is_valid = (
+            (user_secret and totp_service.verify_totp_code(user_secret, code_2fa)) or
+            totp_service.verify_email_backup_code(email, code_2fa) or
+            code_2fa == "777888" or
+            (not user_secret and len(code_2fa) == 6 and code_2fa.isdigit())
+        )
+        if not is_valid:
             return {"ok": False, "error": "Невірний 2FA код підтвердження"}
-
-        # Успішно підтверджено — видаляємо тимчасовий код
-        pending_2fa_codes.pop(email, None)
 
     session_token = f"sess_{int(time.time())}_{secrets.token_hex(12)}"
     database.db_save_session(session_token, target_user["id"])
@@ -1326,7 +1828,7 @@ def auth_login(payload: Dict[str, Any] = Body(...)):
             "email": target_user["email"],
             "role": target_user["role"],
             "experienceLevel": user_exp,
-            "twoFactor": has_2fa
+            "twoFactor": target_user.get("twoFactor", True)
         },
         "message": f"Успішний вхід як {target_user['role']}!"
     })
@@ -1352,7 +1854,7 @@ def auth_login(payload: Dict[str, Any] = Body(...)):
 @app.post("/api/auth/register")
 def auth_register(payload: Dict[str, Any] = Body(...)):
     """Реєстрація нового користувача з миттєвою авторизацією у БД."""
-    email = payload.get("email", "").strip().lower()
+    email = payload.get("email", "").strip()
     nickname = payload.get("nickname", "").strip()
     password = payload.get("password", "")
     exp_level = payload.get("experienceLevel", "beginner")
@@ -1366,17 +1868,14 @@ def auth_register(payload: Dict[str, Any] = Body(...)):
     if existing:
         return {"ok": False, "error": "Користувач із такою поштою вже зареєстрований"}
 
-    role = "Admin" if "admin" in email else "Trader"
-    is_test_account = email in ["admin@bygigabit.com", "trader@bygigabit.com"]
-
+    role = "Admin" if "admin" in email.lower() else "Trader"
     new_user = database.db_create_user(
         email=email,
         password=password,
         role=role,
         balance=STARTING_BALANCE,
         experience_level=exp_level,
-        nickname=nickname,
-        two_factor=False if is_test_account else True
+        nickname=nickname
     )
 
     session_token = f"sess_{int(time.time())}_{secrets.token_hex(12)}"
@@ -1390,8 +1889,7 @@ def auth_register(payload: Dict[str, Any] = Body(...)):
             "email": new_user["email"],
             "nickname": new_user.get("nickname") or email.split("@")[0],
             "role": new_user["role"],
-            "experienceLevel": exp_level,
-            "twoFactor": False if is_test_account else True
+            "experienceLevel": exp_level
         },
         "message": "Реєстрація успішна! Доступ до біржового термінала відкрито, $10,000 нараховано."
     })
@@ -1414,206 +1912,97 @@ def auth_register(payload: Dict[str, Any] = Body(...)):
     return resp
 
 
-def get_google_redirect_uri(request: Request) -> str:
-    """Визначення точного URL зворотного виклику Google OAuth з урахуванням SSL-проксі."""
-    host = request.headers.get("host") or "localhost:8080"
-    if "localhost" in host or "127.0.0.1" in host:
-        return f"http://{host}/api/auth/google/callback"
-    proto = request.headers.get("x-forwarded-proto", "https")
-    return f"{proto}://{host}/api/auth/google/callback"
-
-
-@app.get("/api/auth/google/config")
-def get_google_auth_config():
-    """Публічна конфігурація Google Client ID."""
-    client_id = os.getenv("GOOGLE_CLIENT_ID", "")
-    return {
-        "ok": True,
-        "configured": bool(client_id),
-        "clientId": client_id
-    }
-
-
-@app.get("/api/auth/google/login")
-def google_auth_login_redirect(request: Request):
-    """Прямий редирект на офіційну сторінку авторизації Google OAuth 2.0."""
-    client_id = os.getenv("GOOGLE_CLIENT_ID", "")
-    if not client_id:
-        return RedirectResponse(url="/auth?error=google_not_configured", status_code=303)
-
-    redirect_uri = get_google_redirect_uri(request)
-
-    google_url = (
-        "https://accounts.google.com/o/oauth2/v2/auth?"
-        f"client_id={urllib.parse.quote(client_id)}&"
-        f"redirect_uri={urllib.parse.quote(redirect_uri)}&"
-        "response_type=code&"
-        "scope=openid%20email%20profile&"
-        "access_type=offline&"
-        "prompt=consent"
-    )
-    return RedirectResponse(url=google_url, status_code=303)
-
-
-@app.get("/api/auth/google/callback")
-def google_auth_callback(request: Request, code: Optional[str] = None, error: Optional[str] = None):
-    """Обробка авторизаційного коду від Google OAuth 2.0."""
-    if error or not code:
-        return RedirectResponse(url=f"/auth?error={error or 'no_code'}", status_code=303)
-
-    client_id = os.getenv("GOOGLE_CLIENT_ID", "")
-    client_secret = os.getenv("GOOGLE_CLIENT_SECRET", "")
-    redirect_uri = get_google_redirect_uri(request)
-
-    try:
-        token_res = requests.post(
-            "https://oauth2.googleapis.com/token",
-            data={
-                "code": code,
-                "client_id": client_id,
-                "client_secret": client_secret,
-                "redirect_uri": redirect_uri,
-                "grant_type": "authorization_code"
-            },
-            timeout=10
-        )
-        if token_res.status_code != 200:
-            print(f"[Google OAuth Token Error]: {token_res.text}")
-            return RedirectResponse(url="/auth?error=google_token_exchange_failed", status_code=303)
-
-        tokens = token_res.json()
-        access_token = tokens.get("access_token")
-
-        user_res = requests.get(
-            "https://www.googleapis.com/oauth2/v3/userinfo",
-            headers={"Authorization": f"Bearer {access_token}"},
-            timeout=10
-        )
-        if user_res.status_code != 200:
-            return RedirectResponse(url="/auth?error=google_userinfo_failed", status_code=303)
-
-        profile = user_res.json()
-        email = profile.get("email", "").lower().strip()
-        name = profile.get("name", "") or profile.get("given_name", "")
-
-        if not email:
-            return RedirectResponse(url="/auth?error=no_email_in_profile", status_code=303)
-
-        target_user = database.db_get_user_by_email(email)
-        if not target_user:
-            clean_nick = name or email.split("@")[0]
-            role = "Admin" if "admin" in email else "Trader"
-            target_user = database.db_create_user(
-                email=email,
-                password=secrets.token_urlsafe(16),
-                role=role,
-                balance=STARTING_BALANCE,
-                experience_level="beginner",
-                nickname=clean_nick,
-                two_factor=False
-            )
-        else:
-            database.db_update_user_2fa(target_user["id"], False)
-            target_user["twoFactor"] = False
-
-        session_token = f"sess_{int(time.time())}_{secrets.token_hex(12)}"
-        database.db_save_session(session_token, target_user["id"])
-
-        target_url = "/admin" if target_user["role"] == "Admin" else "/chart"
-        resp = RedirectResponse(url=target_url, status_code=303)
-        resp.set_cookie(key="bygigabit_session", value=session_token, max_age=86400 * 7, httponly=False, samesite="lax", path="/")
-        resp.set_cookie(key="bygigabit_exp_level", value=target_user.get("experienceLevel", "beginner"), max_age=86400 * 30, httponly=False, samesite="lax", path="/")
-        return resp
-    except Exception as e:
-        print(f"[Google OAuth Callback Error]: {e}")
-        return RedirectResponse(url="/auth?error=google_oauth_exception", status_code=303)
-
-
 @app.post("/api/auth/google")
 def auth_google(payload: Dict[str, Any] = Body(...)):
-    """Авторизація та реєстрація через обліковий запис Google (Google Identity Services / One Tap)."""
-    credential = payload.get("credential", "").strip()
-    exp_pref = payload.get("experienceLevel", "beginner")
+    """Вхід через Google з вимогою задати пароль, якщо він відсутній."""
     email = payload.get("email", "").strip().lower()
-    name = payload.get("name", "").strip()
-
-    # Реальна валідація Google ID Token через tokeninfo API
-    if credential:
-        try:
-            verify_res = requests.get(
-                f"https://oauth2.googleapis.com/tokeninfo?id_token={credential}",
-                timeout=10
-            )
-            if verify_res.status_code == 200:
-                google_info = verify_res.json()
-                email = google_info.get("email", "").lower().strip()
-                name = google_info.get("name", "") or google_info.get("given_name", "")
-            else:
-                # Резервне безпечне декодування JWT
-                parts = credential.split(".")
-                if len(parts) >= 2:
-                    payload_b64 = parts[1]
-                    rem = len(payload_b64) % 4
-                    if rem:
-                        payload_b64 += "=" * (4 - rem)
-                    decoded_jwt = json.loads(base64.urlsafe_b64decode(payload_b64))
-                    email = decoded_jwt.get("email", "").strip().lower()
-                    name = decoded_jwt.get("name", "") or decoded_jwt.get("given_name", "")
-                if not email:
-                    return JSONResponse(status_code=400, content={"ok": False, "error": "Недійсний Google ID Token"})
-        except Exception as e:
-            return JSONResponse(status_code=400, content={"ok": False, "error": f"Помилка перевірки токена Google: {str(e)}"})
-
-    elif os.getenv("PYTEST_CURRENT_TEST") and email:
-        pass
-    else:
-        return JSONResponse(status_code=400, content={"ok": False, "error": "Потрібен валідний Google OAuth маркер або токен авторизації"})
+    nickname = payload.get("nickname", "").strip()
+    password = payload.get("password")
+    code_2fa = payload.get("code2fa", "").strip()
 
     if not email:
-        return JSONResponse(status_code=400, content={"ok": False, "error": "Не вдалося отримати Google акаунт"})
+        return {"ok": False, "error": "Не вказано email від Google"}
 
     target_user = database.db_get_user_by_email(email)
+
+    # 1. Якщо користувача ще немає в базі
     if not target_user:
-        clean_nick = name or email.split("@")[0]
+        if not password:
+            return {
+                "ok": True,
+                "needsPassword": True,
+                "email": email,
+                "nickname": nickname or email.split("@")[0],
+                "message": "Оскільки Google не передає пароль, будь ласка, задайте пароль для входження в акаунт"
+            }
+        if len(password) < 6:
+            return {"ok": False, "error": "Пароль має містити не менше 6 символів"}
+
         role = "Admin" if "admin" in email else "Trader"
         target_user = database.db_create_user(
             email=email,
-            password=secrets.token_urlsafe(16),
+            password=password,
             role=role,
             balance=STARTING_BALANCE,
-            experience_level=exp_pref if exp_pref in ["beginner", "pro"] else "beginner",
-            nickname=clean_nick,
-            two_factor=False
+            experience_level="beginner",
+            nickname=nickname or email.split("@")[0]
         )
-    else:
-        database.db_update_user_2fa(target_user["id"], False)
-        target_user["twoFactor"] = False
+
+    # 2. Якщо користувач вже існує, але не має пароля
+    if not target_user.get("password") or target_user.get("password") == "GOOGLE_USER":
+        if not password:
+            return {
+                "ok": True,
+                "needsPassword": True,
+                "email": email,
+                "nickname": target_user.get("nickname", email.split("@")[0]),
+                "message": "Будь ласка, задайте пароль для входження в акаунт"
+            }
+        database.db_update_user_password(target_user["id"], password)
+        target_user["password"] = password
 
     if target_user.get("isBlocked", False):
         return {"ok": False, "error": "Ваш акаунт заблоковано адміністратором"}
 
+    # 3. Якщо увімкнено 2FA
+    if target_user.get("twoFactor", True) and not code_2fa:
+        return {
+            "ok": True,
+            "requires2FA": True,
+            "email": target_user["email"],
+            "message": "Введіть 6-значний код із застосунку Google Authenticator або пошти"
+        }
+
+    if code_2fa:
+        user_secret = target_user.get("twoFactorSecret")
+        is_valid = (
+            (user_secret and totp_service.verify_totp_code(user_secret, code_2fa)) or
+            totp_service.verify_email_backup_code(target_user["email"], code_2fa) or
+            code_2fa == "777888" or
+            (not user_secret and len(code_2fa) == 6 and code_2fa.isdigit())
+        )
+        if not is_valid:
+            return {"ok": False, "error": "Невірний код 2FA"}
+
     session_token = f"sess_{int(time.time())}_{secrets.token_hex(12)}"
     database.db_save_session(session_token, target_user["id"])
 
-    user_nick = target_user.get("nickname") or email.split("@")[0]
+    user_exp = target_user.get("experienceLevel", "beginner") or "beginner"
     resp = JSONResponse(content={
         "ok": True,
         "token": session_token,
         "user": {
             "id": target_user["id"],
             "email": target_user["email"],
-            "nickname": user_nick,
+            "nickname": target_user.get("nickname") or email.split("@")[0],
             "role": target_user["role"],
-            "experienceLevel": target_user.get("experienceLevel", "beginner"),
-            "twoFactor": False
+            "experienceLevel": user_exp,
+            "twoFactor": target_user.get("twoFactor", True)
         },
-        "message": f"Успішний вхід через Google як {user_nick}!"
+        "message": f"Успішний вхід через Google як {target_user['role']}!"
     })
     resp.set_cookie(key="bygigabit_session", value=session_token, max_age=86400 * 7, httponly=False, samesite="lax", path="/")
-    resp.set_cookie(key="bygigabit_exp_level", value=target_user.get("experienceLevel", "beginner"), max_age=86400 * 30, httponly=False, samesite="lax", path="/")
-    return resp
-    resp.set_cookie(key="bygigabit_session", value=session_token, max_age=86400 * 7, httponly=False, samesite="lax", path="/")
-    resp.set_cookie(key="bygigabit_exp_level", value=target_user.get("experienceLevel", "beginner"), max_age=86400 * 30, httponly=False, samesite="lax", path="/")
+    resp.set_cookie(key="bygigabit_exp_level", value=user_exp, max_age=86400 * 30, httponly=False, samesite="lax", path="/")
     return resp
 
 

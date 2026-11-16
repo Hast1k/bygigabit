@@ -48,6 +48,7 @@ class UserModel(Base):
     password = Column(String(255), nullable=False)
     role = Column(String(50), default="Trader", nullable=False)
     twoFactor = Column(Boolean, default=True, nullable=False)
+    twoFactorSecret = Column(String(64), nullable=True)
     balance = Column(Float, default=10000.0, nullable=False)
     tradesCount = Column(Integer, default=0, nullable=False)
     experienceLevel = Column(String(20), default="beginner", nullable=False)
@@ -70,6 +71,8 @@ class UserModel(Base):
             "password": self.password,
             "role": self.role,
             "twoFactor": self.twoFactor,
+            "twoFactorEnabled": self.twoFactor,
+            "twoFactorSecret": getattr(self, "twoFactorSecret", None),
             "balance": round(self.balance, 2),
             "tradesCount": self.tradesCount,
             "experienceLevel": getattr(self, "experienceLevel", "beginner") or "beginner",
@@ -199,6 +202,7 @@ def init_db():
             conn.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS "experienceLevel" VARCHAR(20) DEFAULT \'beginner\''))
             conn.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS "nickname" VARCHAR(100)'))
             conn.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS "twoFactor" BOOLEAN DEFAULT TRUE'))
+            conn.execute(text('ALTER TABLE users ADD COLUMN IF NOT EXISTS "twoFactorSecret" VARCHAR(64)'))
             conn.execute(text('ALTER TABLE limit_orders ADD COLUMN IF NOT EXISTS "initialPrice" FLOAT'))
             conn.commit()
     except Exception:
@@ -211,7 +215,7 @@ def init_db():
                 email="admin@bygigabit.com",
                 password="SecurePass123!",
                 role="Admin",
-                twoFactor=False,
+                twoFactor=True,
                 balance=25000.0,
                 tradesCount=115,
                 experienceLevel="pro",
@@ -219,8 +223,6 @@ def init_db():
                 registeredAt="2026-10-10 09:00"
             )
             db.add(admin)
-        else:
-            admin.twoFactor = False
 
         trader = db.query(UserModel).filter(UserModel.email == "trader@bygigabit.com").first()
         if not trader:
@@ -228,7 +230,7 @@ def init_db():
                 email="trader@bygigabit.com",
                 password="SecurePass123!",
                 role="Trader",
-                twoFactor=False,
+                twoFactor=True,
                 balance=10000.0,
                 tradesCount=4,
                 experienceLevel="beginner",
@@ -236,8 +238,6 @@ def init_db():
                 registeredAt="2026-10-15 14:22"
             )
             db.add(trader)
-        else:
-            trader.twoFactor = False
         db.commit()
 
 
@@ -255,21 +255,19 @@ def db_get_user_by_id(user_id: int) -> Optional[Dict[str, Any]]:
         return user.to_dict() if user else None
 
 
-def db_create_user(email: str, password: str, role: str = "Trader", balance: float = 10000.0, experience_level: str = "beginner", nickname: Optional[str] = None, two_factor: Optional[bool] = None) -> Dict[str, Any]:
+def db_create_user(email: str, password: str, role: str = "Trader", balance: float = 10000.0, experience_level: str = "beginner", nickname: Optional[str] = None) -> Dict[str, Any]:
     with SessionLocal() as db:
         now_str = time.strftime("%Y-%m-%d %H:%M")
         valid_exp = "pro" if experience_level in ["pro", "experienced", "advanced"] else "beginner"
         clean_nick = (nickname or "").strip()
         if not clean_nick and email:
             clean_nick = email.split("@")[0]
-        is_test_account = email.lower().strip() in ["admin@bygigabit.com", "trader@bygigabit.com"]
-        resolved_2fa = two_factor if two_factor is not None else (False if is_test_account else True)
         user = UserModel(
             email=email.lower().strip(),
             nickname=clean_nick,
             password=password,
             role=role,
-            twoFactor=resolved_2fa,
+            twoFactor=True,
             balance=balance,
             tradesCount=0,
             experienceLevel=valid_exp,
@@ -294,13 +292,43 @@ def db_update_user_experience(user_id: int, level: str) -> Optional[Dict[str, An
         return user.to_dict()
 
 
-def db_update_user_2fa(user_id: int, enabled: bool) -> Optional[Dict[str, Any]]:
-    """Оновлення статусу двофакторної автентифікації (2FA) користувача."""
+def db_update_user_nickname(user_id: int, nickname: str) -> Optional[Dict[str, Any]]:
+    """Оновлення імені користувача (нікра)."""
+    with SessionLocal() as db:
+        user = db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not user:
+            return None
+        clean_nick = (nickname or "").strip()
+        if clean_nick:
+            user.nickname = clean_nick
+            db.commit()
+            db.refresh(user)
+        return user.to_dict()
+
+
+def db_update_user_password(user_id: int, new_password: str) -> Optional[Dict[str, Any]]:
+    """Оновлення пароля користувача."""
+    with SessionLocal() as db:
+        user = db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not user:
+            return None
+        user.password = new_password
+        db.commit()
+        db.refresh(user)
+        return user.to_dict()
+
+
+def db_update_user_2fa(user_id: int, enabled: bool, secret: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    """Оновлення статусу двофакторної автентифікації (2FA) та збереження секретного ключа."""
     with SessionLocal() as db:
         user = db.query(UserModel).filter(UserModel.id == user_id).first()
         if not user:
             return None
         user.twoFactor = bool(enabled)
+        if enabled and secret:
+            user.twoFactorSecret = secret.strip().upper()
+        elif not enabled:
+            user.twoFactorSecret = None
         db.commit()
         db.refresh(user)
         return user.to_dict()
@@ -328,6 +356,19 @@ def db_toggle_user_block(user_id: int) -> Optional[Dict[str, Any]]:
         if not user:
             return None
         user.isBlocked = not user.isBlocked
+        db.commit()
+        db.refresh(user)
+        return user.to_dict()
+
+
+def db_update_user_role(user_id: int, role: str) -> Optional[Dict[str, Any]]:
+    """Зміна ролі користувача (Trader або Admin)."""
+    with SessionLocal() as db:
+        user = db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not user:
+            return None
+        valid_role = "Admin" if str(role).lower() == "admin" else "Trader"
+        user.role = valid_role
         db.commit()
         db.refresh(user)
         return user.to_dict()
@@ -470,6 +511,13 @@ def db_clear_limit_orders(user_id: int):
 def db_get_order_history(user_id: int, limit: int = 20) -> List[Dict[str, Any]]:
     with SessionLocal() as db:
         history = db.query(OrderHistoryModel).filter(OrderHistoryModel.user_id == user_id).order_by(OrderHistoryModel.time.desc()).limit(limit).all()
+        return [h.to_dict() for h in history]
+
+
+def db_get_all_order_history(limit: int = 500) -> List[Dict[str, Any]]:
+    """Отримати всю історію угод по всій системі для звітності та експорту."""
+    with SessionLocal() as db:
+        history = db.query(OrderHistoryModel).order_by(OrderHistoryModel.time.desc()).limit(limit).all()
         return [h.to_dict() for h in history]
 
 

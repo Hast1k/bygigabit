@@ -233,27 +233,36 @@
   margin: 0;
 }
 
-/* РОЗДІЛЬНИК ТА КНОПКА GOOGLE OAUTH */
-.auth-divider {
-  display: flex;
-  align-items: center;
+
+
+/* ========================================================
+   GOOGLE AUTH & MODAL STYLES
+   ======================================================== */
+.auth-separator {
+  position: relative;
   text-align: center;
-  margin: 18px 0;
+  margin: 18px 0 14px;
 }
 
-.auth-divider::before,
-.auth-divider::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1px solid var(--border-color);
+.auth-separator::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border-color);
+  z-index: 1;
 }
 
-.auth-divider span {
+.auth-separator span {
+  position: relative;
+  z-index: 2;
+  background: var(--bg-card);
   padding: 0 12px;
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--text-dim);
-  font-weight: 700;
   letter-spacing: 0.1em;
 }
 
@@ -264,24 +273,106 @@
   justify-content: center;
   gap: 12px;
   background: #ffffff;
-  color: #1f2937;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 11px 16px;
-  font-family: var(--font-display);
-  font-size: 12px;
+  color: #1f1f1f;
+  border: 1px solid #d1d5db;
+  font-family: var(--font-body);
+  font-size: 13px;
   font-weight: 700;
+  padding: 12px 16px;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  border-radius: 4px !important;
+  transition: all 0.2s ease;
 }
 
 .btn-google-auth:hover {
-  background: #f1f5f9;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+  background: #f3f4f6;
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
 }
 
-.google-icon {
-  flex-shrink: 0;
+.link-auth-lost {
+  background: none;
+  border: none;
+  color: var(--cyan);
+  font-family: var(--font-body);
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.15s ease;
 }
 
+.link-auth-lost:hover {
+  opacity: 0.8;
+}
+
+/* МОДАЛЬНЕ ВІКНО GOOGLE ПАРОЛЯ */
+.auth-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.auth-modal-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-bright);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+  width: 100%;
+  max-width: 440px;
+  padding: 32px 28px;
+  border-radius: 8px !important;
+  animation: modalPopIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.auth-modal-head {
+  margin-bottom: 20px;
+}
+
+.auth-modal-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.auth-modal-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.auth-modal-sub {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.auth-modal-actions {
+  margin-top: 20px;
+}

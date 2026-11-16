@@ -1,0 +1,409 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="960" viewBox="0 0 1560 960" font-family="Arial, Helvetica, sans-serif">
+<defs>
+        <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
+          <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#f0f0f0" stroke-width="0.6"/>
+        </pattern>
+        <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+          <rect width="50" height="50" fill="url(#smallGrid)"/>
+          <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#e2e2e2" stroke-width="1"/>
+        </pattern>
+        <filter id="dropShadow" x="-10%" y="-10%" width="125%" height="125%">
+          <feDropShadow dx="1.5" dy="2" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.15"/>
+        </filter>
+        
+
+            <marker id="vee-blue" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#2b7889" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-blue" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#2b7889" stroke="#2b7889" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-blue" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#2b7889" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-blue" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#2b7889" stroke="#2b7889" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-blue" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#2b7889" stroke-width="1.3"/>
+            </marker>
+            
+
+            <marker id="vee-black" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#333333" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-black" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#333333" stroke="#333333" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-black" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-black" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#333333" stroke="#333333" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-black" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#333333" stroke-width="1.3"/>
+            </marker>
+            
+
+            <marker id="vee-red" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#e03131" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-red" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#e03131" stroke="#e03131" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-red" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#e03131" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-red" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#e03131" stroke="#e03131" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-red" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#e03131" stroke-width="1.3"/>
+            </marker>
+            
+
+            <marker id="vee-green" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#2b8a3e" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-green" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#2b8a3e" stroke="#2b8a3e" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-green" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#2b8a3e" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-green" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#2b8a3e" stroke="#2b8a3e" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-green" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#2b8a3e" stroke-width="1.3"/>
+            </marker>
+            
+
+            <marker id="vee-orange" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#d97706" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-orange" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#d97706" stroke="#d97706" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-orange" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#d97706" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-orange" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#d97706" stroke="#d97706" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-orange" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#d97706" stroke-width="1.3"/>
+            </marker>
+            
+
+            <marker id="vee-darkorange" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#d9480f" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-darkorange" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#d9480f" stroke="#d9480f" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-darkorange" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#d9480f" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-darkorange" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#d9480f" stroke="#d9480f" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-darkorange" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#d9480f" stroke-width="1.3"/>
+            </marker>
+            
+
+            <marker id="vee-pink" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#b85450" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-pink" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#b85450" stroke="#b85450" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-pink" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#b85450" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-pink" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#b85450" stroke="#b85450" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-pink" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#b85450" stroke-width="1.3"/>
+            </marker>
+            
+
+            <marker id="vee-slate" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-slate" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#475569" stroke="#475569" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-slate" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-slate" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#475569" stroke="#475569" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-slate" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#475569" stroke-width="1.3"/>
+            </marker>
+            
+
+        <marker id="er-one" viewBox="0 0 16 16" refX="2" refY="8" markerWidth="14" markerHeight="14" orient="auto">
+          <path d="M 6 2 L 6 14 M 10 2 L 10 14" fill="none" stroke="#2b7889" stroke-width="1.6"/>
+        </marker>
+        <marker id="er-many" viewBox="0 0 20 16" refX="18" refY="8" markerWidth="16" markerHeight="14" orient="auto">
+          <circle cx="5" cy="8" r="3" fill="#ffffff" stroke="#2b7889" stroke-width="1.5"/>
+          <path d="M 9 8 L 19 2 M 9 8 L 19 8 M 9 8 L 19 14" fill="none" stroke="#2b7889" stroke-width="1.5"/>
+        </marker>
+        </defs>
+<rect width="1560" height="960" fill="#ffffff"/>
+<rect width="1560" height="960" fill="url(#grid)"/>
+<text x="780.0" y="38.3" font-size="18" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Діаграма класів (Class Diagram) — Концептуальні сутності та сервіси</text>
+<rect x="640" y="62" width="280" height="84" fill="#ffffff" stroke="#555555" stroke-width="1.3" filter="url(#dropShadow)"/>
+<rect x="640" y="62" width="280" height="30" fill="#e9ecef" stroke="#555555" stroke-width="1.3"/>
+<circle cx="658" cy="77" r="9" fill="#b0e3e6" stroke="#333333" stroke-width="1"/>
+<text x="658" y="81" font-size="11" font-weight="bold" text-anchor="middle" fill="#111111">A</text>
+<text x="788.0" y="81.2" font-size="12" font-weight="bold" font-style="italic" text-anchor="middle" fill="#111111">BaseEntity</text>
+<line x1="640" y1="119" x2="920" y2="119" stroke="#555555" stroke-width="1.1"/>
+<rect x="650" y="99" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="662" y="107" font-size="11" fill="#111111">id: Union[int, str]</text>
+<circle cx="653" cy="130" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="662" y="134" font-size="11" fill="#111111">to_dict(): Dict[str, Any]</text>
+<rect x="600" y="190" width="360" height="271" fill="#ffffff" stroke="#555555" stroke-width="1.3" filter="url(#dropShadow)"/>
+<rect x="600" y="190" width="360" height="30" fill="#e9ecef" stroke="#555555" stroke-width="1.3"/>
+<circle cx="618" cy="205" r="9" fill="#cce5b0" stroke="#333333" stroke-width="1"/>
+<text x="618" y="209" font-size="11" font-weight="bold" text-anchor="middle" fill="#111111">C</text>
+<text x="788.0" y="209.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">User</text>
+<line x1="600" y1="434" x2="960" y2="434" stroke="#555555" stroke-width="1.1"/>
+<rect x="610" y="227" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="622" y="235" font-size="11" fill="#111111">id: int</text>
+<rect x="610" y="244" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="622" y="252" font-size="11" fill="#111111">email: str</text>
+<rect x="610" y="261" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="622" y="269" font-size="11" fill="#111111">nickname: Optional[str]</text>
+<rect x="610" y="278" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="622" y="286" font-size="11" fill="#111111">password: str</text>
+<rect x="610" y="295" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="622" y="303" font-size="11" fill="#111111">role: str</text>
+<rect x="610" y="312" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="622" y="320" font-size="11" fill="#111111">twoFactor: bool</text>
+<rect x="610" y="329" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="622" y="337" font-size="11" fill="#111111">twoFactorSecret: Optional[str]</text>
+<rect x="610" y="346" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="622" y="354" font-size="11" fill="#111111">balance: float</text>
+<rect x="610" y="363" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="622" y="371" font-size="11" fill="#111111">tradesCount: int</text>
+<rect x="610" y="380" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="622" y="388" font-size="11" fill="#111111">experienceLevel: str</text>
+<rect x="610" y="397" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="622" y="405" font-size="11" fill="#111111">isBlocked: bool</text>
+<rect x="610" y="414" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="622" y="422" font-size="11" fill="#111111">registeredAt: str</text>
+<circle cx="613" cy="445" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="622" y="449" font-size="11" fill="#111111">to_dict(): Dict[str, Any]</text>
+<path d="M 780.0 190.0 L 780.0 146.0" fill="none" stroke="#333333" stroke-width="1.4" marker-end="url(#hollow-black)"/>
+<rect x="40" y="530" width="260" height="118" fill="#ffffff" stroke="#555555" stroke-width="1.3" filter="url(#dropShadow)"/>
+<rect x="40" y="530" width="260" height="30" fill="#e9ecef" stroke="#555555" stroke-width="1.3"/>
+<circle cx="58" cy="545" r="9" fill="#cce5b0" stroke="#333333" stroke-width="1"/>
+<text x="58" y="549" font-size="11" font-weight="bold" text-anchor="middle" fill="#111111">C</text>
+<text x="178.0" y="549.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Session</text>
+<line x1="40" y1="621" x2="300" y2="621" stroke="#555555" stroke-width="1.1"/>
+<rect x="50" y="567" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="62" y="575" font-size="11" fill="#111111">token: str</text>
+<rect x="50" y="584" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="62" y="592" font-size="11" fill="#111111">user_id: int</text>
+<rect x="50" y="601" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="62" y="609" font-size="11" fill="#111111">createdAt: str</text>
+<circle cx="53" cy="632" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="62" y="636" font-size="11" fill="#111111">get_user_by_session(token): User</text>
+<rect x="335" y="530" width="280" height="288" fill="#ffffff" stroke="#555555" stroke-width="1.3" filter="url(#dropShadow)"/>
+<rect x="335" y="530" width="280" height="30" fill="#e9ecef" stroke="#555555" stroke-width="1.3"/>
+<circle cx="353" cy="545" r="9" fill="#cce5b0" stroke="#333333" stroke-width="1"/>
+<text x="353" y="549" font-size="11" font-weight="bold" text-anchor="middle" fill="#111111">C</text>
+<text x="483.0" y="549.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Position</text>
+<line x1="335" y1="791" x2="615" y2="791" stroke="#555555" stroke-width="1.1"/>
+<rect x="345" y="567" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="357" y="575" font-size="11" fill="#111111">id: str</text>
+<rect x="345" y="584" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="357" y="592" font-size="11" fill="#111111">user_id: int</text>
+<rect x="345" y="601" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="357" y="609" font-size="11" fill="#111111">symbol: str</text>
+<rect x="345" y="618" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="357" y="626" font-size="11" fill="#111111">side: str</text>
+<rect x="345" y="635" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="357" y="643" font-size="11" fill="#111111">entryPrice: float</text>
+<rect x="345" y="652" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="357" y="660" font-size="11" fill="#111111">markPrice: float</text>
+<rect x="345" y="669" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="357" y="677" font-size="11" fill="#111111">margin: float</text>
+<rect x="345" y="686" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="357" y="694" font-size="11" fill="#111111">leverage: int</text>
+<rect x="345" y="703" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="357" y="711" font-size="11" fill="#111111">size: float</text>
+<rect x="345" y="720" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="357" y="728" font-size="11" fill="#111111">liqPrice: float</text>
+<rect x="345" y="737" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="357" y="745" font-size="11" fill="#111111">unrealizedPnL: float</text>
+<rect x="345" y="754" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="357" y="762" font-size="11" fill="#111111">roi: float</text>
+<rect x="345" y="771" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="357" y="779" font-size="11" fill="#111111">openedAt: str</text>
+<circle cx="348" cy="802" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="357" y="806" font-size="11" fill="#111111">to_dict(): Dict[str, Any]</text>
+<rect x="650" y="530" width="280" height="271" fill="#ffffff" stroke="#555555" stroke-width="1.3" filter="url(#dropShadow)"/>
+<rect x="650" y="530" width="280" height="30" fill="#e9ecef" stroke="#555555" stroke-width="1.3"/>
+<circle cx="668" cy="545" r="9" fill="#cce5b0" stroke="#333333" stroke-width="1"/>
+<text x="668" y="549" font-size="11" font-weight="bold" text-anchor="middle" fill="#111111">C</text>
+<text x="798.0" y="549.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">LimitOrder</text>
+<line x1="650" y1="774" x2="930" y2="774" stroke="#555555" stroke-width="1.1"/>
+<rect x="660" y="567" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="672" y="575" font-size="11" fill="#111111">id: str</text>
+<rect x="660" y="584" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="672" y="592" font-size="11" fill="#111111">user_id: int</text>
+<rect x="660" y="601" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="672" y="609" font-size="11" fill="#111111">symbol: str</text>
+<rect x="660" y="618" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="672" y="626" font-size="11" fill="#111111">side: str</text>
+<rect x="660" y="635" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="672" y="643" font-size="11" fill="#111111">orderType: str</text>
+<rect x="660" y="652" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="672" y="660" font-size="11" fill="#111111">orderPrice: float</text>
+<rect x="660" y="669" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="672" y="677" font-size="11" fill="#111111">initialPrice: Optional[float]</text>
+<rect x="660" y="686" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="672" y="694" font-size="11" fill="#111111">margin: float</text>
+<rect x="660" y="703" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="672" y="711" font-size="11" fill="#111111">leverage: int</text>
+<rect x="660" y="720" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="672" y="728" font-size="11" fill="#111111">size: float</text>
+<rect x="660" y="737" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="672" y="745" font-size="11" fill="#111111">status: str</text>
+<rect x="660" y="754" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="672" y="762" font-size="11" fill="#111111">createdAt: str</text>
+<circle cx="663" cy="785" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="672" y="789" font-size="11" fill="#111111">to_dict(): Dict[str, Any]</text>
+<rect x="965" y="530" width="280" height="288" fill="#ffffff" stroke="#555555" stroke-width="1.3" filter="url(#dropShadow)"/>
+<rect x="965" y="530" width="280" height="30" fill="#e9ecef" stroke="#555555" stroke-width="1.3"/>
+<circle cx="983" cy="545" r="9" fill="#cce5b0" stroke="#333333" stroke-width="1"/>
+<text x="983" y="549" font-size="11" font-weight="bold" text-anchor="middle" fill="#111111">C</text>
+<text x="1113.0" y="549.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">OrderHistory</text>
+<line x1="965" y1="791" x2="1245" y2="791" stroke="#555555" stroke-width="1.1"/>
+<rect x="975" y="567" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="987" y="575" font-size="11" fill="#111111">id: str</text>
+<rect x="975" y="584" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="987" y="592" font-size="11" fill="#111111">user_id: int</text>
+<rect x="975" y="601" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="987" y="609" font-size="11" fill="#111111">symbol: str</text>
+<rect x="975" y="618" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="987" y="626" font-size="11" fill="#111111">side: str</text>
+<rect x="975" y="635" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="987" y="643" font-size="11" fill="#111111">orderType: str</text>
+<rect x="975" y="652" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="987" y="660" font-size="11" fill="#111111">price: float</text>
+<rect x="975" y="669" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="987" y="677" font-size="11" fill="#111111">closePrice: float</text>
+<rect x="975" y="686" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="987" y="694" font-size="11" fill="#111111">margin: float</text>
+<rect x="975" y="703" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="987" y="711" font-size="11" fill="#111111">leverage: int</text>
+<rect x="975" y="720" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="987" y="728" font-size="11" fill="#111111">pnl: float</text>
+<rect x="975" y="737" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="987" y="745" font-size="11" fill="#111111">roi: float</text>
+<rect x="975" y="754" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="987" y="762" font-size="11" fill="#111111">status: str</text>
+<rect x="975" y="771" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="987" y="779" font-size="11" fill="#111111">time: str</text>
+<circle cx="978" cy="802" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="987" y="806" font-size="11" fill="#111111">to_dict(): Dict[str, Any]</text>
+<path d="M 650.0 461.0 L 650.0 490.0 L 170.0 490.0 L 170.0 530.0" fill="none" stroke="#333333" stroke-width="1.4" marker-end="url(#vee-black)" marker-start="url(#diamond-filled-black)"/>
+<rect x="177.2" y="505.1" width="35.5" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="195.0" y="517.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">0..*</text>
+<path d="M 730.0 461.0 L 730.0 502.0 L 475.0 502.0 L 475.0 530.0" fill="none" stroke="#333333" stroke-width="1.4" marker-end="url(#vee-black)" marker-start="url(#diamond-filled-black)"/>
+<rect x="482.2" y="505.1" width="35.5" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="500.0" y="517.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">0..*</text>
+<path d="M 830.0 461.0 L 830.0 502.0 L 790.0 502.0 L 790.0 530.0" fill="none" stroke="#333333" stroke-width="1.4" marker-end="url(#vee-black)" marker-start="url(#diamond-filled-black)"/>
+<rect x="797.2" y="505.1" width="35.5" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="815.0" y="517.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">0..*</text>
+<path d="M 910.0 461.0 L 910.0 490.0 L 1105.0 490.0 L 1105.0 530.0" fill="none" stroke="#333333" stroke-width="1.4" marker-end="url(#vee-black)" marker-start="url(#diamond-filled-black)"/>
+<rect x="1112.2" y="505.1" width="35.5" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="1130.0" y="517.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">0..*</text>
+<rect x="624.0" y="466.1" width="28.0" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="638.0" y="478.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">1</text>
+<rect x="40" y="110" width="320" height="169" fill="#ffffff" stroke="#555555" stroke-width="1.3" filter="url(#dropShadow)"/>
+<rect x="40" y="110" width="320" height="30" fill="#e9ecef" stroke="#555555" stroke-width="1.3"/>
+<circle cx="58" cy="125" r="9" fill="#ffe6cc" stroke="#333333" stroke-width="1"/>
+<text x="58" y="129" font-size="11" font-weight="bold" text-anchor="middle" fill="#111111">C</text>
+<text x="208.0" y="129.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">AuthSecurityService</text>
+<line x1="40" y1="184" x2="360" y2="184" stroke="#555555" stroke-width="1.1"/>
+<rect x="50" y="147" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="62" y="155" font-size="11" fill="#111111">pending_secrets: Dict[int, str]</text>
+<rect x="50" y="164" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="62" y="172" font-size="11" fill="#111111">backup_codes: Dict[str, Dict]</text>
+<circle cx="53" cy="195" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="62" y="199" font-size="11" fill="#111111">generate_secret(): str</text>
+<circle cx="53" cy="212" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="62" y="216" font-size="11" fill="#111111">get_provisioning_uri(secret, email): str</text>
+<circle cx="53" cy="229" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="62" y="233" font-size="11" fill="#111111">generate_qr_code(uri): str</text>
+<circle cx="53" cy="246" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="62" y="250" font-size="11" fill="#111111">verify_code(secret, code): bool</text>
+<circle cx="53" cy="263" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="62" y="267" font-size="11" fill="#111111">send_backup_code(email): str</text>
+<path d="M 600.0 260.0 L 480.0 260.0 L 480.0 200.0 L 360.0 200.0" fill="none" stroke="#333333" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
+<rect x="457.6" y="223.8" width="44.8" height="16.5" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="480.0" y="235.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">«uses»</text>
+<rect x="1160" y="85" width="360" height="152" fill="#ffffff" stroke="#555555" stroke-width="1.3" filter="url(#dropShadow)"/>
+<rect x="1160" y="85" width="360" height="30" fill="#e9ecef" stroke="#555555" stroke-width="1.3"/>
+<circle cx="1178" cy="100" r="9" fill="#ffe6cc" stroke="#333333" stroke-width="1"/>
+<text x="1178" y="104" font-size="11" font-weight="bold" text-anchor="middle" fill="#111111">C</text>
+<text x="1348.0" y="104.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">TradingService</text>
+<line x1="1160" y1="159" x2="1520" y2="159" stroke="#555555" stroke-width="1.1"/>
+<rect x="1170" y="122" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="1182" y="130" font-size="11" fill="#111111">stress_mode_active: bool</text>
+<rect x="1170" y="139" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="1182" y="147" font-size="11" fill="#111111">price_deviation: float</text>
+<circle cx="1173" cy="170" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="1182" y="174" font-size="11" fill="#111111">get_market_price(symbol): float</text>
+<circle cx="1173" cy="187" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="1182" y="191" font-size="11" fill="#111111">create_order(payload): dict</text>
+<circle cx="1173" cy="204" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="1182" y="208" font-size="11" fill="#111111">close_position(pos_id): dict</text>
+<circle cx="1173" cy="221" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="1182" y="225" font-size="11" fill="#111111">check_liquidations(): void</text>
+<rect x="1160" y="265" width="360" height="118" fill="#ffffff" stroke="#555555" stroke-width="1.3" filter="url(#dropShadow)"/>
+<rect x="1160" y="265" width="360" height="30" fill="#e9ecef" stroke="#555555" stroke-width="1.3"/>
+<circle cx="1178" cy="280" r="9" fill="#ffe6cc" stroke="#333333" stroke-width="1"/>
+<text x="1178" y="284" font-size="11" font-weight="bold" text-anchor="middle" fill="#111111">C</text>
+<text x="1348.0" y="284.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">AnalyticsService</text>
+<line x1="1160" y1="339" x2="1520" y2="339" stroke="#555555" stroke-width="1.1"/>
+<rect x="1170" y="302" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="1182" y="310" font-size="11" fill="#111111">classifier: Classifier</text>
+<rect x="1170" y="319" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="1182" y="327" font-size="11" fill="#111111">indicators: List[str]</text>
+<circle cx="1173" cy="350" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="1182" y="354" font-size="11" fill="#111111">compute_indicators(series): DataFrame</text>
+<circle cx="1173" cy="367" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="1182" y="371" font-size="11" fill="#111111">predict_trend(candles: list): dict</text>
+<rect x="1275" y="530" width="250" height="152" fill="#ffffff" stroke="#555555" stroke-width="1.3" filter="url(#dropShadow)"/>
+<rect x="1275" y="530" width="250" height="30" fill="#e9ecef" stroke="#555555" stroke-width="1.3"/>
+<circle cx="1293" cy="545" r="9" fill="#ffe6cc" stroke="#333333" stroke-width="1"/>
+<text x="1293" y="549" font-size="11" font-weight="bold" text-anchor="middle" fill="#111111">C</text>
+<text x="1408.0" y="549.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">ScenarioService</text>
+<line x1="1275" y1="604" x2="1525" y2="604" stroke="#555555" stroke-width="1.1"/>
+<rect x="1285" y="567" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="1297" y="575" font-size="11" fill="#111111">symbols_catalog: List[Tuple]</text>
+<rect x="1285" y="584" width="6" height="6" fill="#dc3545" stroke="#842029" stroke-width="0.6"/>
+<text x="1297" y="592" font-size="11" fill="#111111">scenarios_cache: Dict</text>
+<circle cx="1288" cy="615" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="1297" y="619" font-size="11" fill="#111111">calculate_rsi(closes): float</text>
+<circle cx="1288" cy="632" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="1297" y="636" font-size="11" fill="#111111">calculate_sma(closes): float</text>
+<circle cx="1288" cy="649" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="1297" y="653" font-size="11" fill="#111111">generate_scenario(id): dict</text>
+<circle cx="1288" cy="666" r="3.5" fill="#198754" stroke="#0f5132" stroke-width="0.6"/>
+<text x="1297" y="670" font-size="11" fill="#111111">evaluate_decision(id, side): dict</text>
+<path d="M 1160.0 155.0 L 1055.0 155.0 L 1055.0 310.0 L 960.0 310.0" fill="none" stroke="#333333" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
+<path d="M 1340.0 223.0 L 1340.0 265.0" fill="none" stroke="#333333" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
+<path d="M 1520.0 165.0 L 1542.0 165.0 L 1542.0 620.0 L 1525.0 620.0" fill="none" stroke="#333333" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
+</svg>

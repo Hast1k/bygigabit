@@ -1,0 +1,35 @@
+stateDiagram-v2
+    [*] --> ФормуванняОрдера
+    
+    state ФормуванняОрдера {
+        [*] --> ВибірПараметрів
+        ВибірПараметрів --> Валідація : Натискання кнопки
+        Валідація --> НедостатнійБаланс : balance < margin
+        НедостатнійБаланс --> ВибірПараметрів : Коригування
+    }
+
+    Валідація --> LimitPending : Тип ордера = Limit
+    Валідація --> OpenPosition : Тип ордера = Market
+
+    state LimitPending {
+        [*] --> ОчікуванняЦіни
+        ОчікуванняЦіни : Заморожена маржа
+    }
+
+    state OpenPosition {
+        [*] --> МоніторингРинку
+        МоніторингРинку : Динамічний Floating PnL
+        МоніторингРинку : Контроль дистанції до liqPrice
+    }
+
+    LimitPending --> OpenPosition : Ринкова ціна досягла лімітної
+    LimitPending --> Cancelled : Трейдер скасував заявку
+
+    OpenPosition --> ClosedByTrader : Трейдер натиснув «Закрити»
+    OpenPosition --> Liquidated : Ціна перетнула liqPrice (Margin Call)
+
+    ClosedByTrader --> ArchivedRecord : Повернення коштів + PnL
+    Liquidated --> ArchivedRecord : Повна втрата маржі
+
+    Cancelled --> [*]
+    ArchivedRecord --> [*]

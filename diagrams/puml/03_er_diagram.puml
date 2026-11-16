@@ -1,0 +1,88 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam roundCorner 6
+skinparam shadowing false
+
+skinparam entity {
+    borderColor #2B6CB0
+    backgroundColor #F7FAFC
+    headerBackgroundColor #EBF8FF
+    fontColor #1A202C
+}
+skinparam arrow {
+    color #2B6CB0
+    fontColor #2D3748
+}
+
+entity "users" as users {
+    * id : INTEGER [PK, AUTOINCREMENT]
+    --
+    * email : VARCHAR(255) [UNIQUE, NOT NULL]
+    * password_hash : VARCHAR(255) [NOT NULL]
+    * role : VARCHAR(20) [DEFAULT 'trader']
+    * balance : NUMERIC(15,2) [DEFAULT 10000.00]
+    * is_blocked : BOOLEAN [DEFAULT FALSE]
+    * is_totp_enabled : BOOLEAN [DEFAULT FALSE]
+    totp_secret : VARCHAR(64) [NULLABLE]
+    * created_at : TIMESTAMP [DEFAULT NOW()]
+}
+
+entity "sessions" as sessions {
+    * token : VARCHAR(64) [PK]
+    --
+    * user_id : INTEGER [FK -> users.id, ON DELETE CASCADE]
+    * created_at : TIMESTAMP [DEFAULT NOW()]
+    * expires_at : TIMESTAMP [NOT NULL]
+}
+
+entity "positions" as positions {
+    * id : VARCHAR(36) [PK, UUID]
+    --
+    * user_id : INTEGER [FK -> users.id, ON DELETE CASCADE]
+    * symbol : VARCHAR(20) [NOT NULL]
+    * side : VARCHAR(10) [NOT NULL]
+    * entry_price : NUMERIC(15,4) [NOT NULL]
+    * margin : NUMERIC(15,2) [NOT NULL]
+    * leverage : INTEGER [NOT NULL]
+    * size : NUMERIC(15,6) [NOT NULL]
+    * liq_price : NUMERIC(15,4) [NOT NULL]
+    * status : VARCHAR(20) [DEFAULT 'open']
+    * created_at : TIMESTAMP [DEFAULT NOW()]
+}
+
+entity "limit_orders" as limit_orders {
+    * id : VARCHAR(36) [PK, UUID]
+    --
+    * user_id : INTEGER [FK -> users.id, ON DELETE CASCADE]
+    * symbol : VARCHAR(20) [NOT NULL]
+    * side : VARCHAR(10) [NOT NULL]
+    * order_price : NUMERIC(15,4) [NOT NULL]
+    * margin : NUMERIC(15,2) [NOT NULL]
+    * leverage : INTEGER [NOT NULL]
+    * status : VARCHAR(20) [DEFAULT 'pending']
+    * created_at : TIMESTAMP [DEFAULT NOW()]
+}
+
+entity "order_history" as order_history {
+    * id : VARCHAR(36) [PK, UUID]
+    --
+    * user_id : INTEGER [FK -> users.id, ON DELETE CASCADE]
+    * symbol : VARCHAR(20) [NOT NULL]
+    * side : VARCHAR(10) [NOT NULL]
+    * entry_price : NUMERIC(15,4) [NOT NULL]
+    * close_price : NUMERIC(15,4) [NOT NULL]
+    * margin : NUMERIC(15,2) [NOT NULL]
+    * leverage : INTEGER [NOT NULL]
+    * pnl : NUMERIC(15,2) [NOT NULL]
+    * close_reason : VARCHAR(50) [NOT NULL]
+    * created_at : TIMESTAMP [NOT NULL]
+    * closed_at : TIMESTAMP [DEFAULT NOW()]
+}
+
+users ||--o{ sessions : "1 : N (CASCADE)"
+users ||--o{ positions : "1 : N (CASCADE)"
+users ||--o{ limit_orders : "1 : N (CASCADE)"
+users ||--o{ order_history : "1 : N (CASCADE)"
+@enduml

@@ -1,11 +1,16 @@
 let allUsers = [];
+let allPositions = [];
+let allOrders = [];
 let areaChartInstance = null;
 let barChartInstance = null;
+let activeModalUserId = null;
+
 window.addEventListener('DOMContentLoaded', () => {
   initSidebarToggle();
   initCharts();
   loadAdminData();
 });
+
 function initSidebarToggle() {
   const sidebarToggle = document.querySelector('#sidebarToggle');
   if (sidebarToggle) {
@@ -23,6 +28,19 @@ function initSidebarToggle() {
     });
   }
 }
+
+function switchNav(linkEl) {
+  document.querySelectorAll('.sb-nav-link').forEach(el => el.classList.remove('active'));
+  linkEl.classList.add('active');
+  const targetId = linkEl.getAttribute('href');
+  if (targetId && targetId.startsWith('#')) {
+    const targetSection = document.querySelector(targetId);
+    if (targetSection) {
+      targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+}
+
 function syncSearch(val) {
   const tableInput = document.getElementById('userSearchInput');
   if (tableInput) {
@@ -30,9 +48,16 @@ function syncSearch(val) {
     filterUsers();
   }
 }
+
 async function loadAdminData() {
-  await Promise.all([loadAdminStats(), loadAdminUsers()]);
+  await Promise.all([
+    loadAdminStats(),
+    loadAdminUsers(),
+    loadAdminPositions(),
+    loadAdminOrders()
+  ]);
 }
+
 async function loadAdminStats() {
   try {
     const res = await fetch('/api/admin/stats');
@@ -41,13 +66,20 @@ async function loadAdminStats() {
       const s = data.stats;
       document.getElementById('statTotalUsers').textContent = s.totalUsers;
       document.getElementById('statActivePositions').textContent = s.activePositions;
-      document.getElementById('statTotalBalance').textContent = '$' + s.totalSystemBalance.toLocaleString('en-US', { minimumFractionDigits: 2 });
+      document.getElementById('statTotalBalance').textContent = '$' + (s.totalSystemBalance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
       document.getElementById('statBlockedUsers').textContent = s.blockedUsers;
+      
+      const ordersEl = document.getElementById('statActiveOrders');
+      if (ordersEl) ordersEl.textContent = s.activeLimitOrders || 0;
+      
+      const marginEl = document.getElementById('statMarginLocked');
+      if (marginEl) marginEl.textContent = '$' + (s.totalMarginLocked || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
     }
   } catch (err) {
     console.error("Помилка завантаження статистики адмінки:", err);
   }
 }
+
 async function loadAdminUsers() {
   try {
     const res = await fetch('/api/admin/users');
@@ -60,20 +92,29 @@ async function loadAdminUsers() {
     console.error("Помилка завантаження користувачів:", err);
   }
 }
+
 function filterUsers() {
   const query = document.getElementById('userSearchInput').value.toLowerCase().trim();
   const roleFilter = document.getElementById('userRoleFilter').value;
+  const statusFilter = document.getElementById('userStatusFilter') ? document.getElementById('userStatusFilter').value : 'all';
   const tbody = document.getElementById('usersTableBody');
   tbody.innerHTML = '';
+
   const filtered = allUsers.filter(u => {
-    if (query && !u.email.toLowerCase().includes(query)) return false;
+    const matchesEmail = u.email && u.email.toLowerCase().includes(query);
+    const matchesNick = u.nickname && u.nickname.toLowerCase().includes(query);
+    if (query && !matchesEmail && !matchesNick) return false;
     if (roleFilter !== 'all' && u.role !== roleFilter) return false;
+    if (statusFilter === 'active' && u.isBlocked) return false;
+    if (statusFilter === 'blocked' && !u.isBlocked) return false;
     return true;
   });
+
   if (filtered.length === 0) {
     tbody.innerHTML = '<tr><td colspan="9" class="empty-state">Користувачів за вказаним фільтром не знайдено</td></tr>';
     return;
   }
+
   filtered.forEach(u => {
     const tr = document.createElement('tr');
     tr.className = 'mono';
@@ -82,26 +123,45 @@ function filterUsers() {
     const statusBadge = isBlocked 
       ? '<span class="badge badge-red">ЗАБЛОКОВАНО</span>' 
       : '<span class="badge badge-green">АКТИВНИЙ</span>';
-    const btnText = isBlocked ? 'Розблокувати' : 'Заблокувати';
-    const btnClass = isBlocked ? 'btn-success' : 'btn-danger';
+    const btnBlockText = isBlocked ? 'Розблокувати' : 'Блокувати';
+    const btnBlockClass = isBlocked ? 'btn-success' : 'btn-danger';
+
     tr.innerHTML = `
       <td style="color:#94a3b8;">#${u.id}</td>
-      <td style="font-weight:600; color:#fff;">${u.email}</td>
+      <td style="font-weight:600; color:#fff;">
+        <div>${u.email}</div>
+        ${u.nickname ? `<div style="font-size:10px; color:var(--text-muted); font-weight:400;">@${u.nickname}</div>` : ''}
+      </td>
       <td><span class="badge ${roleBadgeClass}">${u.role.toUpperCase()}</span></td>
-      <td>${u.twoFactor ? '<span style="color:var(--green);">Увімкнено (Email)</span>' : '<span style="color:#64748b;">Вимкнено</span>'}</td>
-      <td style="font-weight:700;">$${u.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-      <td>${u.tradesCount}</td>
-      <td style="font-size:11px; color:#94a3b8;">${u.registeredAt}</td>
+      <td>${u.twoFactor ? '<span style="color:var(--green);"><i class="fas fa-check-circle"></i> Активно</span>' : '<span style="color:#64748b;"><i class="fas fa-times-circle"></i> Вимкнено</span>'}</td>
+      <td style="font-weight:700; color:var(--green);">$${u.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+      <td>${u.tradesCount || 0}</td>
+      <td style="font-size:11px; color:#94a3b8;">${u.registeredAt || '-'}</td>
       <td>${statusBadge}</td>
       <td>
-        <button class="btn ${btnClass}" style="padding:4px 10px; font-size:11px;" onclick="toggleBlockUser(${u.id})">
-          ${btnText}
-        </button>
+        <div class="admin-actions-cell">
+          <button class="btn-action-sm btn-action-balance" title="Корекція балансу" onclick="openBalanceModal(${u.id}, '${u.email}', ${u.balance})">
+            <i class="fas fa-wallet"></i> Баланс
+          </button>
+          <button class="btn-action-sm btn-action-role" title="Змінити роль користувача" onclick="changeUserRole(${u.id}, '${u.role}')">
+            <i class="fas fa-user-shield"></i> Роль
+          </button>
+          <button class="btn-action-sm" title="Скинути 2FA" onclick="resetUser2FA(${u.id}, '${u.email}')">
+            <i class="fas fa-key"></i> 2FA
+          </button>
+          <button class="btn ${btnBlockClass}" style="padding:4px 8px; font-size:10px;" onclick="toggleBlockUser(${u.id})">
+            ${btnBlockText}
+          </button>
+          <button class="btn-action-sm btn-action-history" title="Переглянути угоди" onclick="openTradesModal(${u.id}, '${u.email}')">
+            <i class="fas fa-history"></i> Угоди
+          </button>
+        </div>
       </td>
     `;
     tbody.appendChild(tr);
   });
 }
+
 async function toggleBlockUser(userId) {
   try {
     const res = await fetch(`/api/admin/users/${userId}/toggle-block`, { method: 'POST' });
@@ -116,11 +176,312 @@ async function toggleBlockUser(userId) {
     showToast('Помилка сервера при зміні статусу');
   }
 }
+
+async function changeUserRole(userId, currentRole) {
+  const newRole = currentRole === 'Admin' ? 'Trader' : 'Admin';
+  if (!confirm(`Змінити роль користувача #${userId} з ${currentRole} на ${newRole}?`)) {
+    return;
+  }
+  try {
+    const res = await fetch(`/api/admin/users/${userId}/role`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role: newRole })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showToast(data.message);
+      loadAdminUsers();
+    } else {
+      showToast(`Помилка: ${data.error}`);
+    }
+  } catch (err) {
+    showToast('Помилка сервера при зміні ролі');
+  }
+}
+
+async function resetUser2FA(userId, email) {
+  if (!confirm(`Скинути налаштування 2FA для ${email}? Користувач зможе увійти без другого фактора.`)) {
+    return;
+  }
+  try {
+    const res = await fetch(`/api/admin/users/${userId}/reset-2fa`, { method: 'POST' });
+    const data = await res.json();
+    if (data.ok) {
+      showToast(data.message);
+      loadAdminUsers();
+    } else {
+      showToast(`Помилка: ${data.error}`);
+    }
+  } catch (err) {
+    showToast('Помилка сервера при скиданні 2FA');
+  }
+}
+
+function openBalanceModal(userId, email, currentBalance) {
+  activeModalUserId = userId;
+  document.getElementById('balanceModalEmail').textContent = email;
+  document.getElementById('balanceModalInput').value = currentBalance;
+  document.getElementById('balanceModal').classList.add('active');
+}
+
+function closeBalanceModal() {
+  activeModalUserId = null;
+  document.getElementById('balanceModal').classList.remove('active');
+}
+
+function setQuickBalance(amount) {
+  document.getElementById('balanceModalInput').value = amount;
+}
+
+async function submitBalanceChange() {
+  if (!activeModalUserId) return;
+  const rawVal = document.getElementById('balanceModalInput').value;
+  const newBalance = parseFloat(rawVal);
+  if (isNaN(newBalance) || newBalance < 0) {
+    showToast('Введіть коректну суму балансу (>= 0)');
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/admin/users/${activeModalUserId}/balance`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ balance: newBalance })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showToast(data.message);
+      closeBalanceModal();
+      loadAdminData();
+    } else {
+      showToast(`Помилка: ${data.error}`);
+    }
+  } catch (err) {
+    showToast('Помилка сервера при оновленні балансу');
+  }
+}
+
+async function openTradesModal(userId, email) {
+  document.getElementById('tradesModalEmail').textContent = email;
+  const tbody = document.getElementById('userTradesTableBody');
+  tbody.innerHTML = '<tr><td colspan="10" class="empty-state">Завантаження журналу угод...</td></tr>';
+  document.getElementById('tradesModal').classList.add('active');
+
+  try {
+    const res = await fetch(`/api/admin/users/${userId}/trades`);
+    const data = await res.json();
+    if (data.ok) {
+      const trades = data.trades || [];
+      tbody.innerHTML = '';
+      if (trades.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" class="empty-state">У трейдера поки немає завершених угод</td></tr>';
+        return;
+      }
+      trades.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.className = 'mono';
+        const pnlColor = t.pnl >= 0 ? 'var(--green)' : 'var(--red)';
+        const sideBadge = t.side === 'long' ? '<span class="badge badge-green">LONG</span>' : '<span class="badge badge-red">SHORT</span>';
+        tr.innerHTML = `
+          <td style="color:#94a3b8;">${t.id}</td>
+          <td style="font-weight:700;">${t.symbol}</td>
+          <td>${sideBadge}</td>
+          <td>$${t.price.toFixed(2)}</td>
+          <td>$${t.closePrice.toFixed(2)}</td>
+          <td>$${t.margin.toFixed(2)}</td>
+          <td>${t.leverage}x</td>
+          <td style="font-weight:700; color:${pnlColor};">${t.pnl >= 0 ? '+' : ''}$${t.pnl.toFixed(2)}</td>
+          <td style="color:${pnlColor};">${t.roi >= 0 ? '+' : ''}${t.roi.toFixed(2)}%</td>
+          <td style="font-size:10px; color:#94a3b8;">${t.time}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } else {
+      tbody.innerHTML = `<tr><td colspan="10" class="empty-state">Помилка: ${data.error}</td></tr>`;
+    }
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="10" class="empty-state">Помилка зв\'язку з сервером</td></tr>';
+  }
+}
+
+function closeTradesModal() {
+  document.getElementById('tradesModal').classList.remove('active');
+}
+
+async function loadAdminPositions() {
+  const tbody = document.getElementById('positionsTableBody');
+  if (!tbody) return;
+
+  try {
+    const res = await fetch('/api/admin/positions');
+    const data = await res.json();
+    if (data.ok) {
+      allPositions = data.positions || [];
+      renderPositionsTable();
+    }
+  } catch (err) {
+    console.error("Помилка завантаження відкритих позицій:", err);
+  }
+}
+
+function renderPositionsTable() {
+  const tbody = document.getElementById('positionsTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  if (allPositions.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="11" class="empty-state">На даний момент немає активних відкритих позицій по платформі</td></tr>';
+    return;
+  }
+
+  allPositions.forEach(p => {
+    const tr = document.createElement('tr');
+    tr.className = 'mono';
+    const sideBadge = p.side === 'long' ? '<span class="badge badge-green">LONG</span>' : '<span class="badge badge-red">SHORT</span>';
+    tr.innerHTML = `
+      <td style="color:#94a3b8;">${p.id}</td>
+      <td style="font-weight:600; color:#fff;">${p.userEmail || ('User #' + p.user_id)}</td>
+      <td style="font-weight:700; color:var(--cyan);">${p.symbol}</td>
+      <td>${sideBadge}</td>
+      <td>${p.size}</td>
+      <td>$${p.entryPrice.toFixed(2)}</td>
+      <td style="color:var(--red); font-weight:700;">$${p.liqPrice.toFixed(2)}</td>
+      <td>$${p.margin.toFixed(2)}</td>
+      <td>${p.leverage}x</td>
+      <td style="font-size:11px; color:#94a3b8;">${p.time || '-'}</td>
+      <td>
+        <button class="btn btn-danger" style="padding:4px 8px; font-size:10px;" onclick="adminClosePosition(${p.user_id}, '${p.id}', ${p.entryPrice})">
+          <i class="fas fa-times-circle"></i> Закрити
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+async function adminClosePosition(userId, posId, fallbackPrice) {
+  if (!confirm(`Примусово закрити відкриту позицію #${posId} трейдера #${userId}?`)) {
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/admin/positions/${userId}/${posId}/close`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ markPrice: fallbackPrice })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showToast(data.message);
+      loadAdminData();
+    } else {
+      showToast(`Помилка: ${data.error}`);
+    }
+  } catch (err) {
+    showToast('Помилка сервера при закритті позиції');
+  }
+}
+
+async function loadAdminOrders() {
+  const tbody = document.getElementById('ordersTableBody');
+  if (!tbody) return;
+
+  try {
+    const res = await fetch('/api/admin/orders');
+    const data = await res.json();
+    if (data.ok) {
+      allOrders = data.orders || [];
+      renderOrdersTable();
+    }
+  } catch (err) {
+    console.error("Помилка завантаження ордерів:", err);
+  }
+}
+
+function renderOrdersTable() {
+  const tbody = document.getElementById('ordersTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  if (allOrders.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Активних лімітних ордерів не знайдено</td></tr>';
+    return;
+  }
+
+  allOrders.forEach(o => {
+    const tr = document.createElement('tr');
+    tr.className = 'mono';
+    const sideBadge = o.side === 'buy' || o.side === 'long' 
+      ? '<span class="badge badge-green">BUY</span>' 
+      : '<span class="badge badge-red">SELL</span>';
+
+    tr.innerHTML = `
+      <td style="color:#94a3b8;">${o.id}</td>
+      <td style="font-weight:600; color:#fff;">${o.userEmail || ('User #' + o.user_id)}</td>
+      <td style="font-weight:700; color:var(--cyan);">${o.symbol}</td>
+      <td>${sideBadge}</td>
+      <td style="font-weight:700;">$${parseFloat(o.price || 0).toFixed(2)}</td>
+      <td>$${parseFloat(o.margin || 0).toFixed(2)}</td>
+      <td style="font-size:11px; color:#94a3b8;">${o.time || '-'}</td>
+      <td>
+        <button class="btn btn-outline" style="padding:4px 8px; font-size:10px; color:var(--red); border-color:var(--red);" onclick="adminCancelOrder(${o.user_id}, '${o.id}')">
+          <i class="fas fa-ban"></i> Скасувати
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+async function adminCancelOrder(userId, orderId) {
+  if (!confirm(`Скасувати лімітний ордер #${orderId} та повернути маржу трейдеру?`)) {
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/admin/orders/${userId}/${orderId}/cancel`, { method: 'POST' });
+    const data = await res.json();
+    if (data.ok) {
+      showToast(data.message);
+      loadAdminData();
+    } else {
+      showToast(`Помилка: ${data.error}`);
+    }
+  } catch (err) {
+    showToast('Помилка сервера при скасуванні ордера');
+  }
+}
+
+function updateChartColors(theme) {
+  if (typeof Chart === 'undefined') return;
+  const isLight = theme === 'light';
+  Chart.defaults.color = isLight ? '#475569' : '#94a3af';
+  Chart.defaults.borderColor = isLight ? '#e2e8f0' : '#1f293d';
+  const gridColor = isLight ? 'rgba(226, 232, 240, 0.8)' : 'rgba(31, 41, 61, 0.5)';
+  if (areaChartInstance) {
+    areaChartInstance.options.scales.x.grid.color = gridColor;
+    areaChartInstance.options.scales.y.grid.color = gridColor;
+    areaChartInstance.update();
+  }
+  if (barChartInstance) {
+    barChartInstance.options.scales.y.grid.color = gridColor;
+    barChartInstance.update();
+  }
+}
+
 function initCharts() {
   if (typeof Chart === 'undefined') return;
-  Chart.defaults.color = '#94a3af';
-  Chart.defaults.borderColor = '#1f293d';
+  const currentTheme = localStorage.getItem('bygigabit_theme') || 'dark';
+  const isLight = currentTheme === 'light';
+  Chart.defaults.color = isLight ? '#475569' : '#94a3af';
+  Chart.defaults.borderColor = isLight ? '#e2e8f0' : '#1f293d';
   Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
+
+  window.addEventListener('themechange', (e) => {
+    updateChartColors(e.detail.theme);
+  });
+
   const ctxArea = document.getElementById('adminAreaChart');
   if (ctxArea) {
     areaChartInstance = new Chart(ctxArea, {
@@ -129,7 +490,7 @@ function initCharts() {
         labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
         datasets: [{
           label: 'Торговий об\'єм (USDT)',
-          data: [12400, 18500, 24100, 31200, 48900, 56200, 68400],
+          data: [18400, 26500, 39100, 51200, 68900, 84200, 102400],
           borderColor: '#38bdf8',
           backgroundColor: 'rgba(56, 189, 248, 0.12)',
           fill: true,
@@ -158,6 +519,7 @@ function initCharts() {
       }
     });
   }
+
   const ctxBar = document.getElementById('adminBarChart');
   if (ctxBar) {
     barChartInstance = new Chart(ctxBar, {
@@ -166,7 +528,7 @@ function initCharts() {
         labels: ['BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'BNB/USDT', 'XRP/USDT'],
         datasets: [{
           label: 'Кількість угод',
-          data: [142, 89, 64, 38, 22],
+          data: [214, 142, 98, 54, 38],
           backgroundColor: [
             'rgba(59, 130, 246, 0.85)',
             'rgba(16, 185, 129, 0.85)',
@@ -191,6 +553,7 @@ function initCharts() {
     });
   }
 }
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   if (!t) return;

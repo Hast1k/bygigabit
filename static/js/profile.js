@@ -1,3 +1,412 @@
+let currentUserData = null;
+let user2FAEnabled = false;
+
+// ЗАВАНТАЖЕННЯ ДАНИХ ПРОФІЛЮ ТА СТАНУ 2FA
+async function loadUserProfile() {
+  try {
+    const res = await fetch('/api/auth/me');
+    if (res.status === 401) {
+      window.location.href = '/auth?next=/profile';
+      return;
+    }
+    const data = await res.json();
+    if (data.ok && data.user) {
+      currentUserData = data.user;
+      user2FAEnabled = !!data.user.twoFactorEnabled;
+
+      // Оновлення нікнейма
+      const nickEl = document.getElementById('profileNickname');
+      if (nickEl) {
+        nickEl.textContent = data.user.nickname || (data.user.email ? data.user.email.split('@')[0] : 'Трейдер');
+      }
+
+      // Оновлення пошти
+      const emailEl = document.getElementById('userEmailMeta');
+      if (emailEl) {
+        emailEl.textContent = data.user.email;
+      }
+
+      // Оновлення статусу 2FA
+      update2FAStatusUI(user2FAEnabled);
+
+      // Оновлення кваліфікації
+      const expLevel = data.user.experienceLevel || localStorage.getItem('bygigabit_experience_level') || 'beginner';
+      applyQualificationUI(expLevel);
+
+      // Оновлення бейджа ролі у шапці
+      const navBadge = document.getElementById('navRoleBadge');
+      if (navBadge) {
+        navBadge.textContent = (data.user.role || 'TRADER').toUpperCase() + ' ROLE';
+      }
+    }
+  } catch (err) {
+    console.error('Помилка завантаження профілю:', err);
+  }
+}
+
+// ОНОВЛЕННЯ СТАТУСУ ТА КНОПОК 2FA
+function update2FAStatusUI(enabled) {
+  user2FAEnabled = !!enabled;
+
+  const statusWord = document.getElementById('twoFaStatusWord');
+  if (statusWord) {
+    statusWord.textContent = enabled ? 'Увімкнено' : 'Вимкнено';
+    statusWord.style.color = enabled ? 'var(--green)' : '#a8a29e';
+  }
+
+  const metaText = document.getElementById('user2FAStatusText');
+  if (metaText) {
+    metaText.innerHTML = enabled
+      ? '<span class="status-active-tag" style="color:var(--green); font-weight:700;">Увімкнено</span>'
+      : '<span class="status-inactive-tag" style="color:#a8a29e; font-weight:600;">Вимкнено</span>';
+  }
+
+  const btnAction = document.getElementById('btn2FAAction');
+  if (btnAction) {
+    btnAction.textContent = enabled ? 'Вимкнути 2FA' : 'Увімкнути 2FA';
+  }
+}
+
+// РЕДАГУВАННЯ НІКНЕЙМА
+function openEditNickname() {
+  const box = document.getElementById('nicknameEditBox');
+  const input = document.getElementById('inputNewNickname');
+  const currentNick = document.getElementById('profileNickname').textContent;
+
+  if (box && input) {
+    box.style.display = 'flex';
+    input.value = currentNick.trim();
+    input.focus();
+  }
+}
+
+function closeEditNickname() {
+  const box = document.getElementById('nicknameEditBox');
+  if (box) {
+    box.style.display = 'none';
+  }
+}
+
+async function saveNickname() {
+  const input = document.getElementById('inputNewNickname');
+  if (!input) return;
+
+  const newNick = input.value.trim();
+  if (!newNick) {
+    showToast("Ім'я користувача не може бути порожнім");
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/user/nickname', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nickname: newNick })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      document.getElementById('profileNickname').textContent = data.nickname;
+      showToast(data.message || "Ім'я успішно оновлено");
+      closeEditNickname();
+
+      // Оновлюємо localStorage
+      const cached = localStorage.getItem('bygigabit_user');
+      if (cached) {
+        try {
+          const u = JSON.parse(cached);
+          u.nickname = data.nickname;
+          localStorage.setItem('bygigabit_user', JSON.stringify(u));
+        } catch (e) {}
+      }
+    } else {
+      showToast(data.error || "Помилка оновлення імені");
+    }
+  } catch (err) {
+    showToast("Помилка з'єднання із сервером");
+  }
+}
+
+// ПЕРЕМИКАННЯ КВАЛІФІКАЦІЇ ТРЕЙДЕРА
+function applyQualificationUI(level) {
+  const pillBeg = document.getElementById('profPillBeginner');
+  const pillPro = document.getElementById('profPillPro');
+
+  if (pillBeg && pillPro) {
+    if (level === 'pro') {
+      pillBeg.classList.remove('active');
+      pillPro.classList.add('active');
+    } else {
+      pillPro.classList.remove('active');
+      pillBeg.classList.add('active');
+    }
+  }
+}
+
+async function selectProfileLevel(level) {
+  applyQualificationUI(level);
+  localStorage.setItem('bygigabit_experience_level', level);
+
+  // Оновлення навігаційної пілюлі
+  const navPill = document.querySelector('.exp-toggle-pill');
+  if (navPill) {
+    if (level === 'pro') {
+      navPill.className = 'exp-toggle-pill pro';
+      const label = navPill.querySelector('.exp-label');
+      if (label) label.textContent = 'PRO ТРЕЙДЕР';
+    } else {
+      navPill.className = 'exp-toggle-pill beginner';
+      const label = navPill.querySelector('.exp-label');
+      if (label) label.textContent = 'НОВАЧОК';
+    }
+  }
+
+  try {
+    await fetch('/api/user/experience', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ experienceLevel: level })
+    });
+    showToast(`Рівень кваліфікації оновлено: ${level === 'pro' ? 'PRO' : 'Новачок'}`);
+  } catch (e) {}
+}
+
+// ПОКАЗ / ПРИХОВУВАННЯ ПАРОЛЯ ЧЕРЕЗ ОЧКО
+function togglePassField(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+
+  const isPassword = input.type === 'password';
+  input.type = isPassword ? 'text' : 'password';
+
+  if (btn) {
+    if (isPassword) {
+      btn.innerHTML = `
+        <svg class="eye-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        </svg>
+      `;
+      btn.style.color = 'var(--cyan)';
+    } else {
+      btn.innerHTML = `
+        <svg class="eye-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+      `;
+      btn.style.color = '#78716c';
+    }
+  }
+}
+
+// ЗМІНА ПАРОЛЯ
+async function handlePasswordChange(e) {
+  e.preventDefault();
+
+  const currentPassword = document.getElementById('currPassword').value;
+  const newPassword = document.getElementById('newPassword').value;
+  const repeatPassword = document.getElementById('repeatPassword').value;
+
+  if (newPassword.length < 8 || newPassword.length > 128) {
+    showToast('Новий пароль має містити від 8 до 128 символів');
+    return;
+  }
+
+  if (newPassword !== repeatPassword) {
+    showToast('Новий пароль та повтор не співпадають');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/user/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword, newPassword, repeatPassword })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showToast(data.message || 'Пароль успішно змінено. Інші сеанси завершено.');
+      document.getElementById('formChangePassword').reset();
+    } else {
+      showToast(data.error || 'Помилка зміни пароля');
+    }
+  } catch (err) {
+    showToast("Помилка з'єднання із сервером");
+  }
+}
+
+// 2FA УВІМКНУТИ / ВИМКНУТИ ТА ЗГОРТАННЯ
+async function handle2FAToggleClick() {
+  if (user2FAEnabled) {
+    // Вже увімкнено -> розгортаємо панель вимкнення
+    const disablePanel = document.getElementById('panelDisable2FA');
+    const enablePanel = document.getElementById('panelEnable2FA');
+    if (enablePanel) enablePanel.style.display = 'none';
+
+    if (disablePanel) {
+      const isVisible = disablePanel.style.display === 'block';
+      disablePanel.style.display = isVisible ? 'none' : 'block';
+      if (!isVisible) {
+        document.getElementById('disableVerifyCode').value = '';
+        document.getElementById('disableVerifyCode').focus();
+      }
+    }
+  } else {
+    // Вимкнено -> розгортаємо панель увімкнення та генеруємо новий QR і ключ
+    const enablePanel = document.getElementById('panelEnable2FA');
+    const disablePanel = document.getElementById('panelDisable2FA');
+    if (disablePanel) disablePanel.style.display = 'none';
+
+    if (enablePanel) {
+      const isVisible = enablePanel.style.display === 'block';
+      if (isVisible) {
+        enablePanel.style.display = 'none';
+      } else {
+        enablePanel.style.display = 'block';
+        await generateAndShow2FASecret();
+      }
+    }
+  }
+}
+
+// ГЕНЕРАЦІЯ УНІКАЛЬНОГО КЛЮЧА ТА ВЕКТОРНОГО SVG QR-КОДУ
+async function generateAndShow2FASecret() {
+  const qrWrapper = document.getElementById('qrSvgWrapper');
+  const secretInput = document.getElementById('totpSecretValue');
+
+  if (qrWrapper) {
+    qrWrapper.innerHTML = '<div class="qr-loading-spinner">Генерація безпечного ключа...</div>';
+  }
+
+  try {
+    const res = await fetch('/api/user/2fa/generate-secret', { method: 'POST' });
+    const data = await res.json();
+    if (data.ok) {
+      if (secretInput) {
+        secretInput.value = data.secret;
+      }
+      if (qrWrapper) {
+        qrWrapper.innerHTML = data.qr_svg;
+      }
+      const verifyInput = document.getElementById('enableVerifyCode');
+      if (verifyInput) {
+        verifyInput.value = '';
+        verifyInput.focus();
+      }
+    } else {
+      if (qrWrapper) {
+        qrWrapper.innerHTML = '<div style="color:var(--red); font-size:11px;">Помилка створення QR</div>';
+      }
+      showToast(data.error || 'Помилка генерації ключа 2FA');
+    }
+  } catch (err) {
+    if (qrWrapper) {
+      qrWrapper.innerHTML = '<div style="color:var(--red); font-size:11px;">Помилка мережі</div>';
+    }
+    showToast("Помилка з'єднання із сервером");
+  }
+}
+
+// КОПІЮВАННЯ СЕКРЕТНОГО КЛЮЧА
+function copySecretKey() {
+  const secretInput = document.getElementById('totpSecretValue');
+  if (!secretInput || !secretInput.value) return;
+
+  navigator.clipboard.writeText(secretInput.value).then(() => {
+    showToast('Секретний ключ 2FA скопійовано в буфер обміну');
+  }).catch(() => {
+    secretInput.select();
+    document.execCommand('copy');
+    showToast('Секретний ключ 2FA скопійовано');
+  });
+}
+
+// ПІДТВЕРДЖЕННЯ АКТИВАЦІЇ 2FA
+async function submitEnable2FA() {
+  const codeInput = document.getElementById('enableVerifyCode');
+  const code = codeInput ? codeInput.value.trim() : '';
+
+  if (code.length !== 6) {
+    showToast('Введіть 6-значний код із застосунку або пошти');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/user/2fa/confirm-enable', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showToast(data.message || 'Двофакторну автентифікацію успішно активовано!');
+      update2FAStatusUI(true);
+      collapse2FAPanels();
+    } else {
+      showToast(data.error || 'Невірний код підтвердження');
+    }
+  } catch (err) {
+    showToast("Помилка підтвердження 2FA");
+  }
+}
+
+// ПІДТВЕРДЖЕННЯ ВИМКНЕННЯ 2FA
+async function submitDisable2FA() {
+  const codeInput = document.getElementById('disableVerifyCode');
+  const code = codeInput ? codeInput.value.trim() : '';
+
+  if (code.length !== 6) {
+    showToast('Введіть 6-значний код для підтвердження вимкнення');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/user/2fa/confirm-disable', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showToast(data.message || 'Двофакторну автентифікацію вимкнено');
+      update2FAStatusUI(false);
+      collapse2FAPanels();
+    } else {
+      showToast(data.error || 'Невірний код для вимкнення 2FA');
+    }
+  } catch (err) {
+    showToast("Помилка вимкнення 2FA");
+  }
+}
+
+// ЗГОРТАННЯ ПАНЕЛЕЙ 2FA (ACCORDION COLLAPSE)
+function collapse2FAPanels() {
+  const enablePanel = document.getElementById('panelEnable2FA');
+  const disablePanel = document.getElementById('panelDisable2FA');
+  if (enablePanel) enablePanel.style.display = 'none';
+  if (disablePanel) disablePanel.style.display = 'none';
+}
+
+// ВІДПРАВКА ОДНОРАЗОВОГО РЕЗЕРВНОГО КОДУ НА ПОШТУ
+async function sendLostKeyEmailCode() {
+  try {
+    const res = await fetch('/api/auth/2fa/send-email-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showToast(data.message || 'Одноразовий резервний код відправлено на вашу пошту!');
+    } else {
+      showToast(data.error || 'Помилка надсилання коду');
+    }
+  } catch (err) {
+    showToast("Помилка з'єднання із сервером");
+  }
+}
+
+// ГАМАНЕЦЬ PAPER TRADING
 async function loadProfileWallet() {
   try {
     const res = await fetch('/api/wallet');
@@ -18,81 +427,8 @@ async function loadProfileWallet() {
       pnlEl.style.color = pnl >= 0 ? 'var(--green)' : 'var(--red)';
     }
   } catch (err) {
-    console.error("Помилка завантаження гаманця:", err);
+    console.error('Помилка завантаження гаманця:', err);
   }
-}
-
-async function loadUserProfile() {
-  try {
-    const res = await fetch('/api/auth/me');
-    const data = await res.json();
-    if (data.ok && data.user) {
-      const u = data.user;
-      document.getElementById('userEmailMeta').textContent = u.email;
-      document.getElementById('userRoleBadge').textContent = (u.role || 'TRADER').toUpperCase();
-      document.getElementById('navRoleBadge').textContent = (u.role || 'TRADER') + ' Role';
-      
-      const is2FA = u.twoFactor !== false;
-      const toggle = document.getElementById('toggle2FA');
-      if (toggle) toggle.checked = is2FA;
-      update2FAUI(is2FA);
-    }
-  } catch (e) {
-    console.error("Помилка завантаження профілю:", e);
-  }
-}
-
-function update2FAUI(enabled) {
-  const badge = document.getElementById('prof2FABadge');
-  if (badge) {
-    badge.textContent = enabled ? 'АКТИВНИЙ ЗАХИСТ' : 'ВИМКНЕНО';
-    badge.className = enabled ? 'badge badge-green' : 'badge badge-red';
-  }
-  const box = document.getElementById('box2FADetails');
-  if (box) {
-    box.style.opacity = enabled ? '1' : '0.45';
-  }
-}
-
-async function handle2FAToggle(checked) {
-  try {
-    const res = await fetch('/api/user/2fa', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ twoFactor: checked })
-    });
-    const data = await res.json();
-    if (data.ok) {
-      showToast(data.message);
-      update2FAUI(checked);
-      const userJson = localStorage.getItem('bygigabit_user');
-      if (userJson) {
-        try {
-          const u = JSON.parse(userJson);
-          u.twoFactor = checked;
-          localStorage.setItem('bygigabit_user', JSON.stringify(u));
-        } catch (e) {}
-      }
-    } else {
-      showToast(data.error || 'Помилка оновлення 2FA');
-      document.getElementById('toggle2FA').checked = !checked;
-    }
-  } catch (err) {
-    showToast('Помилка з\'єднання із сервером');
-    document.getElementById('toggle2FA').checked = !checked;
-  }
-}
-
-function copy2FAKey() {
-  const keyEl = document.getElementById('totpSecretKey');
-  if (!keyEl) return;
-  navigator.clipboard.writeText(keyEl.value).then(() => {
-    showToast('Секретний ключ 2FA скопійовано в буфер обміну');
-  }).catch(() => {
-    keyEl.select();
-    document.execCommand('copy');
-    showToast('Секретний ключ 2FA скопійовано');
-  });
 }
 
 async function resetWallet() {
@@ -109,21 +445,11 @@ async function resetWallet() {
       showToast('Помилка при скиданні балансу');
     }
   } catch (err) {
-    showToast('Помилка з\'єднання із сервером');
+    showToast("Помилка з'єднання із сервером");
   }
 }
 
-function handlePasswordChange(e) {
-  e.preventDefault();
-  const newPass = document.getElementById('newPass').value;
-  if (newPass.length < 6) {
-    showToast('Новий пароль має містити не менше 6 символів');
-    return;
-  }
-  showToast('Пароль успішно змінено та захешовано (PBKDF2/SHA256)');
-  e.target.reset();
-}
-
+// TOAST ПОВІДОМЛЕННЯ
 function showToast(msg) {
   const t = document.getElementById('toast');
   if (!t) return;
@@ -132,6 +458,7 @@ function showToast(msg) {
   setTimeout(() => { t.style.display = 'none'; }, 4000);
 }
 
+// ВИХІД З СИСТЕМИ
 async function handleLogout() {
   try {
     await fetch('/api/auth/logout', { method: 'POST' });

@@ -1,0 +1,32 @@
+sequenceDiagram
+    autonumber
+    actor Trader as Трейдер
+    participant UI as Вебтермінал
+    participant API as FastAPI app.py
+    participant Auth as Auth & RBAC
+    participant Bybit as Bybit V5 API
+    participant Engine as Trading Engine
+    participant DB as Neon PostgreSQL
+
+    Trader->>UI: Вводить BTCUSDT, Long, плече 10x, маржа 100 USDT
+    UI->>API: POST /api/orders {symbol, side, margin, leverage}
+    API->>Auth: Перевірка валідності токена сесії
+    Auth->>DB: SELECT * FROM sessions WHERE token = ?
+    DB-->>Auth: Дані сесії (user_id = 42, active)
+    Auth-->>API: Авторизовано
+
+    API->>DB: Перевірка вільного балансу (balance >= 100)
+    DB-->>API: Баланс = 10000.00 USDT (Достатньо)
+
+    API->>Bybit: Запит поточної ринкової ціни
+    Bybit-->>API: Ціна BTCUSDT = 65000.00 USDT
+
+    API->>Engine: Розрахунок позиції (size = 0.01538 BTC, liq = 59150 USDT)
+    Engine-->>API: Параметри розраховано
+
+    API->>DB: BEGIN TRANSACTION (Списання 100 USDT, створення позиції)
+    DB-->>API: COMMIT успішний
+
+    API-->>UI: HTTP 200 OK {position_id, entry: 65000, liq: 59150, balance: 9900}
+    UI->>UI: Відображення позиції на графіку та в таблиці
+    UI-->>Trader: Сповіщення «Позицію успішно відкрито»

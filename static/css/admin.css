@@ -326,3 +326,285 @@ body.sb-sidenav-toggled #layoutSidenav_nav {
   align-items: center;
   gap: 8px;
 }
+
+/* Секції адмін-панелі */
+.sb-section-spacer {
+  margin-top: 36px;
+}
+
+/* Центр експорту статистики */
+.export-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 16px;
+}
+.export-card {
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.export-card:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.08);
+}
+.export-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.export-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  background: rgba(56, 189, 248, 0.1);
+  color: var(--cyan);
+}
+.export-icon.green {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--green);
+}
+.export-icon.orange {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--orange);
+}
+.export-icon.magenta {
+  background: rgba(255, 0, 234, 0.1);
+  color: var(--magenta);
+}
+.export-card-title {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+}
+.export-card-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 18px;
+  flex: 1;
+}
+.export-btn-group {
+  display: flex;
+  gap: 10px;
+}
+.btn-export {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 3px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-export-csv {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid var(--green);
+  color: var(--green);
+}
+.btn-export-csv:hover {
+  background: var(--green);
+  color: #000;
+}
+.btn-export-json {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+}
+.btn-export-json:hover {
+  background: var(--cyan);
+  color: #000;
+}
+
+/* Кнопки дій в таблицях */
+.admin-actions-cell {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.btn-action-sm {
+  padding: 4px 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 2px;
+  text-transform: uppercase;
+  transition: all 0.15s;
+}
+.btn-action-sm:hover {
+  color: #fff;
+  border-color: var(--cyan);
+}
+.btn-action-balance {
+  color: var(--cyan);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+.btn-action-balance:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: var(--cyan);
+  color: #fff;
+}
+.btn-action-role {
+  color: var(--magenta);
+  border-color: rgba(255, 0, 234, 0.4);
+}
+.btn-action-role:hover {
+  background: rgba(255, 0, 234, 0.15);
+  border-color: var(--magenta);
+  color: #fff;
+}
+.btn-action-history {
+  color: var(--orange);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+.btn-action-history:hover {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: var(--orange);
+  color: #fff;
+}
+
+/* Системний моніторинг */
+.system-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
+.sys-card {
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: 4px;
+}
+.sys-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.sys-card-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+}
+.sys-card-status {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+.sys-card-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Модальні вікна адміністратора */
+.admin-modal-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+.admin-modal-backdrop.active {
+  display: flex;
+}
+.admin-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-top: 3px solid var(--magenta);
+  width: 95%;
+  max-width: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+.admin-modal.modal-lg {
+  max-width: 900px;
+}
+.admin-modal-header {
+  padding: 16px 20px;
+  background: var(--bg-darker);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.admin-modal-title {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+.admin-modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 18px;
+  cursor: pointer;
+}
+.admin-modal-close:hover {
+  color: var(--red);
+}
+.admin-modal-body {
+  padding: 20px;
+  overflow-y: auto;
+}
+.admin-modal-footer {
+  padding: 14px 20px;
+  background: var(--bg-darker);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.quick-balance-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.quick-balance-btn:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}

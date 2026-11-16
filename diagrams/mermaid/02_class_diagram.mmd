@@ -1,0 +1,75 @@
+classDiagram
+    class UserModel {
+        +int id
+        +string email
+        +string password_hash
+        +string role
+        +float balance
+        +bool is_blocked
+        +bool is_totp_enabled
+        +string totp_secret
+        +datetime created_at
+        +check_password(password) bool
+        +verify_totp(code) bool
+        +to_dict() dict
+    }
+
+    class SessionModel {
+        +string token
+        +int user_id
+        +datetime created_at
+        +datetime expires_at
+        +is_valid() bool
+    }
+
+    class PositionModel {
+        +string id
+        +int user_id
+        +string symbol
+        +string side
+        +float entry_price
+        +float margin
+        +int leverage
+        +float size
+        +float liq_price
+        +string status
+        +datetime created_at
+        +calculate_pnl(current_price) float
+        +check_liquidation(current_price) bool
+        +to_dict() dict
+    }
+
+    class LimitOrderModel {
+        +string id
+        +int user_id
+        +string symbol
+        +string side
+        +float order_price
+        +float margin
+        +int leverage
+        +string status
+        +datetime created_at
+        +can_execute(current_price) bool
+        +to_dict() dict
+    }
+
+    class OrderHistoryModel {
+        +string id
+        +int user_id
+        +string symbol
+        +string side
+        +float entry_price
+        +float close_price
+        +float margin
+        +int leverage
+        +float pnl
+        +string close_reason
+        +datetime created_at
+        +datetime closed_at
+        +to_dict() dict
+    }
+
+    UserModel "1" --> "0..*" SessionModel : sessions
+    UserModel "1" --> "0..*" PositionModel : positions
+    UserModel "1" --> "0..*" LimitOrderModel : limit_orders
+    UserModel "1" --> "0..*" OrderHistoryModel : order_history

@@ -1,0 +1,65 @@
+erDiagram
+    users ||--o{ sessions : "має (CASCADE)"
+    users ||--o{ positions : "відкриває (CASCADE)"
+    users ||--o{ limit_orders : "виставляє (CASCADE)"
+    users ||--o{ order_history : "зберігає (CASCADE)"
+
+    users {
+        int id PK
+        string email UK
+        string password_hash
+        string role
+        numeric balance
+        boolean is_blocked
+        boolean is_totp_enabled
+        string totp_secret
+        timestamp created_at
+    }
+
+    sessions {
+        string token PK
+        int user_id FK
+        timestamp created_at
+        timestamp expires_at
+    }
+
+    positions {
+        string id PK
+        int user_id FK
+        string symbol
+        string side
+        numeric entry_price
+        numeric margin
+        int leverage
+        numeric size
+        numeric liq_price
+        string status
+        timestamp created_at
+    }
+
+    limit_orders {
+        string id PK
+        int user_id FK
+        string symbol
+        string side
+        numeric order_price
+        numeric margin
+        int leverage
+        string status
+        timestamp created_at
+    }
+
+    order_history {
+        string id PK
+        int user_id FK
+        string symbol
+        string side
+        numeric entry_price
+        numeric close_price
+        numeric margin
+        int leverage
+        numeric pnl
+        string close_reason
+        timestamp created_at
+        timestamp closed_at
+    }

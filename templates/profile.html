@@ -6,7 +6,7 @@
   <title>ByGigaBit — Профіль & Віртуальний гаманець</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/common.css">
   <link rel="stylesheet" href="/static/css/profile.css">
   <script src="/static/js/theme.js"></script>
@@ -48,32 +48,261 @@
       {% endif %}
     </div>
   </nav>
+
   <main class="profile-container">
-    <header class="page-header">
-      <div>
-        <h1 class="page-title">Віртуальний гаманець та налаштування акаунта</h1>
-        <p class="page-subtitle">Керуйте Paper-депозитом, параметрами безпеки 2FA та обліковим записом</p>
+    <!-- ГОЛОВНИЙ ЗАГОЛОВОК СТОРІНКИ (ФОТО 1) -->
+    <header class="page-header-simple">
+      <div class="header-titles">
+        <h1 class="main-page-title">Мій профіль</h1>
+        <p class="main-page-sub">Особисті дані, кваліфікація трейдера та безпека облікового запису.</p>
       </div>
-      <div>
-        <button onclick="handleLogout()" class="btn btn-outline" style="font-size:12px;">Вийти з акаунта</button>
+      <div class="header-logout">
+        <button onclick="handleLogout()" class="btn-logout-clean">Вийти з акаунта</button>
       </div>
     </header>
-    <div class="profile-grid">
+
+    <div class="profile-cards-stack">
+      <!-- КАРТКА 1: ДАНІ ПРОФІЛЮ, НІКНЕЙМ ТА КВАЛІФІКАЦІЯ (ДИЗАЙН ФОТО 1 - БЕЗ ФОТО ТА БЕЗ ДАТИ) -->
+      <section class="profile-main-card">
+        <div class="profile-head-info">
+          <!-- ІМ'Я КОРИСТУВАЧА З КНОПКОЮ РЕДАГУВАННЯ -->
+          <div class="nickname-title-row">
+            <span id="profileNickname" class="profile-user-name">{{ user.nickname if user and user.nickname else (user.email.split('@')[0] if user else 'Трейдер') }}</span>
+            <button type="button" id="btnEditNick" class="btn-nick-edit" onclick="openEditNickname()" title="Змінити ім'я користувача">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- ІНЛАЙН-ФОРМА ЗМІНИ ІМЕНІ -->
+          <div id="nicknameEditBox" class="nickname-edit-box" style="display:none;">
+            <input type="text" id="inputNewNickname" class="nick-text-input" placeholder="Введіть нове ім'я..." maxlength="50">
+            <div class="nick-actions">
+              <button type="button" class="btn-nick-save" onclick="saveNickname()">Зберегти</button>
+              <button type="button" class="btn-nick-cancel" onclick="closeEditNickname()">Скасувати</button>
+            </div>
+          </div>
+
+          <!-- ПЕРЕМИКАЧІ КВАЛІФІКАЦІЇ В СТИЛІ ПІЛЮЛЬ ФОТО 1 -->
+          <div class="qualification-pills-row">
+            <button type="button" class="qual-pill active" id="profPillBeginner" onclick="selectProfileLevel('beginner')">
+              <span class="qual-pill-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                </svg>
+              </span>
+              <span>Новачок (Початківець)</span>
+            </button>
+            <button type="button" class="qual-pill" id="profPillPro" onclick="selectProfileLevel('pro')">
+              <span class="qual-pill-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </span>
+              <span>Досвідчений (PRO)</span>
+            </button>
+          </div>
+          <p class="qual-pills-caption">Рівень кваліфікації можна перемикати в профілі в будь-який момент для оптимізації підказок термінала.</p>
+
+          <!-- СПИСОК РЕКВІЗИТІВ (ПОШТА ТА 2FA) -->
+          <div class="profile-meta-list">
+            <div class="meta-item-row">
+              <div class="meta-item-left">
+                <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                <span>Пошта</span>
+              </div>
+              <div class="meta-item-right" id="userEmailMeta">{{ user.email if user else 'trader@bygigabit.com' }}</div>
+            </div>
+
+            <div class="meta-item-row">
+              <div class="meta-item-left">
+                <svg class="meta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                <span>Двофакторний вхід</span>
+              </div>
+              <div class="meta-item-right" id="user2FAStatusText">
+                {% if user and user.twoFactorEnabled %}
+                  <span class="status-active-tag">Увімкнено</span>
+                {% else %}
+                  <span class="status-inactive-tag">Вимкнено</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- КАРТКА 2: БЕЗПЕКА (ДИЗАЙН ФОТО 2 — ЗМІНА ПАРОЛЯ ТА 2FA РОЗГОРТАННЯ) -->
+      <section class="security-card">
+        <div class="security-card-header">
+          <h2 class="sec-main-title">Безпека</h2>
+        </div>
+
+        <!-- СЕКЦІЯ: ЗМІНА ПАРОЛЯ (3 ПОЛЯ ПОРУЧ В ОДИН РЯДОК З ОЧКАМИ) -->
+        <div class="sec-subsection">
+          <h3 class="sec-section-title">Зміна пароля</h3>
+          <p class="sec-section-desc">Після зміни інші активні сеанси завершаться.</p>
+
+          <form id="formChangePassword" onsubmit="handlePasswordChange(event)">
+            <div class="passwords-grid-3">
+              <!-- ПОТОЧНИЙ ПАРОЛЬ -->
+              <div class="sec-field-group">
+                <label class="sec-label" for="currPassword">Поточний пароль</label>
+                <div class="sec-input-wrap">
+                  <input type="password" id="currPassword" class="sec-text-input" placeholder="Введіть поточний пароль" required autocomplete="current-password">
+                  <button type="button" class="btn-toggle-eye" onclick="togglePassField('currPassword', this)" title="Показати/приховати пароль">
+                    <svg class="eye-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- НОВИЙ ПАРОЛЬ -->
+              <div class="sec-field-group">
+                <label class="sec-label" for="newPassword">Новий пароль</label>
+                <div class="sec-input-wrap">
+                  <input type="password" id="newPassword" class="sec-text-input" placeholder="Придумайте новий пароль" required autocomplete="new-password">
+                  <button type="button" class="btn-toggle-eye" onclick="togglePassField('newPassword', this)" title="Показати/приховати пароль">
+                    <svg class="eye-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                </div>
+                <span class="sec-field-hint">Від 8 до 128 символів.</span>
+              </div>
+
+              <!-- ПОВТОРІТЬ НОВИЙ ПАРОЛЬ -->
+              <div class="sec-field-group">
+                <label class="sec-label" for="repeatPassword">Повторіть новий пароль</label>
+                <div class="sec-input-wrap">
+                  <input type="password" id="repeatPassword" class="sec-text-input" placeholder="Введіть пароль ще раз" required autocomplete="new-password">
+                  <button type="button" class="btn-toggle-eye" onclick="togglePassField('repeatPassword', this)" title="Показати/приховати пароль">
+                    <svg class="eye-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="sec-btn-row">
+              <button type="submit" id="btnSubmitPassword" class="btn-light-action">Змінити пароль</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="sec-card-divider"></div>
+
+        <!-- СЕКЦІЯ: ДВОФАКТОРНИЙ ВХІД З КНОПКОЮ УВІМКНУТИ / ВИМКНУТИ ТА ЗГОРТАННЯМ -->
+        <div class="sec-subsection">
+          <div class="twofa-header-flex">
+            <div class="twofa-header-text">
+              <h3 class="sec-section-title">Двофакторний вхід</h3>
+              <p class="sec-section-desc">
+                Статус: <strong id="twoFaStatusWord">{% if user and user.twoFactorEnabled %}Увімкнено{% else %}Вимкнено{% endif %}</strong> &bull; код із Google Authenticator або іншого TOTP-застосунку
+              </p>
+            </div>
+            <div class="twofa-header-action">
+              <button type="button" id="btn2FAAction" class="btn-dark-action" onclick="handle2FAToggleClick()">
+                {% if user and user.twoFactorEnabled %}Вимкнути 2FA{% else %}Увімкнути 2FA{% endif %}
+              </button>
+            </div>
+          </div>
+
+          <!-- ПАНЕЛЬ 1: РОЗГОРТАННЯ ПРИ УВІМКНЕННІ 2FA (QR-КОД, КЛЮЧ, ПЕРЕВІРКА, ЗГОРТАННЯ) -->
+          <div id="panelEnable2FA" class="accordion-panel" style="display:none;">
+            <div class="panel-content-wrap">
+              <div class="qr-setup-grid">
+                <div class="qr-code-box" id="qrSvgWrapper">
+                  <div class="qr-loading-spinner" id="qrLoading">Генерація безпечного ключа...</div>
+                </div>
+
+                <div class="qr-details-block">
+                  <h4 class="qr-step-title">Підключення застосунку Google Authenticator</h4>
+                  <p class="qr-step-text">
+                    1. Відкрийте <strong>Google Authenticator</strong>, <strong>Authy</strong> або <strong>Apple Passwords</strong> на смартфоні.<br>
+                    2. Відскануйте QR-код або введіть цей секретний ключ вручну:
+                  </p>
+
+                  <div class="secret-box-row">
+                    <input type="text" id="totpSecretValue" class="secret-display-input mono" readonly value="...">
+                    <button type="button" class="btn-secret-copy" onclick="copySecretKey()">Скопіювати</button>
+                  </div>
+
+                  <p class="qr-step-text" style="margin-top:14px;">
+                    3. Введіть 6-значний код із застосунку для підтвердження активації:
+                  </p>
+
+                  <div class="confirm-code-row">
+                    <input type="text" id="enableVerifyCode" class="auth-input mono verify-code-input" maxlength="6" placeholder="000000" autocomplete="one-time-code">
+                    <button type="button" class="btn-confirm-action" onclick="submitEnable2FA()">Підтвердити та увімкнути</button>
+                    <button type="button" class="btn-cancel-action" onclick="collapse2FAPanels()">Скасувати</button>
+                  </div>
+
+                  <div class="lost-key-link-wrap">
+                    <button type="button" class="link-lost-key" onclick="sendLostKeyEmailCode()">
+                      Загубили ключ від 2FA? Надіслати резервний код на пошту
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ПАНЕЛЬ 2: РОЗГОРТАННЯ ПРИ ВИМКНЕННІ 2FA (ВВЕДЕННЯ КОДУ ТА ЗГОРТАННЯ) -->
+          <div id="panelDisable2FA" class="accordion-panel" style="display:none;">
+            <div class="panel-content-wrap">
+              <div class="disable-warning-box">
+                <h4 class="disable-title">Вимкнення двофакторного захисту</h4>
+                <p class="disable-text">
+                  Для підтвердження вимкнення 2FA введіть 6-значний код із вашого застосунку Google Authenticator або резервний код з пошти:
+                </p>
+
+                <div class="confirm-code-row" style="margin-top:14px;">
+                  <input type="text" id="disableVerifyCode" class="auth-input mono verify-code-input" maxlength="6" placeholder="000000" autocomplete="one-time-code">
+                  <button type="button" class="btn-disable-danger" onclick="submitDisable2FA()">Підтвердити та вимкнути</button>
+                  <button type="button" class="btn-cancel-action" onclick="collapse2FAPanels()">Скасувати</button>
+                </div>
+
+                <div class="lost-key-link-wrap">
+                  <button type="button" class="link-lost-key" onclick="sendLostKeyEmailCode()">
+                    Загубили ключ? Надіслати код на пошту
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- КАРТКА 3: ВІРТУАЛЬНИЙ ГАМАНЕЦЬ PAPER TRADING -->
       <section class="card wallet-card">
         <div class="card-head-row">
           <div class="card-icon-title">
             <div>
               <h3>Віртуальний гаманець Paper Trading</h3>
-              <span style="font-size:12px; color:#94a3b8;">Стартовий капітал для трейдингу без фінансових втрат</span>
+              <span class="card-subtitle">Стартовий капітал для практичного біржового трейдингу без фінансових втрат</span>
             </div>
           </div>
           <span class="badge badge-green">USDT BALANCE</span>
         </div>
+
         <div class="wallet-balance-hero">
           <span class="bal-label">Поточний капітал (Total Equity)</span>
           <div id="profEquity" class="bal-val mono">$10,000.00</div>
           <div class="bal-sub mono">Баланс рахунку: <strong id="profBalance">$10,000.00</strong></div>
         </div>
+
         <div class="wallet-stats-cols mono">
           <div class="w-stat">
             <span class="w-stat-label">Задіяна маржа в позиціях</span>
@@ -88,6 +317,7 @@
             <span id="profRealizedPnL" class="w-stat-val">+$0.00</span>
           </div>
         </div>
+
         <div class="wallet-actions">
           <button class="btn btn-primary" onclick="resetWallet()">
             Скинути баланс до $10,000 USDT
@@ -97,120 +327,9 @@
           </a>
         </div>
       </section>
-      <div class="settings-col">
-        <!-- КАРТКА РІВНЯ КВАЛІФІКАЦІЇ -->
-        <section class="card">
-          <div class="card-head-row">
-            <div class="card-icon-title">
-              <div>
-                <h3>Рівень кваліфікації трейдера</h3>
-                <span class="card-subtitle">Перемикання між навчальним режимом підказок та біржовим PRO-режимом</span>
-              </div>
-            </div>
-            <span id="profExpBadge" class="badge badge-cyan">НОВАЧОК</span>
-          </div>
-          <div class="exp-level-switcher">
-            <button type="button" class="exp-btn active" id="profBtnBeginner" onclick="applyExperienceLevel('beginner', true)">
-              <div class="exp-btn-head">
-                <span class="exp-dot" style="background:var(--cyan); box-shadow:0 0 6px var(--cyan);"></span>
-                <strong style="color:#ffffff; font-size:12px;">НОВАЧОК (ПОЧАТКІВЕЦЬ)</strong>
-              </div>
-              <p style="font-size:11px; color:#94a3b8; margin-top:4px; line-height:1.4;">
-                Навчальний режим: активні бейджі з поясненнями до маржі, кредитного плеча, ціни ліквідації та підказок нейромережі.
-              </p>
-            </button>
-            <button type="button" class="exp-btn" id="profBtnPro" onclick="applyExperienceLevel('pro', true)">
-              <div class="exp-btn-head">
-                <span class="exp-dot" style="background:var(--magenta); box-shadow:0 0 6px var(--magenta);"></span>
-                <strong style="color:#ffffff; font-size:12px;">ДОСВІДЧЕНИЙ (PRO ТРЕЙДЕР)</strong>
-              </div>
-              <p style="font-size:11px; color:#94a3b8; margin-top:4px; line-height:1.4;">
-                Повний функціонал біржового термінала без зайвих спливаючих підказок, швидке розміщення ордерів.
-              </p>
-            </button>
-          </div>
-        </section>
-
-        <!-- КАРТКА БЕЗПЕКИ -->
-        <section class="card">
-          <div class="card-head-row">
-            <div class="card-icon-title">
-              <div>
-                <h3>Безпека та 2FA автентифікація</h3>
-                <span class="card-subtitle">Захист входу та операцій одноразовими кодами</span>
-              </div>
-            </div>
-            <span id="prof2FABadge" class="badge badge-green">АКТИВНИЙ ЗАХИСТ</span>
-          </div>
-          <div class="setting-toggle-row">
-            <div>
-              <div class="setting-toggle-title">Двофакторна перевірка (Email / TOTP 2FA)</div>
-              <div class="setting-toggle-desc">
-                Вимагати 6-значний код підтвердження при вході в термінал
-              </div>
-            </div>
-            <label class="switch">
-              <input type="checkbox" id="toggle2FA" checked onchange="handle2FAToggle(this.checked)">
-              <span class="slider-toggle"></span>
-            </label>
-          </div>
-          <div id="box2FADetails" class="totp-info-box" style="margin-bottom:20px; background:var(--bg-darker); border:1px solid var(--border-color); padding:16px 20px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.06em;">Секретний ключ (TOTP Secret):</span>
-              <span class="badge badge-cyan" style="font-size:9px;">RFC 6238 SHA-1</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:10px;">
-              <input type="text" readonly value="BYGB-7788-X992-SEC" id="totpSecretKey" class="mono" style="background:var(--bg-secondary); border:1px solid var(--border-bright); color:var(--cyan); padding:8px 12px; font-size:12px; font-weight:700; width:100%; outline:none;">
-              <button type="button" class="btn btn-outline" style="padding:8px 14px; font-size:11px; flex-shrink:0;" onclick="copy2FAKey()">Скопіювати</button>
-            </div>
-            <div style="font-family:var(--font-mono); font-size:10px; color:#94a3b8; margin-top:10px; line-height:1.4;">
-              Сумісні додатки: Google Authenticator, Microsoft Authenticator, Authy. Майстер-код для демонстрації: <strong style="color:var(--green);">777888</strong>.
-            </div>
-          </div>
-          <div class="user-meta-box">
-            <div class="meta-row">
-              <span class="meta-label">Обліковий Email:</span>
-              <strong id="userEmailMeta" class="meta-val mono">trader@bygigabit.com</strong>
-            </div>
-            <div class="meta-row">
-              <span class="meta-label">Роль доступу (RBAC):</span>
-              <span id="userRoleBadge" class="badge badge-cyan">TRADER</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-label">Тип сесії:</span>
-              <strong class="meta-val mono" style="color:var(--green);">JWT Bearer Token</strong>
-            </div>
-          </div>
-        </section>
-
-        <!-- КАРТКА ЗМІНИ ПАРОЛЯ -->
-        <section class="card">
-          <div class="card-head-row">
-            <div class="card-icon-title">
-              <div>
-                <h3>Зміна пароля</h3>
-                <span class="card-subtitle">Оновлення безпечного пароля облікового запису</span>
-              </div>
-            </div>
-            <span class="badge badge-cyan">SECURITY</span>
-          </div>
-          <form onsubmit="handlePasswordChange(event)" class="password-form">
-            <div class="form-group">
-              <label class="input-label">Поточний пароль</label>
-              <input type="password" class="auth-input" placeholder="Введіть поточний пароль" required autocomplete="current-password">
-            </div>
-            <div class="form-group">
-              <label class="input-label">Новий пароль</label>
-              <input type="password" id="newPass" class="auth-input" placeholder="Мінімум 6 символів" required autocomplete="new-password">
-            </div>
-            <button type="submit" class="btn btn-outline btn-save-pass">
-              Зберегти новий пароль
-            </button>
-          </form>
-        </section>
-      </div>
     </div>
   </main>
+
   <div id="toast" class="toast"></div>
   <script src="/static/js/profile.js"></script>
 </body>

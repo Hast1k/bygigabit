@@ -1,0 +1,35 @@
+flowchart TD
+    Start([Початок]) --> EnterParams[Введення торгової пари, маржі та плеча 1x-20x]
+    EnterParams --> CheckType{Тип ордера?}
+
+    CheckType -->|Лімітний| EnterLimit[Введення лімітної ціни виконання]
+    EnterLimit --> CheckLimitBal{Баланс >= Маржа?}
+    CheckLimitBal -->|Ні| ErrLimit[Повідомлення: Недостатньо коштів] --> EndFail([Кінець])
+    CheckLimitBal -->|Так| LockMargin[Резервування маржі та статус pending]
+    LockMargin --> WaitPrice{Ціна досягла ліміту?}
+    WaitPrice -->|Ні, скасовано| CancelLimit[Скасування та розблокування коштів] --> EndCancel([Кінець])
+    WaitPrice -->|Так| ActivateOrder[Активація лімітного ордера]
+
+    CheckType -->|Ринковий| ReqPrice[Запит поточної ціни з Bybit V5]
+    ReqPrice --> CheckMarketBal{Баланс >= Маржа?}
+    CheckMarketBal -->|Ні| ErrMarket[Повідомлення: Недостатній баланс] --> EndFail2([Кінець])
+    CheckMarketBal -->|Так| CalcRisk[Розрахунок розміру та ціни ліквідації]
+    CalcRisk --> DeductBal[Списання маржі з балансу]
+    DeductBal --> CreatePos[Створення відкритої позиції в БД]
+
+    ActivateOrder --> MonitorPos
+    CreatePos --> MonitorPos[Активна позиція: Моніторинг у реальному часі]
+
+    MonitorPos --> CalcPnL[Динамічний перерахунок нереалізованого Floating PnL]
+    CalcPnL --> CheckLiq{Поточна ціна перетнула liqPrice?}
+
+    CheckLiq -->|Так, Margin Call| AutoLiq[Примусова ліквідація та списання маржі]
+    AutoLiq --> SaveLiq[Запис у журнал order_history reason: liquidation]
+    SaveLiq --> EndLiq([Кінець])
+
+    CheckLiq -->|Ні| CheckClose{Трейдер закрив позицію?}
+    CheckClose -->|Ні| MonitorPos
+    CheckClose -->|Так| CloseMarket[Фіксація ціни закриття та розрахунок Realized PnL]
+    CloseMarket --> ReturnFunds[Повернення маржі + PnL на баланс]
+    ReturnFunds --> ArchiveOrder[Збереження в order_history status: closed]
+    ArchiveOrder --> EndSuccess([Позицію успішно завершено])

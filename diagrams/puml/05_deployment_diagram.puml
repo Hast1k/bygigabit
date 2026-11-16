@@ -1,0 +1,39 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam roundCorner 0
+skinparam shadowing false
+
+skinparam node {
+    borderColor #D9480F
+    backgroundColor #FFE8CC
+    fontColor #000000
+    fontStyle bold
+}
+skinparam database {
+    borderColor #D9480F
+    backgroundColor #FFE8CC
+    fontColor #000000
+    fontStyle bold
+}
+skinparam arrow {
+    color #D9480F
+    fontColor #000000
+}
+
+title **Приклад діаграми розгортання платформи ByGigaBit**
+
+node "PC\n(Робоча станція трейдера)" as PC
+node "Mobile phone\n(Смартфон трейдера)" as Mobile
+node "Server\n(FastAPI / Render Cloud)" as Server
+database "База даних\n(PostgreSQL / Neon)" as DB {
+    [PostgreSQL]
+}
+
+PC -[hidden]down- Mobile
+
+PC -right-> Server : https://bygigabit.app
+Mobile -right-> Server : https://bygigabit.app
+Server -right-> DB : tcp://5432 (SSL)
+@enduml

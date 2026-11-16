@@ -1,0 +1,92 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam roundCorner 0
+skinparam shadowing false
+
+skinparam component {
+    borderColor #333333
+    backgroundColor #FFFFFF
+    fontColor #111111
+}
+skinparam interface {
+    borderColor #333333
+    backgroundColor #FFFFFF
+    fontColor #111111
+}
+skinparam arrow {
+    color #333333
+}
+
+title **Приклад діаграми компонентів для RESTful API архітектури платформи ByGigaBit**
+
+[Client\n<<Application>>] as Client
+
+interface "API" as API_Int
+interface "ISqlCommands" as SQL_Int
+
+Client -right-> API_Int
+
+' Колонка 1: Контролери платформи ByGigaBit
+[MarketController\n<<Controller>>] as C_Market
+[OrderController\n<<Controller>>] as C_Order
+[AuthController\n<<Controller>>] as C_Auth
+[SimulatorController\n<<Controller>>] as C_Sim
+[AdminController\n<<Controller>>] as C_Admin
+
+API_Int --> C_Market
+API_Int --> C_Order
+API_Int --> C_Auth
+API_Int --> C_Sim
+API_Int --> C_Admin
+
+' Колонка 2: Бізнес-менеджери та рушії
+[MarketManager\n<<Component>>] as M_Market
+[TradingRiskManager\n<<Component>>] as M_Order
+[AuthManager\n<<Component>>] as M_Auth
+[SimulatorManager\n<<Component>>] as M_Sim
+[AdminManager\n<<Component>>] as M_Admin
+
+C_Market ..> M_Market
+C_Order ..> M_Order
+C_Auth ..> M_Auth
+C_Sim ..> M_Sim
+C_Admin ..> M_Admin
+
+' Колонка 3: Репозиторії доступу до даних (SQLAlchemy ORM)
+[MarketRepository\n<<Component>>] as R_Market
+[PositionRepository\n<<Component>>] as R_Position
+[OrderRepository\n<<Component>>] as R_Order
+[UserRepository\n<<Component>>] as R_User
+[HistoryRepository\n<<Component>>] as R_History
+
+M_Market ..> R_Market
+M_Order ..> R_Position
+M_Order ..> R_Order
+M_Auth ..> R_User
+M_Admin ..> R_User
+M_Order ..> R_History
+M_Sim ..> R_History
+
+R_Market --> SQL_Int
+R_Position --> SQL_Int
+R_Order --> SQL_Int
+R_User --> SQL_Int
+R_History --> SQL_Int
+
+[DB\n<<Component>>] as DB
+SQL_Int -right-> DB
+
+' Нижня панель зовнішніх та допоміжних сервісів
+[BybitV5Service\n<<Service>>] as S_Bybit
+[TOTP2FAService\n<<Service>>] as S_2FA
+[SMTPService\n<<Service>>] as S_SMTP
+[AIRadarService\n<<Service>>] as S_AI
+
+M_Market ..> S_Bybit
+M_Order ..> S_Bybit
+M_Auth ..> S_2FA
+M_Auth ..> S_SMTP
+M_Sim ..> S_AI
+@enduml

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>ByGigaBit — Панель адміністратора (RBAC)</title>
+  <title>ByGigaBit — Панель адміністратора (RBAC & Platform Control)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,46 +14,73 @@
   <script src="/static/js/theme.js"></script>
 </head>
 <body class="sb-nav-fixed">
+  <!-- Top Navigation Bar -->
   <nav class="sb-topnav">
     <div style="display:flex; align-items:center;">
       <a class="brand" href="/admin" style="margin-right:20px;">
         <span class="brand-title">BYGIGABIT</span>
-        <span class="brand-dept">BOOTLEG DEPT.</span>
+        <span class="brand-dept">ADMIN CONTROL</span>
       </a>
       <button class="sb-btn-toggle" id="sidebarToggle" title="Згорнути / Розгорнути меню">
         <i class="fas fa-bars"></i>
       </button>
     </div>
     <form class="sb-search-form" onsubmit="event.preventDefault(); document.getElementById('userSearchInput').focus();">
-      <input class="sb-search-input" type="text" placeholder="Пошук у системі..." id="topSearchInput" oninput="syncSearch(this.value)">
+      <input class="sb-search-input" type="text" placeholder="Швидкий пошук трейдера..." id="topSearchInput" oninput="syncSearch(this.value)">
       <button class="sb-search-btn" type="submit">
         <i class="fas fa-search"></i>
       </button>
     </form>
     <div class="sb-top-actions">
-      <a href="/chart" class="btn-terminal-back">
+      <a href="/api/admin/export/stats?format=csv" class="btn btn-outline" style="padding:6px 12px; font-size:11px; color:var(--green); border-color:var(--green);" title="Завантажити зведений звіт">
+        <i class="fas fa-file-csv"></i>
+        <span>Звіт CSV</span>
+      </a>
+      <button class="btn-theme-toggle" onclick="toggleTheme()" type="button" title="Змінити тему">Тема: Темна</button>
+      <a href="/chart" class="btn-terminal-back" title="Перейти в торговий термінал">
         <i class="fas fa-chart-line"></i>
         <span>Термінал</span>
       </a>
-      <a href="/profile" class="btn-terminal-back">
-        <i class="fas fa-user-shield"></i>
-        <span>Профіль</span>
-      </a>
-      <a href="/auth" class="btn-terminal-back" style="color:var(--red);">
+      <a href="/auth" class="btn-terminal-back" style="color:var(--red);" title="Вихід із системи">
         <i class="fas fa-sign-out-alt"></i>
       </a>
     </div>
   </nav>
+
   <div id="layoutSidenav">
+    <!-- Left Admin Functional Sidebar -->
     <div id="layoutSidenav_nav">
       <nav class="sb-sidenav" id="sidenavAccordion">
         <div class="sb-sidenav-menu">
-          <div class="sb-sidenav-menu-heading">Основне</div>
-          <a class="sb-nav-link active" href="/admin">
+          <div class="sb-sidenav-menu-heading">Керування платформою (RBAC)</div>
+          <a class="sb-nav-link active" href="#view-dashboard" onclick="switchNav(this)">
             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-            Дашборд
+            Дашборд платформи
           </a>
-          <div class="sb-sidenav-menu-heading">Торгові модулі</div>
+          <a class="sb-nav-link" href="#view-users" onclick="switchNav(this)">
+            <div class="sb-nav-link-icon"><i class="fas fa-users-cog"></i></div>
+            Користувачі та трейдери
+          </a>
+          <a class="sb-nav-link" href="#view-positions" onclick="switchNav(this)">
+            <div class="sb-nav-link-icon"><i class="fas fa-shield-alt"></i></div>
+            Відкриті позиції (Ризики)
+          </a>
+          <a class="sb-nav-link" href="#view-orders" onclick="switchNav(this)">
+            <div class="sb-nav-link-icon"><i class="fas fa-list-check"></i></div>
+            Активні лімітні ордери
+          </a>
+
+          <div class="sb-sidenav-menu-heading">Аналітика та експорт</div>
+          <a class="sb-nav-link" href="#view-export" onclick="switchNav(this)">
+            <div class="sb-nav-link-icon"><i class="fas fa-download"></i></div>
+            Завантаження статистики
+          </a>
+          <a class="sb-nav-link" href="#view-system" onclick="switchNav(this)">
+            <div class="sb-nav-link-icon"><i class="fas fa-server"></i></div>
+            Стан Bybit V5 & Системи
+          </a>
+
+          <div class="sb-sidenav-menu-heading">Швидкий перехід</div>
           <a class="sb-nav-link" href="/chart">
             <div class="sb-nav-link-icon"><i class="fas fa-chart-candlestick"></i></div>
             Термінал Bybit V5
@@ -62,164 +89,435 @@
             <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
             Тренажер сценаріїв
           </a>
-          <a class="sb-nav-link" href="/analytics">
-            <div class="sb-nav-link-icon"><i class="fas fa-chart-pie"></i></div>
-            Аналітика угод
-          </a>
           <a class="sb-nav-link" href="/profile">
             <div class="sb-nav-link-icon"><i class="fas fa-wallet"></i></div>
             Віртуальний гаманець
           </a>
-          <div class="sb-sidenav-menu-heading">Керування (RBAC)</div>
-          <a class="sb-nav-link" href="#usersTableSection">
-            <div class="sb-nav-link-icon"><i class="fas fa-users-cog"></i></div>
-            Користувачі та трейдери
-          </a>
-          <a class="sb-nav-link" href="/auth">
-            <div class="sb-nav-link-icon"><i class="fas fa-shield-alt"></i></div>
-            Авторизація & 2FA
-          </a>
           <a class="sb-nav-link" href="/">
             <div class="sb-nav-link-icon"><i class="fas fa-globe"></i></div>
-            Головний сайт
+            Головна сторінка
           </a>
         </div>
         <div class="sb-sidenav-footer">
           <div>Вхід виконано:</div>
-          <strong>Administrator (RBAC)</strong>
+          <strong>ADMINISTRATOR (RBAC)</strong>
         </div>
       </nav>
     </div>
+
+    <!-- Main Workspace -->
     <div id="layoutSidenav_content">
       <main class="sb-container">
-        <div class="sb-page-header">
-          <h1 class="sb-page-title">Панель адміністратора</h1>
-          <ul class="sb-breadcrumb">
-            <li class="sb-breadcrumb-item"><a href="/">Головна</a></li>
-            <li class="sb-breadcrumb-item"><a href="/admin">Адміністрування</a></li>
-            <li class="sb-breadcrumb-item active">Дашборд</li>
-          </ul>
-        </div>
-        <div class="sb-cards-grid">
-          <div class="sb-card sb-card-primary">
-            <div class="sb-card-body">
-              <div class="sb-card-title">Зареєстровані трейдери</div>
-              <div class="sb-card-value mono" id="statTotalUsers">0</div>
-            </div>
-            <a class="sb-card-footer" href="#usersTableSection">
-              <span>Детальний список</span>
-              <i class="fas fa-angle-right"></i>
-            </a>
+        <!-- Page Header -->
+        <div class="sb-page-header" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">
+          <div>
+            <h1 class="sb-page-title">Центр адміністрування ByGigaBit</h1>
+            <ul class="sb-breadcrumb">
+              <li class="sb-breadcrumb-item"><a href="/">Головна</a></li>
+              <li class="sb-breadcrumb-item"><a href="/admin">Адміністрування</a></li>
+              <li class="sb-breadcrumb-item active">Контроль системи</li>
+            </ul>
           </div>
-          <div class="sb-card sb-card-warning">
-            <div class="sb-card-body">
-              <div class="sb-card-title">Активні маржинальні позиції</div>
-              <div class="sb-card-value mono" id="statActivePositions">0</div>
-            </div>
-            <a class="sb-card-footer" href="/chart">
-              <span>Відкрити в терміналі</span>
-              <i class="fas fa-angle-right"></i>
-            </a>
-          </div>
-          <div class="sb-card sb-card-success">
-            <div class="sb-card-body">
-              <div class="sb-card-title">Загальний пул депозитів</div>
-              <div class="sb-card-value mono" id="statTotalBalance">$0.00</div>
-            </div>
-            <a class="sb-card-footer" href="/profile">
-              <span>Переглянути стан гаманців</span>
-              <i class="fas fa-angle-right"></i>
-            </a>
-          </div>
-          <div class="sb-card sb-card-danger">
-            <div class="sb-card-body">
-              <div class="sb-card-title">Заблоковані акаунти</div>
-              <div class="sb-card-value mono" id="statBlockedUsers">0</div>
-            </div>
-            <a class="sb-card-footer" href="#usersTableSection">
-              <span>Керування блокуванням</span>
-              <i class="fas fa-angle-right"></i>
-            </a>
-          </div>
-        </div>
-        <div class="sb-charts-grid">
-          <div class="sb-panel-card">
-            <div class="sb-panel-header">
-              <div class="header-left">
-                <i class="fas fa-chart-area"></i>
-                <span>Динаміка обороту системи (24h)</span>
-              </div>
-              <span class="badge badge-cyan">USDT VOLUME</span>
-            </div>
-            <div class="sb-panel-body">
-              <div class="chart-wrapper">
-                <canvas id="adminAreaChart"></canvas>
-              </div>
-            </div>
-          </div>
-          <div class="sb-panel-card">
-            <div class="sb-panel-header">
-              <div class="header-left">
-                <i class="fas fa-chart-bar"></i>
-                <span>Кількість угод за торговими парами</span>
-              </div>
-              <span class="badge badge-green">SPOT PAIRS</span>
-            </div>
-            <div class="sb-panel-body">
-              <div class="chart-wrapper">
-                <canvas id="adminBarChart"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="sb-panel-card" id="usersTableSection">
-          <div class="sb-panel-header">
-            <div class="header-left">
-              <i class="fas fa-table"></i>
-              <span>Таблиця користувачів системи (RBAC Access Management)</span>
-            </div>
-            <button class="btn btn-outline" style="padding:4px 10px; font-size:11px;" onclick="loadAdminData()">
-              <i class="fas fa-sync-alt"></i> Оновити
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button class="btn btn-outline" style="padding:6px 14px; font-size:11px;" onclick="loadAdminData()">
+              <i class="fas fa-sync-alt"></i> Оновити дані
             </button>
-          </div>
-          <div class="sb-panel-body">
-            <div class="sb-table-filters">
-              <div class="sb-table-search">
-                <i class="fas fa-search" style="color:#64748b;"></i>
-                <input type="text" id="userSearchInput" class="sb-table-search-input" placeholder="Пошук за Email..." oninput="filterUsers()">
-              </div>
-              <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-size:12px; color:#94a3b8;">Фільтр ролі:</span>
-                <select id="userRoleFilter" class="filter-select" onchange="filterUsers()">
-                  <option value="all">Усі ролі</option>
-                  <option value="Trader">Тільки Trader</option>
-                  <option value="Admin">Тільки Admin</option>
-                </select>
-              </div>
-            </div>
-            <div class="table-wrap">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Користувач (Email)</th>
-                    <th>Роль</th>
-                    <th>2FA Захист</th>
-                    <th>Баланс (USDT)</th>
-                    <th>К-сть угод</th>
-                    <th>Дата реєстрації</th>
-                    <th>Статус</th>
-                    <th>Дія</th>
-                  </tr>
-                </thead>
-                <tbody id="usersTableBody">
-                  <tr><td colspan="9" class="empty-state">Завантаження користувачів...</td></tr>
-                </tbody>
-              </table>
-            </div>
+            <a href="#view-export" class="btn btn-primary" style="padding:6px 14px; font-size:11px; text-decoration:none;">
+              <i class="fas fa-download"></i> Завантаження статистики
+            </a>
           </div>
         </div>
+
+        <!-- Section 1: Dashboard KPI & Charts -->
+        <section id="view-dashboard">
+          <div class="sb-cards-grid">
+            <div class="sb-card sb-card-primary">
+              <div class="sb-card-body">
+                <div class="sb-card-title">Зареєстровані трейдери</div>
+                <div class="sb-card-value mono" id="statTotalUsers">0</div>
+              </div>
+              <a class="sb-card-footer" href="#view-users">
+                <span>Керування трейдерами</span>
+                <i class="fas fa-angle-right"></i>
+              </a>
+            </div>
+
+            <div class="sb-card sb-card-warning">
+              <div class="sb-card-body">
+                <div class="sb-card-title">Активні маржинальні позиції</div>
+                <div class="sb-card-value mono" id="statActivePositions">0</div>
+              </div>
+              <a class="sb-card-footer" href="#view-positions">
+                <span>Моніторинг ризиків</span>
+                <i class="fas fa-angle-right"></i>
+              </a>
+            </div>
+
+            <div class="sb-card sb-card-success">
+              <div class="sb-card-body">
+                <div class="sb-card-title">Загальний пул балансів</div>
+                <div class="sb-card-value mono" id="statTotalBalance">$0.00</div>
+              </div>
+              <a class="sb-card-footer" href="#view-users">
+                <span>Редагувати баланси</span>
+                <i class="fas fa-angle-right"></i>
+              </a>
+            </div>
+
+            <div class="sb-card sb-card-danger">
+              <div class="sb-card-body">
+                <div class="sb-card-title">Заблоковані акаунти</div>
+                <div class="sb-card-value mono" id="statBlockedUsers">0</div>
+              </div>
+              <a class="sb-card-footer" href="#view-users">
+                <span>Керування доступом</span>
+                <i class="fas fa-angle-right"></i>
+              </a>
+            </div>
+
+            <div class="sb-card" style="border-top:3px solid var(--purple);">
+              <div class="sb-card-body">
+                <div class="sb-card-title">Активні лімітні ордери</div>
+                <div class="sb-card-value mono" id="statActiveOrders">0</div>
+              </div>
+              <a class="sb-card-footer" href="#view-orders">
+                <span>Переглянути ордери</span>
+                <i class="fas fa-angle-right"></i>
+              </a>
+            </div>
+
+            <div class="sb-card" style="border-top:3px solid var(--magenta);">
+              <div class="sb-card-body">
+                <div class="sb-card-title">Маржа у відкритих позиціях</div>
+                <div class="sb-card-value mono" id="statMarginLocked">$0.00</div>
+              </div>
+              <a class="sb-card-footer" href="#view-positions">
+                <span>Оцінка експозиції</span>
+                <i class="fas fa-angle-right"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Charts Grid -->
+          <div class="sb-charts-grid">
+            <div class="sb-panel-card">
+              <div class="sb-panel-header">
+                <div class="header-left">
+                  <i class="fas fa-chart-area"></i>
+                  <span>Динаміка обороту системи (24h)</span>
+                </div>
+                <span class="badge badge-cyan">USDT VOLUME</span>
+              </div>
+              <div class="sb-panel-body">
+                <div class="chart-wrapper">
+                  <canvas id="adminAreaChart"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="sb-panel-card">
+              <div class="sb-panel-header">
+                <div class="header-left">
+                  <i class="fas fa-chart-bar"></i>
+                  <span>Кількість угод за торговими парами</span>
+                </div>
+                <span class="badge badge-green">SPOT PAIRS</span>
+              </div>
+              <div class="sb-panel-body">
+                <div class="chart-wrapper">
+                  <canvas id="adminBarChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Центр завантаження статистики та звітів -->
+        <section id="view-export" class="sb-section-spacer">
+          <div class="sb-panel-card">
+            <div class="sb-panel-header">
+              <div class="header-left">
+                <i class="fas fa-file-export" style="color:var(--green);"></i>
+                <span>Центр експорту та завантаження статистики платформи</span>
+              </div>
+              <span class="badge badge-green">DATA EXPORT HUB</span>
+            </div>
+            <div class="sb-panel-body">
+              <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">
+                Вивантажуйте консолідовані дані платформи ByGigaBit для фінансового аудиту, аналізу ефективності трейдерів та збереження історії угод у форматах CSV та JSON.
+              </p>
+              <div class="export-grid">
+                <!-- Card 1 -->
+                <div class="export-card">
+                  <div class="export-card-header">
+                    <div class="export-icon"><i class="fas fa-chart-pie"></i></div>
+                    <div class="export-card-title">Зведена статистика платформи</div>
+                  </div>
+                  <div class="export-card-desc">
+                    Метрики капіталізації, активних трейдерів, кількості відкритих позицій, сумарної маржі, обсягу торгів та статусу підключення Bybit V5.
+                  </div>
+                  <div class="export-btn-group">
+                    <a href="/api/admin/export/stats?format=csv" class="btn-export btn-export-csv" download>
+                      <i class="fas fa-file-csv"></i> Завантажити CSV
+                    </a>
+                    <a href="/api/admin/export/stats?format=json" class="btn-export btn-export-json" download>
+                      <i class="fas fa-file-code"></i> JSON
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="export-card">
+                  <div class="export-card-header">
+                    <div class="export-icon green"><i class="fas fa-users"></i></div>
+                    <div class="export-card-title">Реєстр користувачів (RBAC)</div>
+                  </div>
+                  <div class="export-card-desc">
+                    Повний список зареєстрованих трейдерів: Email, баланс USDT, роль, 2FA статус, статус блокування, кількість угод та дата створення.
+                  </div>
+                  <div class="export-btn-group">
+                    <a href="/api/admin/export/users?format=csv" class="btn-export btn-export-csv" download>
+                      <i class="fas fa-file-csv"></i> Завантажити CSV
+                    </a>
+                    <a href="/api/admin/export/users?format=json" class="btn-export btn-export-json" download>
+                      <i class="fas fa-file-code"></i> JSON
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="export-card">
+                  <div class="export-card-header">
+                    <div class="export-icon orange"><i class="fas fa-history"></i></div>
+                    <div class="export-card-title">Журнал торгових угод</div>
+                  </div>
+                  <div class="export-card-desc">
+                    Повна історія завершених торгових ордерів платформи: пари, ціни відкриття та закриття, маржа, плече, розрахований PnL, ROI та часові мітки.
+                  </div>
+                  <div class="export-btn-group">
+                    <a href="/api/admin/export/trades?format=csv" class="btn-export btn-export-csv" download>
+                      <i class="fas fa-file-csv"></i> Завантажити CSV
+                    </a>
+                    <a href="/api/admin/export/trades?format=json" class="btn-export btn-export-json" download>
+                      <i class="fas fa-file-code"></i> JSON
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="export-card">
+                  <div class="export-card-header">
+                    <div class="export-icon magenta"><i class="fas fa-crosshairs"></i></div>
+                    <div class="export-card-title">Відкриті позиції та ризики</div>
+                  </div>
+                  <div class="export-card-desc">
+                    Поточні активні маржинальні позиції в реальному часі: пара, сторона Long/Short, розмір контракту, ціна входу, розрахункова ліквідація та плече.
+                  </div>
+                  <div class="export-btn-group">
+                    <a href="/api/admin/export/positions?format=csv" class="btn-export btn-export-csv" download>
+                      <i class="fas fa-file-csv"></i> Завантажити CSV
+                    </a>
+                    <a href="/api/admin/export/positions?format=json" class="btn-export btn-export-json" download>
+                      <i class="fas fa-file-code"></i> JSON
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: Керування користувачами та трейдерами -->
+        <section id="view-users" class="sb-section-spacer">
+          <div class="sb-panel-card" id="usersTableSection">
+            <div class="sb-panel-header">
+              <div class="header-left">
+                <i class="fas fa-users-cog"></i>
+                <span>Керування трейдерами та правами доступу (RBAC Management)</span>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="btn btn-outline" style="padding:4px 10px; font-size:11px;" onclick="loadAdminUsers()">
+                  <i class="fas fa-sync-alt"></i> Оновити список
+                </button>
+              </div>
+            </div>
+            <div class="sb-panel-body">
+              <div class="sb-table-filters">
+                <div class="sb-table-search">
+                  <i class="fas fa-search" style="color:#64748b;"></i>
+                  <input type="text" id="userSearchInput" class="sb-table-search-input" placeholder="Пошук за Email або нікнеймом..." oninput="filterUsers()">
+                </div>
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                  <span style="font-size:12px; color:#94a3b8;">Роль:</span>
+                  <select id="userRoleFilter" class="filter-select" onchange="filterUsers()">
+                    <option value="all">Усі ролі</option>
+                    <option value="Trader">Тільки Trader</option>
+                    <option value="Admin">Тільки Admin</option>
+                  </select>
+                  <span style="font-size:12px; color:#94a3b8; margin-left:8px;">Статус:</span>
+                  <select id="userStatusFilter" class="filter-select" onchange="filterUsers()">
+                    <option value="all">Усі статуси</option>
+                    <option value="active">Активні</option>
+                    <option value="blocked">Заблоковані</option>
+                  </select>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Користувач (Email / Нік)</th>
+                      <th>Роль</th>
+                      <th>2FA Захист</th>
+                      <th>Баланс (USDT)</th>
+                      <th>К-сть угод</th>
+                      <th>Дата реєстрації</th>
+                      <th>Статус</th>
+                      <th>Адміністрування</th>
+                    </tr>
+                  </thead>
+                  <tbody id="usersTableBody">
+                    <tr><td colspan="9" class="empty-state">Завантаження списку користувачів...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Глобальний моніторинг активних позицій платформи -->
+        <section id="view-positions" class="sb-section-spacer">
+          <div class="sb-panel-card">
+            <div class="sb-panel-header">
+              <div class="header-left">
+                <i class="fas fa-shield-alt" style="color:var(--orange);"></i>
+                <span>Глобальний моніторинг маржинальних позицій платформи</span>
+              </div>
+              <button class="btn btn-outline" style="padding:4px 10px; font-size:11px;" onclick="loadAdminPositions()">
+                <i class="fas fa-sync-alt"></i> Оновити позиції
+              </button>
+            </div>
+            <div class="sb-panel-body">
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Трейдер (Email)</th>
+                      <th>Пара</th>
+                      <th>Сторона</th>
+                      <th>Розмір</th>
+                      <th>Ціна входу</th>
+                      <th>Ціна ліквідації</th>
+                      <th>Маржа</th>
+                      <th>Плече</th>
+                      <th>Час відкриття</th>
+                      <th>Дія</th>
+                    </tr>
+                  </thead>
+                  <tbody id="positionsTableBody">
+                    <tr><td colspan="11" class="empty-state">Завантаження активних позицій...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 5: Активні лімітні ордери -->
+        <section id="view-orders" class="sb-section-spacer">
+          <div class="sb-panel-card">
+            <div class="sb-panel-header">
+              <div class="header-left">
+                <i class="fas fa-list-check" style="color:var(--purple);"></i>
+                <span>Активні лімітні ордери трейдерів</span>
+              </div>
+              <button class="btn btn-outline" style="padding:4px 10px; font-size:11px;" onclick="loadAdminOrders()">
+                <i class="fas fa-sync-alt"></i> Оновити ордери
+              </button>
+            </div>
+            <div class="sb-panel-body">
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>ID ордера</th>
+                      <th>Трейдер (Email)</th>
+                      <th>Пара</th>
+                      <th>Сторона</th>
+                      <th>Лімітна ціна</th>
+                      <th>Маржа</th>
+                      <th>Дата розміщення</th>
+                      <th>Дія</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ordersTableBody">
+                    <tr><td colspan="8" class="empty-state">Завантаження активних лімітних ордерів...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Стан системи & Bybit V5 -->
+        <section id="view-system" class="sb-section-spacer">
+          <div class="sb-panel-card">
+            <div class="sb-panel-header">
+              <div class="header-left">
+                <i class="fas fa-server" style="color:var(--cyan);"></i>
+                <span>Стан шлюзів системи, бази даних та Bybit V5 API</span>
+              </div>
+              <span class="badge badge-cyan">SYSTEM HEALTH</span>
+            </div>
+            <div class="sb-panel-body">
+              <div class="system-status-grid">
+                <div class="sys-card">
+                  <div class="sys-card-header">
+                    <span class="sys-card-title"><i class="fas fa-link" style="color:var(--cyan); margin-right:6px;"></i> Bybit V5 Spot API</span>
+                    <span class="badge badge-green sys-card-status">CONNECTED</span>
+                  </div>
+                  <div class="sys-card-desc">
+                    Шлюз REST & WebSocket активний. Пряма трансляція котирувань BTC, ETH, SOL, BNB, XRP у режимі реального часу.
+                  </div>
+                </div>
+
+                <div class="sys-card">
+                  <div class="sys-card-header">
+                    <span class="sys-card-title"><i class="fas fa-database" style="color:var(--green); margin-right:6px;"></i> База даних (ORM)</span>
+                    <span class="badge badge-green sys-card-status">OPERATIONAL</span>
+                  </div>
+                  <div class="sys-card-desc">
+                    Сховище SQLite у режимі WAL (Write-Ahead Logging). Забезпечує миттєву атомарність транзакцій та ізоляцію балансів.
+                  </div>
+                </div>
+
+                <div class="sys-card">
+                  <div class="sys-card-header">
+                    <span class="sys-card-title"><i class="fas fa-user-lock" style="color:var(--magenta); margin-right:6px;"></i> RBAC & 2FA Безпека</span>
+                    <span class="badge badge-green sys-card-status">ENFORCED</span>
+                  </div>
+                  <div class="sys-card-desc">
+                    Рольова модель контролю доступу (Role-Based Access Control) активна. Підтримка одноразових кодів RFC 6238 TOTP.
+                  </div>
+                </div>
+
+                <div class="sys-card">
+                  <div class="sys-card-header">
+                    <span class="sys-card-title"><i class="fas fa-bolt" style="color:var(--orange); margin-right:6px;"></i> Chaos Mode Engine</span>
+                    <span class="badge badge-cyan sys-card-status">STANDBY</span>
+                  </div>
+                  <div class="sys-card-desc">
+                    Генератор штучної ринкової волатильності для стрес-тестування ліквідацій позицій та перевірки стійкості трейдерів.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
+
+      <!-- Footer -->
       <footer class="sb-footer">
         <div>Copyright &copy; ByGigaBit Platform &bull; Bybit API Spot V5 &bull; 2026</div>
         <div>
@@ -229,6 +527,72 @@
       </footer>
     </div>
   </div>
+
+  <!-- Модальне вікно редагування балансу -->
+  <div id="balanceModal" class="admin-modal-backdrop">
+    <div class="admin-modal">
+      <div class="admin-modal-header">
+        <div class="admin-modal-title"><i class="fas fa-wallet" style="color:var(--cyan); margin-right:8px;"></i> Корекція балансу трейдера</div>
+        <button class="admin-modal-close" onclick="closeBalanceModal()">&times;</button>
+      </div>
+      <div class="admin-modal-body">
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
+          Введіть нову суму депозиту в USDT для користувача <strong id="balanceModalEmail" style="color:#fff;"></strong>:
+        </p>
+        <div style="margin-bottom:16px;">
+          <label style="font-family:var(--font-mono); font-size:11px; color:#94a3b8; display:block; margin-bottom:6px;">Новий баланс (USDT):</label>
+          <input type="number" id="balanceModalInput" step="100" min="0" style="width:100%; background:var(--bg-darker); border:1px solid var(--border-color); color:#fff; font-family:var(--font-mono); font-size:18px; font-weight:700; padding:10px 14px;" placeholder="10000.00">
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+          <button type="button" class="quick-balance-btn" onclick="setQuickBalance(1000)">$1,000</button>
+          <button type="button" class="quick-balance-btn" onclick="setQuickBalance(5000)">$5,000</button>
+          <button type="button" class="quick-balance-btn" onclick="setQuickBalance(10000)">$10,000</button>
+          <button type="button" class="quick-balance-btn" onclick="setQuickBalance(50000)">$50,000</button>
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button type="button" class="btn btn-outline" style="padding:6px 14px;" onclick="closeBalanceModal()">Скасувати</button>
+        <button type="button" class="btn btn-primary" style="padding:6px 16px;" onclick="submitBalanceChange()">Зберегти баланс</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальне вікно історії угод користувача -->
+  <div id="tradesModal" class="admin-modal-backdrop">
+    <div class="admin-modal modal-lg">
+      <div class="admin-modal-header">
+        <div class="admin-modal-title"><i class="fas fa-history" style="color:var(--orange); margin-right:8px;"></i> Журнал угод користувача: <span id="tradesModalEmail" style="color:var(--cyan);"></span></div>
+        <button class="admin-modal-close" onclick="closeTradesModal()">&times;</button>
+      </div>
+      <div class="admin-modal-body">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID угоди</th>
+                <th>Пара</th>
+                <th>Сторона</th>
+                <th>Ціна входу</th>
+                <th>Ціна закриття</th>
+                <th>Маржа</th>
+                <th>Плече</th>
+                <th>PnL (USDT)</th>
+                <th>ROI</th>
+                <th>Час</th>
+              </tr>
+            </thead>
+            <tbody id="userTradesTableBody">
+              <tr><td colspan="10" class="empty-state">Завантаження угод...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button type="button" class="btn btn-outline" style="padding:6px 14px;" onclick="closeTradesModal()">Закрити</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast"></div>
   <script src="/static/js/admin.js"></script>
 </body>

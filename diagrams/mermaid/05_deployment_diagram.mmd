@@ -1,0 +1,34 @@
+flowchart TD
+    subgraph ClientPC ["Робоча станція трейдера (Client PC)"]
+        Browser["Веббраузер (Chrome / Safari / Firefox)"]
+        WebArtifact["Клієнтський SPA інтерфейс (HTML5 / Vanilla JS)"]
+        ChartArtifact["TradingView Lightweight Charts v4.2.1"]
+        Browser --- WebArtifact
+        Browser --- ChartArtifact
+    end
+
+    subgraph CloudApp ["Хмарний сервер застосунку (Render / Linux)"]
+        PythonEnv["Python 3.12 Runtime Environment"]
+        Uvicorn["ASGI Сервер Uvicorn"]
+        FastAPIApp["ByGigaBit Web Backend (FastAPI)"]
+        Modules["Торговий рушій, TOTP 2FA, AI Radar, SQLAlchemy"]
+        PythonEnv --- Uvicorn
+        Uvicorn --- FastAPIApp
+        FastAPIApp --- Modules
+    end
+
+    subgraph ManagedDB ["Керована хмарна СУБД (Neon Cloud)"]
+        PGServer["PostgreSQL 16 Serverless Engine"]
+        Database[(Реляційна БД ByGigaBit)]
+        PGServer --- Database
+    end
+
+    subgraph ExtServices ["Зовнішні сервіси"]
+        BybitAPI["Bybit V5 Public Market API"]
+        SMTPServer["SMTP Поштовий шлюз (TLS 587)"]
+    end
+
+    Browser ==>|HTTPS / REST JSON (порт 443)| Uvicorn
+    FastAPIApp ==>|Безпечне TCP/SSL з'єднання (порт 5432)| PGServer
+    Modules ==>|HTTPS REST запити котирувань| BybitAPI
+    Modules ==>|TLS SMTP надсилання кодів| SMTPServer

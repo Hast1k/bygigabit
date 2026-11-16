@@ -1,0 +1,61 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam roundCorner 15
+skinparam shadowing false
+
+skinparam state {
+    borderColor #E03131
+    backgroundColor #FFF9DB
+    fontColor #212529
+    fontSize 12
+    fontStyle bold
+    arrowColor #E03131
+    arrowFontColor #C92A2A
+}
+skinparam note {
+    borderColor #E03131
+    backgroundColor #FFFFFF
+    fontColor #C92A2A
+    fontStyle bold
+}
+
+title **Позиція | Торговельний ордер (State Machine Diagram)**
+
+[*] --> Створено
+
+state "Створено" as Створено
+state "Обробка та валідація" as Обробка
+state "Скасовано" as Скасовано
+state "Відкладений (Limit)" as Limit
+state "Ринковий (Market)" as Market
+state "Відкрита позиція" as Open
+state "Примусова ліквідація" as Liq
+state "Успішно закрита" as Closed
+state "Архів історії угод" as History
+
+Створено --> Обробка : Трейдер підтвердив ордер
+
+Обробка -left-> Скасовано : Ордер скасовано / Недостатній баланс
+Обробка --> Limit : Лімітний тип
+Обробка --> Market : Ринковий тип
+
+Limit --> Open : Ціна досягла ліміту
+Limit -left-> Скасовано : Скасовано трейдером
+Market --> Open : Миттєве виконання
+
+Open --> Liq : Ціна досягла liqPrice (Margin Call)
+Open --> Closed : Трейдер натиснув «Закрити»
+
+Liq --> History : Зафіксовано списання маржі
+Closed --> History : Зафіксовано чистий PnL
+
+Скасовано -down-> [*]
+History --> [*]
+
+note bottom of History
+  **Об'єкт:**
+  **Торгова позиція / Ордер**
+end note
+@enduml

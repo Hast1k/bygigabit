@@ -1,0 +1,46 @@
+flowchart TD
+    subgraph UI ["Клієнтський браузер (Frontend)"]
+        TerminalUI["Термінал котирувань (HTML/CSS)"]
+        Charts["Свічковий графік (Lightweight Charts)"]
+        JournalUI["Аналітика журналу (Chart.js)"]
+        ModalUI["Форми 2FA та профілю (Vanilla JS)"]
+    end
+
+    subgraph API ["Сервер застосунку (FastAPI Backend)"]
+        Router["Маршрутизатор app.py"]
+        AuthMid["Сесії та RBAC Middleware"]
+        TradeEngine["Торговий рушій (Trading Engine)"]
+        RiskEngine["Калькулятор ліквідації (Risk Engine)"]
+        TOTPSrv["2FA Сервіс (pyotp / qrcode)"]
+        MLSrv["AI Quant Radar (scikit-learn)"]
+        ChaosSrv["Тренажер і Chaos Mode"]
+    end
+
+    subgraph Data ["Шар бази даних"]
+        ORM["SQLAlchemy 2.0 ORM"]
+        DB[(PostgreSQL Neon / SQLite)]
+    end
+
+    subgraph External ["Зовнішні сервіси"]
+        Bybit[("Bybit V5 REST API")]
+        SMTP[("SMTP Поштовий шлюз")]
+    end
+
+    TerminalUI -->|HTTP REST| Router
+    Charts -->|Klines Data| Router
+    ModalUI -->|2FA Verify| Router
+
+    Router --> AuthMid
+    Router --> TradeEngine
+    Router --> TOTPSrv
+    Router --> MLSrv
+    Router --> ChaosSrv
+
+    TradeEngine --> RiskEngine
+    TradeEngine --> Bybit
+    MLSrv --> Bybit
+    TOTPSrv --> SMTP
+
+    TradeEngine --> ORM
+    AuthMid --> ORM
+    ORM --> DB

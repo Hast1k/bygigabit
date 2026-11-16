@@ -1,0 +1,251 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1380" height="920" viewBox="0 0 1380 920" font-family="Arial, Helvetica, sans-serif">
+<defs>
+        <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
+          <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#f0f0f0" stroke-width="0.6"/>
+        </pattern>
+        <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+          <rect width="50" height="50" fill="url(#smallGrid)"/>
+          <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#e2e2e2" stroke-width="1"/>
+        </pattern>
+        <filter id="dropShadow" x="-10%" y="-10%" width="125%" height="125%">
+          <feDropShadow dx="1.5" dy="2" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.15"/>
+        </filter>
+        
+
+            <marker id="vee-blue" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#2b7889" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-blue" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#2b7889" stroke="#2b7889" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-blue" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#2b7889" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-blue" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#2b7889" stroke="#2b7889" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-blue" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#2b7889" stroke-width="1.3"/>
+            </marker>
+            
+
+            <marker id="vee-black" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#333333" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-black" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#333333" stroke="#333333" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-black" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-black" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#333333" stroke="#333333" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-black" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#333333" stroke-width="1.3"/>
+            </marker>
+            
+
+            <marker id="vee-red" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#e03131" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-red" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#e03131" stroke="#e03131" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-red" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#e03131" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-red" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#e03131" stroke="#e03131" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-red" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#e03131" stroke-width="1.3"/>
+            </marker>
+            
+
+            <marker id="vee-green" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#2b8a3e" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-green" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#2b8a3e" stroke="#2b8a3e" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-green" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#2b8a3e" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-green" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#2b8a3e" stroke="#2b8a3e" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-green" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#2b8a3e" stroke-width="1.3"/>
+            </marker>
+            
+
+            <marker id="vee-orange" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#d97706" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-orange" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#d97706" stroke="#d97706" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-orange" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#d97706" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-orange" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#d97706" stroke="#d97706" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-orange" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#d97706" stroke-width="1.3"/>
+            </marker>
+            
+
+            <marker id="vee-darkorange" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#d9480f" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-darkorange" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#d9480f" stroke="#d9480f" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-darkorange" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#d9480f" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-darkorange" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#d9480f" stroke="#d9480f" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-darkorange" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#d9480f" stroke-width="1.3"/>
+            </marker>
+            
+
+            <marker id="vee-pink" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#b85450" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-pink" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#b85450" stroke="#b85450" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-pink" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#b85450" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-pink" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#b85450" stroke="#b85450" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-pink" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#b85450" stroke-width="1.3"/>
+            </marker>
+            
+
+            <marker id="vee-slate" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+              <path d="M 1 1 L 11 6 L 1 11" fill="none" stroke="#475569" stroke-width="1.5" stroke-linejoin="round"/>
+            </marker>
+            <marker id="arrow-slate" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+              <path d="M 1 2 L 11 6 L 1 10 z" fill="#475569" stroke="#475569" stroke-width="1"/>
+            </marker>
+            <marker id="hollow-slate" viewBox="0 0 14 14" refX="13" refY="7" markerWidth="12" markerHeight="12" orient="auto-start-reverse">
+              <path d="M 1 1 L 13 7 L 1 13 z" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
+            </marker>
+            <marker id="diamond-filled-slate" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#475569" stroke="#475569" stroke-width="1.2"/>
+            </marker>
+            <marker id="diamond-hollow-slate" viewBox="0 0 16 12" refX="1" refY="6" markerWidth="14" markerHeight="10" orient="auto">
+              <path d="M 1 6 L 8 1 L 15 6 L 8 11 z" fill="#ffffff" stroke="#475569" stroke-width="1.3"/>
+            </marker>
+            
+
+        <marker id="er-one" viewBox="0 0 16 16" refX="2" refY="8" markerWidth="14" markerHeight="14" orient="auto">
+          <path d="M 6 2 L 6 14 M 10 2 L 10 14" fill="none" stroke="#2b7889" stroke-width="1.6"/>
+        </marker>
+        <marker id="er-many" viewBox="0 0 20 16" refX="18" refY="8" markerWidth="16" markerHeight="14" orient="auto">
+          <circle cx="5" cy="8" r="3" fill="#ffffff" stroke="#2b7889" stroke-width="1.5"/>
+          <path d="M 9 8 L 19 2 M 9 8 L 19 8 M 9 8 L 19 14" fill="none" stroke="#2b7889" stroke-width="1.5"/>
+        </marker>
+        </defs>
+<rect width="1380" height="920" fill="#ffffff"/>
+<text x="690.0" y="38.3" font-size="18" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Діаграма послідовності оформлення торгового ордера</text>
+<circle cx="110" cy="85" r="10" fill="#f39c12" stroke="#d97706" stroke-width="1.6"/>
+<line x1="110" y1="95" x2="110" y2="120" stroke="#d97706" stroke-width="1.6"/>
+<line x1="94" y1="105" x2="126" y2="105" stroke="#d97706" stroke-width="1.6"/>
+<line x1="110" y1="120" x2="96" y2="139" stroke="#d97706" stroke-width="1.6"/>
+<line x1="110" y1="120" x2="124" y2="139" stroke="#d97706" stroke-width="1.6"/>
+<text x="110.0" y="159.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Користувач</text>
+<line x1="296" y1="88" x2="296" y2="122" stroke="#d97706" stroke-width="2"/>
+<line x1="296" y1="105" x2="310" y2="105" stroke="#d97706" stroke-width="2"/>
+<circle cx="330" cy="105" r="20" fill="#f39c12" stroke="#d97706" stroke-width="1.6"/>
+<text x="330.0" y="149.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Website</text>
+<circle cx="570" cy="105" r="20" fill="#f39c12" stroke="#d97706" stroke-width="1.6"/>
+<path d="M 566 85 L 574 79 L 574 91 z" fill="#f39c12" stroke="#d97706" stroke-width="1.2"/>
+<text x="570.0" y="149.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">OrderController</text>
+<rect x="742" y="82" width="136" height="44" fill="#f39c12" stroke="#d97706" stroke-width="1.6"/>
+<text x="810.0" y="108.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">:Position</text>
+<rect x="968" y="82" width="144" height="44" fill="#f39c12" stroke="#d97706" stroke-width="1.6"/>
+<text x="1040.0" y="108.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">:MarketService</text>
+<path d="M 1214 85 L 1214 125 A 36 9 0 0 0 1286 125 L 1286 85 Z" fill="#f39c12" stroke="#d97706" stroke-width="1.6"/>
+<ellipse cx="1250" cy="85" rx="36" ry="9" fill="#f7b733" stroke="#d97706" stroke-width="1.6"/>
+<text x="1250.0" y="152.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">База даних</text>
+<line x1="110" y1="168" x2="110" y2="885" stroke="#64748b" stroke-width="1.3" stroke-dasharray="5,5"/>
+<line x1="330" y1="168" x2="330" y2="885" stroke="#64748b" stroke-width="1.3" stroke-dasharray="5,5"/>
+<line x1="570" y1="168" x2="570" y2="885" stroke="#64748b" stroke-width="1.3" stroke-dasharray="5,5"/>
+<line x1="810" y1="168" x2="810" y2="885" stroke="#64748b" stroke-width="1.3" stroke-dasharray="5,5"/>
+<line x1="1040" y1="168" x2="1040" y2="885" stroke="#64748b" stroke-width="1.3" stroke-dasharray="5,5"/>
+<line x1="1250" y1="168" x2="1250" y2="885" stroke="#64748b" stroke-width="1.3" stroke-dasharray="5,5"/>
+<rect x="103" y="190" width="14" height="675" fill="#f39c12" stroke="#d97706" stroke-width="1.2"/>
+<rect x="323" y="195" width="14" height="150" fill="#f39c12" stroke="#d97706" stroke-width="1.2"/>
+<rect x="563" y="225" width="14" height="90" fill="#f39c12" stroke="#d97706" stroke-width="1.2"/>
+<rect x="1033" y="250" width="14" height="35" fill="#f39c12" stroke="#d97706" stroke-width="1.2"/>
+<rect x="323" y="395" width="14" height="460" fill="#f39c12" stroke="#d97706" stroke-width="1.2"/>
+<rect x="563" y="430" width="14" height="395" fill="#f39c12" stroke="#d97706" stroke-width="1.2"/>
+<rect x="1243" y="465" width="14" height="50" fill="#f39c12" stroke="#d97706" stroke-width="1.2"/>
+<rect x="1033" y="545" width="14" height="50" fill="#f39c12" stroke="#d97706" stroke-width="1.2"/>
+<rect x="803" y="625" width="14" height="80" fill="#f39c12" stroke="#d97706" stroke-width="1.2"/>
+<rect x="1243" y="735" width="14" height="60" fill="#f39c12" stroke="#d97706" stroke-width="1.2"/>
+<path d="M 117.0 200.0 L 323.0 200.0" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow-black)"/>
+<rect x="122.5" y="179.1" width="195.0" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="220.0" y="191.8" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">1. Відкрити торговий термінал</text>
+<path d="M 337.0 230.0 L 563.0 230.0" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow-black)"/>
+<rect x="371.6" y="209.1" width="156.7" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="450.0" y="221.8" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">2. Запит ринкових даних</text>
+<path d="M 577.0 255.0 L 1033.0 255.0" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow-black)"/>
+<rect x="694.7" y="234.1" width="220.5" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="805.0" y="246.8" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">3. Отримати актуальні котирування</text>
+<path d="M 1033.0 285.0 L 577.0 285.0" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#vee-slate)"/>
+<rect x="697.9" y="264.1" width="214.2" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="805.0" y="276.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">4. Поточні свічки та ціна активу</text>
+<path d="M 563.0 315.0 L 337.0 315.0" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#vee-slate)"/>
+<rect x="349.3" y="294.1" width="201.4" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="450.0" y="306.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">5. Котирування та стан рахунку</text>
+<path d="M 323.0 345.0 L 117.0 345.0" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#vee-slate)"/>
+<rect x="119.3" y="324.1" width="201.4" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="220.0" y="336.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">6. Відображення графіка активу</text>
+<path d="M 117.0 405.0 L 323.0 405.0" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow-black)"/>
+<rect x="160.8" y="384.1" width="118.5" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="220.0" y="396.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">7. Створити ордер</text>
+<path d="M 337.0 435.0 L 563.0 435.0" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow-black)"/>
+<rect x="355.7" y="414.1" width="188.6" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="450.0" y="426.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">8. Передати параметри ордера</text>
+<path d="M 577.0 470.0 L 1243.0 470.0" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow-black)"/>
+<rect x="780.6" y="449.1" width="258.8" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="910.0" y="461.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">9. Перевірити сесію та доступний баланс</text>
+<path d="M 1243.0 510.0 L 577.0 510.0" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#vee-slate)"/>
+<rect x="790.2" y="489.1" width="239.7" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="910.0" y="501.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">10. Достатність балансу підтверджено</text>
+<path d="M 577.0 550.0 L 1033.0 550.0" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow-black)"/>
+<rect x="694.7" y="529.1" width="220.5" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="805.0" y="541.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">11. Запит поточної ціни виконання</text>
+<path d="M 1033.0 590.0 L 577.0 590.0" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#vee-slate)"/>
+<rect x="723.4" y="569.1" width="163.1" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="805.0" y="581.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">12. Поточна ринкова ціна</text>
+<path d="M 577.0 630.0 L 803.0 630.0" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow-black)"/>
+<rect x="551.0" y="609.1" width="278.0" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="690.0" y="621.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">13. Створити позицію та розрахувати ризики</text>
+<path d="M 803.0 700.0 L 577.0 700.0" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#vee-slate)"/>
+<rect x="614.8" y="679.1" width="150.4" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="690.0" y="691.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">14. Сформована позиція</text>
+<path d="M 577.0 740.0 L 1243.0 740.0" fill="none" stroke="#111111" stroke-width="1.5" marker-end="url(#arrow-black)"/>
+<rect x="783.8" y="719.1" width="252.4" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="910.0" y="731.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">15. Зберегти позицію та оновити баланс</text>
+<path d="M 1243.0 790.0 L 577.0 790.0" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#vee-slate)"/>
+<rect x="828.4" y="769.1" width="163.1" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="910.0" y="781.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">16. Результат транзакції</text>
+<path d="M 563.0 825.0 L 337.0 825.0" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#vee-slate)"/>
+<rect x="333.4" y="804.1" width="233.3" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="450.0" y="816.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">17. Підтвердження створення позиції</text>
+<path d="M 323.0 855.0 L 117.0 855.0" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#vee-slate)"/>
+<rect x="90.6" y="834.1" width="258.8" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="220.0" y="846.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">18. Оновлення графіка та списку позицій</text>
+</svg>

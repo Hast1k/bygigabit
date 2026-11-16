@@ -1,5 +1,6 @@
 let authMode = 'login';
 let currentQualification = 'beginner';
+let pendingGoogleEmail = '';
 
 function selectQualification(level) {
   currentQualification = level === 'pro' ? 'pro' : 'beginner';
@@ -14,50 +15,39 @@ function selectQualification(level) {
 
 function switchAuthMode(mode) {
   authMode = mode;
-  const tabLogin = document.getElementById('tabLogin');
-  const tabRegister = document.getElementById('tabRegister');
+  document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
+  document.getElementById('tabRegister').classList.toggle('active', mode === 'register');
   const title = document.getElementById('authTitle');
   const sub = document.getElementById('authSubtitle');
   const btn = document.getElementById('btnSubmitAuth');
   const repeatGroup = document.getElementById('repeatPasswordGroup');
   const nickGroup = document.getElementById('nicknameGroup');
-  const qualGroup = document.getElementById('qualificationGroup');
-  const googleBtnText = document.getElementById('googleBtnText');
-
-  if (tabLogin) tabLogin.classList.toggle('active', mode === 'login');
-  if (tabRegister) tabRegister.classList.toggle('active', mode === 'register');
-
   if (mode === 'login') {
-    if (title) title.textContent = 'Вхід у ByGigaBit';
-    if (sub) sub.textContent = 'Введіть email та пароль для доступу до віртуального рахунку';
-    if (btn) btn.textContent = 'Увійти в термінал';
-    if (repeatGroup) repeatGroup.style.display = 'none';
+    title.textContent = 'Вхід у ByGigaBit';
+    sub.textContent = 'Введіть дані для доступу до віртуального рахунку та торгівлі';
+    btn.textContent = 'Продовжити вхід';
+    repeatGroup.style.display = 'none';
     if (nickGroup) nickGroup.style.display = 'none';
-    // При вході вибір ролі чи кваліфікації не потрібен — вони зберігаються у БД
-    if (qualGroup) qualGroup.style.display = 'none';
-    if (googleBtnText) googleBtnText.textContent = 'Продовжити через Google';
   } else {
-    if (title) title.textContent = 'Створення акаунта трейдера';
-    if (sub) sub.textContent = 'Отримайте стартовий віртуальний баланс $10,000 USDT для Paper Trading';
-    if (btn) btn.textContent = 'Зареєструватися ($10,000 бонус)';
-    if (repeatGroup) repeatGroup.style.display = 'block';
+    title.textContent = 'Створення акаунта трейдера';
+    sub.textContent = 'Отримайте стартовий віртуальний баланс $10,000 USDT для Paper Trading';
+    btn.textContent = 'Зареєструватися ($10,000 бонус)';
+    repeatGroup.style.display = 'block';
     if (nickGroup) nickGroup.style.display = 'block';
-    // При реєстрації користувач обирає свій рівень кваліфікації
-    if (qualGroup) qualGroup.style.display = 'block';
-    if (googleBtnText) googleBtnText.textContent = 'Зареєструватися через Google';
   }
   cancel2FA();
+}
+
+function fillCreds(email, role) {
+  document.getElementById('authEmail').value = email;
+  document.getElementById('authPassword').value = 'SecurePass123!';
+  showToast(`Заповнено облікові дані для ролі: ${role}`);
 }
 
 async function handleMainSubmit(e) {
   e.preventDefault();
   const email = document.getElementById('authEmail').value.trim();
   const password = document.getElementById('authPassword').value;
-
-  if (!email || !password) {
-    showToast('Заповніть email та пароль');
-    return;
-  }
 
   if (authMode === 'register') {
     const repeat = document.getElementById('authPasswordRepeat').value;
@@ -86,38 +76,27 @@ async function handleMainSubmit(e) {
         showToast(data.error || 'Помилка реєстрації');
       }
     } catch (err) {
-      showToast('Помилка з\'єднання із сервером');
+      showToast("Помилка з'єднання із сервером");
     }
   } else {
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password, experienceLevel: currentQualification })
       });
       const data = await res.json();
-
       if (data.ok && data.requires2FA) {
         document.getElementById('authMainForm').style.display = 'none';
-        const step2FA = document.getElementById('auth2FAStep');
-        step2FA.style.display = 'block';
-
-        const targetEmailEl = document.getElementById('twoFactorTargetEmail');
-        if (targetEmailEl) targetEmailEl.textContent = email;
-
-        const codeInput = document.getElementById('input2FACode');
-        if (codeInput) {
-          codeInput.value = '';
-          codeInput.focus();
-        }
-        showToast('Код безпеки надіслано на вашу пошту');
+        document.getElementById('auth2FAStep').style.display = 'block';
+        showToast(data.message);
       } else if (data.ok && data.token) {
         completeLogin(data);
       } else {
         showToast(data.error || 'Невірні облікові дані');
       }
     } catch (err) {
-      showToast('Помилка з\'єднання із сервером');
+      showToast("Помилка з'єднання із сервером");
     }
   }
 }
@@ -128,7 +107,7 @@ async function verify2FACode() {
   const code = document.getElementById('input2FACode').value.trim();
 
   if (code.length !== 6) {
-    showToast('Введіть повний 6-значний код безпеки');
+    showToast('Введіть 6-значний код!');
     return;
   }
 
@@ -136,58 +115,138 @@ async function verify2FACode() {
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, code2fa: code })
+      body: JSON.stringify({ email, password, code2fa: code, experienceLevel: currentQualification })
     });
     const data = await res.json();
     if (data.ok && data.token) {
       completeLogin(data);
     } else {
-      showToast(data.error || 'Невірний 2FA код');
+      showToast(data.error || 'Невірний код 2FA');
     }
   } catch (err) {
-    showToast('Помилка підтвердження 2FA коду');
+    showToast('Помилка підтвердження 2FA');
   }
 }
 
-// Реальна обробка Google OAuth відповіді (Google Identity Services)
-window.handleGoogleCredentialResponse = async function(response) {
-  if (!response || !response.credential) {
-    showToast('Не вдалося отримати токен Google');
+// ЗАПИТ РЕЗЕРВНОГО КОДУ 2FA НА ПОШТУ ПРИ ВХОДІ
+async function requestAuthEmailBackupCode() {
+  const email = document.getElementById('authEmail').value.trim() || pendingGoogleEmail;
+  if (!email) {
+    showToast('Вкажіть вашу електронну пошту');
     return;
   }
+
+  try {
+    const res = await fetch('/api/auth/2fa/send-email-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showToast(data.message || 'Одноразовий резервний код відправлено на вашу пошту!');
+    } else {
+      showToast(data.error || 'Помилка відправки коду');
+    }
+  } catch (err) {
+    showToast("Помилка з'єднання із сервером");
+  }
+}
+
+// ВХІД ЧЕРЕЗ GOOGLE
+async function startGoogleAuth() {
+  let googleEmail = prompt('Введіть ваш Google Email для входу:', 'trader.google@gmail.com');
+  if (!googleEmail) return;
+  googleEmail = googleEmail.trim().toLowerCase();
+
+  pendingGoogleEmail = googleEmail;
+
   try {
     const res = await fetch('/api/auth/google', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        credential: response.credential,
+        email: googleEmail,
+        nickname: googleEmail.split('@')[0],
+        experienceLevel: currentQualification
+      })
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      if (data.needsPassword) {
+        // Користувачу треба задати пароль (вікно "Задайте пароль для входження в акаунт")
+        openGoogleModal(data.email);
+        showToast(data.message);
+      } else if (data.requires2FA) {
+        document.getElementById('authEmail').value = data.email;
+        document.getElementById('authMainForm').style.display = 'none';
+        document.getElementById('auth2FAStep').style.display = 'block';
+        showToast(data.message);
+      } else if (data.token) {
+        completeLogin(data);
+      }
+    } else {
+      showToast(data.error || 'Помилка Google авторизації');
+    }
+  } catch (err) {
+    showToast("Помилка з'єднання із сервером Google Auth");
+  }
+}
+
+function openGoogleModal(email) {
+  pendingGoogleEmail = email;
+  const modal = document.getElementById('modalGooglePassword');
+  if (modal) {
+    modal.style.display = 'flex';
+    document.getElementById('googleNewPass').value = '';
+    document.getElementById('googleRepeatPass').value = '';
+    document.getElementById('googleNewPass').focus();
+  }
+}
+
+function closeGoogleModal() {
+  const modal = document.getElementById('modalGooglePassword');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}
+
+async function handleGooglePasswordSubmit(e) {
+  e.preventDefault();
+  const pass = document.getElementById('googleNewPass').value;
+  const repeat = document.getElementById('googleRepeatPass').value;
+
+  if (pass.length < 8 || pass.length > 128) {
+    showToast('Пароль має містити від 8 до 128 символів');
+    return;
+  }
+
+  if (pass !== repeat) {
+    showToast('Паролі не співпадають!');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/auth/google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: pendingGoogleEmail,
+        nickname: pendingGoogleEmail.split('@')[0],
+        password: pass,
         experienceLevel: currentQualification
       })
     });
     const data = await res.json();
     if (data.ok && data.token) {
+      closeGoogleModal();
       completeLogin(data);
     } else {
-      showToast(data.error || 'Помилка автентифікації через Google');
+      showToast(data.error || 'Помилка встановлення пароля');
     }
   } catch (err) {
-    showToast('Помилка зв\'язку із сервером Google');
-  }
-};
-
-function startGoogleAuth() {
-  const onloadEl = document.getElementById('g_id_onload');
-  const googleClientId = onloadEl ? onloadEl.dataset.clientId : '';
-
-  if (googleClientId && window.google && window.google.accounts && window.google.accounts.id) {
-    window.google.accounts.id.initialize({
-      client_id: googleClientId,
-      callback: window.handleGoogleCredentialResponse
-    });
-    window.google.accounts.id.prompt();
-  } else {
-    // Якщо клієнтський GSI не активний або потрібен повний веб-редирект OAuth
-    window.location.href = '/api/auth/google/login';
+    showToast("Помилка збереження пароля");
   }
 }
 
@@ -197,7 +256,7 @@ function completeLogin(data) {
   if (data.user && data.user.experienceLevel) {
     localStorage.setItem('bygigabit_experience_level', data.user.experienceLevel);
   }
-  showToast(data.message || 'Успішний вхід!');
+  showToast(data.message);
   const urlParams = new URLSearchParams(window.location.search);
   const nextUrl = urlParams.get('next');
   setTimeout(() => {
@@ -212,10 +271,8 @@ function completeLogin(data) {
 }
 
 function cancel2FA() {
-  const mainForm = document.getElementById('authMainForm');
-  const step2FA = document.getElementById('auth2FAStep');
-  if (mainForm) mainForm.style.display = 'block';
-  if (step2FA) step2FA.style.display = 'none';
+  document.getElementById('authMainForm').style.display = 'block';
+  document.getElementById('auth2FAStep').style.display = 'none';
 }
 
 function showToast(msg) {
@@ -229,21 +286,8 @@ function showToast(msg) {
 window.addEventListener('DOMContentLoaded', () => {
   const savedExp = localStorage.getItem('bygigabit_experience_level') || 'beginner';
   selectQualification(savedExp);
-
-  // Перевірка URL параметрів на наявність помилок OAuth
   const urlParams = new URLSearchParams(window.location.search);
-  const authErr = urlParams.get('error');
-  if (authErr) {
-    if (authErr === 'google_not_configured') {
-      showToast('Для входу через Google додайте GOOGLE_CLIENT_ID у файл .env');
-    } else {
-      showToast(`Помилка авторизації: ${authErr}`);
-    }
-  }
-
   if (urlParams.get('mode') === 'register' || window.location.pathname === '/register') {
     switchAuthMode('register');
-  } else {
-    switchAuthMode('login');
   }
 });

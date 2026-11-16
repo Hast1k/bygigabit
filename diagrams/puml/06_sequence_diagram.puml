@@ -1,0 +1,96 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam roundCorner 0
+skinparam shadowing false
+
+skinparam sequence {
+    arrowColor #000000
+    arrowFontColor #000000
+    lifeLineBorderColor #868E96
+    lifeLineBackgroundColor #FFA94D
+}
+skinparam participant {
+    borderColor #D9480F
+    backgroundColor #FFA94D
+    fontColor #000000
+    fontStyle bold
+}
+skinparam actor {
+    borderColor #D9480F
+    backgroundColor #FFE8CC
+    fontColor #000000
+}
+skinparam boundary {
+    borderColor #D9480F
+    backgroundColor #FFA94D
+    fontColor #000000
+}
+skinparam control {
+    borderColor #D9480F
+    backgroundColor #FFA94D
+    fontColor #000000
+}
+skinparam entity {
+    borderColor #D9480F
+    backgroundColor #FFA94D
+    fontColor #000000
+}
+skinparam database {
+    borderColor #D9480F
+    backgroundColor #FFA94D
+    fontColor #000000
+}
+
+title **Приклад діаграми послідовності для створення ордера в системі ByGigaBit**
+
+actor "Клієнт" as Client
+boundary "Website" as Website
+control "OrderController" as Controller
+entity ":Order" as Order
+entity ":BybitService" as Bybit
+database "База даних" as DB
+
+Client -> Website : Отримати інформацію про котирування
+activate Website
+Website -> Controller : Запит ринкових даних
+activate Controller
+Controller -> Bybit : Перевірити актуальну ціну Bybit
+activate Bybit
+Bybit --> Controller : Результат котирувань
+deactivate Bybit
+Controller --> Website : Інформація про ринок
+deactivate Controller
+Website --> Client : Інформація про ринок
+deactivate Website
+
+Client -> Website : Створити ордер (Long, 10x)
+activate Website
+Website -> Controller : Створити ордер
+activate Controller
+
+Controller -> DB : Перевірити чи наявний баланс
+activate DB
+DB --> Controller : Результат перевірки
+deactivate DB
+
+Controller -> Order : Створити позицію
+activate Order
+Order -> Bybit : Отримати ціну виконання
+activate Bybit
+Bybit --> Order : Ціна котирування
+deactivate Bybit
+Order --> Controller : Створена позиція
+deactivate Order
+
+Controller -> DB : Зберегти замовлення та списати маржу
+activate DB
+DB --> Controller : Підтвердження запису
+deactivate DB
+
+Controller --> Website : Створене замовлення
+deactivate Controller
+Website --> Client : Замовлення відкрито на графіку
+deactivate Website
+@enduml

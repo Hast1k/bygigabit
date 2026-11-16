@@ -1,0 +1,86 @@
+// Схема бази даних вебплатформи «ByGigaBit» для https://dbdiagram.io/
+// Відповідає реальній структурі SQLAlchemy 2.0 у файлі database.py
+
+Table users {
+  id integer [pk, increment, note: 'Унікальний ідентифікатор користувача']
+  email varchar(255) [unique, not null, note: 'Електронна пошта для входу']
+  nickname varchar(100) [null, note: 'Відображуване імʼя трейдера']
+  password varchar(255) [not null, note: 'Хеш пароля PBKDF2-HMAC-SHA256 або пароль']
+  role varchar(50) [default: 'Trader', not null, note: 'Роль у системі RBAC: Trader або Admin']
+  twoFactor boolean [default: true, not null, note: 'Статус двоетапної автентифікації (2FA)']
+  twoFactorSecret varchar(64) [null, note: 'Base32 секретний ключ RFC 6238 TOTP']
+  balance float [default: 10000.0, not null, note: 'Віртуальний торговий баланс у USDT']
+  tradesCount integer [default: 0, not null, note: 'Кількість завершених угод користувача']
+  experienceLevel varchar(20) [default: 'beginner', not null, note: 'Рівень досвіду: beginner / pro']
+  isBlocked boolean [default: false, not null, note: 'Прапорець блокування доступу адміністратором']
+  registeredAt varchar(50) [not null, note: 'Дата та час реєстрації облікового запису']
+
+  Note: 'Облікові записи трейдерів та адміністраторів платформи ByGigaBit'
+}
+
+Table sessions {
+  token varchar(255) [pk, note: 'Криптографічний токен сесії авторизації']
+  user_id integer [not null, note: 'Зовнішній ключ на таблицю users']
+  createdAt varchar(50) [not null, note: 'Часова мітка створення сесії']
+
+  Note: 'Активні користувацькі сесії'
+}
+
+Table positions {
+  id varchar(100) [pk, note: 'Унікальний ідентифікатор відкритої позиції']
+  user_id integer [not null, note: 'Зовнішній ключ на таблицю users']
+  symbol varchar(50) [default: 'BTCUSDT', not null, note: 'Торгова пара (BTCUSDT, ETHUSDT, SOLUSDT тощо)']
+  side varchar(20) [not null, note: 'Напрямок позиції: Long або Short']
+  entryPrice float [not null, note: 'Ціна входу в позицію']
+  markPrice float [not null, note: 'Поточна ринкова ціна маркування']
+  margin float [not null, note: 'Заставна маржа у USDT']
+  leverage integer [not null, note: 'Кредитне плече (1x - 20x)']
+  size float [not null, note: 'Обсяг позиції в базовому активі']
+  liqPrice float [not null, note: 'Розрахункова ціна ліквідації (Margin Call)']
+  unrealizedPnL float [default: 0.0, not null, note: 'Поточний нереалізований прибуток/збиток']
+  roi float [default: 0.0, not null, note: 'Поточна рентабельність угоди у %']
+  openedAt varchar(50) [not null, note: 'Час відкриття позиції']
+
+  Note: 'Активні маржинальні позиції трейдерів'
+}
+
+Table limit_orders {
+  id varchar(100) [pk, note: 'Ідентифікатор відкладеного лімітного ордера']
+  user_id integer [not null, note: 'Зовнішній ключ на таблицю users']
+  symbol varchar(50) [default: 'BTCUSDT', not null, note: 'Торгова пара']
+  side varchar(20) [not null, note: 'Напрямок ордера: Long або Short']
+  orderType varchar(50) [default: 'limit', not null, note: 'Тип ордера: limit']
+  orderPrice float [not null, note: 'Цільова лімітна ціна виконання']
+  initialPrice float [null, note: 'Ринкова ціна на момент виставлення ордера']
+  margin float [not null, note: 'Зарезервована маржа в USDT']
+  leverage integer [not null, note: 'Кредитне плече (1x - 20x)']
+  size float [not null, note: 'Розрахунковий обсяг позиції']
+  status varchar(50) [default: 'active', not null, note: 'Статус ордера: active / filled / cancelled']
+  createdAt varchar(50) [not null, note: 'Час створення заявки']
+
+  Note: 'Відкладені лімітні ордери користувачів'
+}
+
+Table order_history {
+  id varchar(100) [pk, note: 'Ідентифікатор закритої угоди']
+  user_id integer [not null, note: 'Зовнішній ключ на таблицю users']
+  symbol varchar(50) [default: 'BTCUSDT', not null, note: 'Торгова пара']
+  side varchar(20) [not null, note: 'Напрямок угоди: Long або Short']
+  orderType varchar(50) [default: 'market', not null, note: 'Тип ордера: market або limit']
+  price float [not null, note: 'Ціна входу в позицію']
+  closePrice float [not null, note: 'Ціна закриття або ліквідації']
+  margin float [not null, note: 'Задіяна заставна маржа в USDT']
+  leverage integer [not null, note: 'Кредитне плече']
+  pnl float [not null, note: 'Зафіксований фінансовий результат (PnL) в USDT']
+  roi float [not null, note: 'Підсумкова дохідність (ROI) у %']
+  status varchar(50) [default: 'closed', not null, note: 'Фінальний статус: closed або liquidated']
+  time varchar(50) [not null, note: 'Час остаточного закриття угоди']
+
+  Note: 'Журнал історії торгових операцій та розрахунку статистики'
+}
+
+// Зв'язки 1:N з каскадним видаленням (ON DELETE CASCADE)
+Ref: users.id < sessions.user_id [delete: cascade]
+Ref: users.id < positions.user_id [delete: cascade]
+Ref: users.id < limit_orders.user_id [delete: cascade]
+Ref: users.id < order_history.user_id [delete: cascade]

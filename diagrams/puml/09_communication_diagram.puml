@@ -1,0 +1,42 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam roundCorner 8
+skinparam shadowing false
+
+skinparam rectangle {
+    borderColor #E03131
+    backgroundColor #FFE3E3
+    fontColor #491217
+    fontStyle bold
+}
+skinparam database {
+    borderColor #E03131
+    backgroundColor #FFE3E3
+    fontColor #491217
+    fontStyle bold
+}
+skinparam actor {
+    borderColor #E03131
+    backgroundColor #FFE3E3
+    fontColor #491217
+}
+skinparam arrow {
+    color #C92A2A
+    fontColor #491217
+}
+
+actor ":Трейдер" as Trader
+rectangle ":Website (UI)" as Website
+rectangle ":OrderController" as Controller
+rectangle ":RiskEngine" as RiskEngine
+rectangle ":BybitService" as Bybit
+database ":DB (PostgreSQL)" as DB
+
+Trader -- Website : 1: Ввести параметри ордера >\n20: Оновити графік та баланс <
+Website -- Controller : 2: Відправити POST /api/orders >\n19: Повернути стан відкритої позиції <
+Controller -- DB : 3: Перевірити токен сесії >\n4: Дані сесії <\n7: Перевірити вільний баланс >\n8: Підтвердження балансу <\n15: Списати маржу та вставити позицію >\n16: Результат транзакції <
+Controller -- Bybit : 5: Запит актуальної ціни Bybit V5 >\n6: Поточна ринкова ціна <
+Controller -- RiskEngine : 9: Передати параметри для розрахунку >\n10: Розраховані розмір та ліквідація <
+@enduml

@@ -1,0 +1,90 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam roundCorner 10
+skinparam shadowing false
+
+skinparam swimlane {
+    borderColor #2B8A3E
+    titleFontColor #2B8A3E
+    titleFontStyle bold
+    backgroundColor #FFFFFF
+}
+skinparam activity {
+    borderColor #2B8A3E
+    backgroundColor #EBFBEE
+    fontColor #1B4422
+}
+skinparam decision {
+    borderColor #2B8A3E
+    backgroundColor #EBFBEE
+    fontColor #1B4422
+}
+skinparam arrow {
+    color #2B8A3E
+    fontColor #1B4422
+}
+
+title **Діаграма діяльності: виконання торговельної операції у системі ByGigaBit**
+
+|Трейдер (Клієнтський термінал)|
+start
+:Обрати торгову пару (BTC/ETH/SOL);
+:Вказати розмір маржі та кредитне плече (1x-20x);
+:Обрати тип ордера (Market або Limit);
+:Натиснути кнопку «Відкрити Long / Short»;
+
+|Сервер платформи (FastAPI)|
+:Перевірити активність сесії користувача;
+if (Чи достатній баланс трейдера?) then ([ні])
+    :Показати повідомлення про нестачу коштів;
+    |Трейдер (Клієнтський термінал)|
+    stop
+else ([так])
+endif
+
+|Зовнішня біржа Bybit та СУБД Neon|
+:Отримати актуальне котирування через Bybit V5;
+:Розрахувати обсяг позиції та ціну ліквідації;
+:Зарезервувати суму маржі на балансі;
+
+if (Тип ордера?) then ([Лімітний])
+    :Зберегти запит у таблиці limit_orders (pending);
+    |Трейдер (Клієнтський термінал)|
+    :Очікування наближення ринкової ціни;
+    |Зовнішня біржа Bybit та СУБД Neon|
+    :Спрацювання лімітного ордера при перетині ціни;
+else ([Ринковий])
+endif
+
+:Створити активний запис у таблиці positions (open);
+
+|Трейдер (Клієнтський термінал)|
+:Відобразити відкриту позицію на свічковому графіку;
+
+|Сервер платформи (FastAPI)|
+repeat
+    :Фоновий моніторинг ринкових котирувань Bybit;
+    :Динамічний перерахунок Floating PnL;
+    if (Ринкова ціна перетнула ціну ліквідації?) then ([так, Margin Call])
+        |Зовнішня біржа Bybit та СУБД Neon|
+        :Примусова ліквідація та списання застави;
+        :Зафіксувати подію в order_history (liquidation);
+        |Трейдер (Клієнтський термінал)|
+        :Повідомити трейдера про ліквідацію;
+        stop
+    else ([ні])
+    endif
+repeat while (Трейдер надіслав запит на закриття?) is ([ні])
+
+|Зовнішня біржа Bybit та СУБД Neon|
+:Фіксація фінальної ціни закриття;
+:Остаточний розрахунок чистого PnL;
+:Повернення заставної маржі та PnL на баланс;
+:Оновлення статусу на closed та запис в order_history;
+
+|Трейдер (Клієнтський термінал)|
+:Оновити стан балансу та історію угод у терміналі;
+stop
+@enduml

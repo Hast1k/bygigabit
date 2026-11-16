@@ -1,0 +1,95 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam roundCorner 0
+skinparam shadowing false
+
+skinparam class {
+    borderColor #333333
+    backgroundColor #FFFFFF
+    headerBackgroundColor #F1F3F5
+    fontColor #111111
+}
+skinparam arrow {
+    color #333333
+}
+
+title **Приклад Class Diagram для торгової системи ByGigaBit**
+
+class Trader as "Trader (UserModel)" {
+    + int id
+    + string email
+    + string nickname
+    + string role
+    + double balance
+    + bool isBlocked
+    --
+    + check_password(password) bool
+    + verify_totp(code) bool
+    + MakeOrder() Order
+}
+
+class Order as "Order (LimitOrderModel)" {
+    + Guid id
+    + string symbol
+    + string side
+    + double orderPrice
+    + double margin
+    + int leverage
+    + Trader trader
+    + OrderExecution[] executions
+    --
+    + can_execute(markPrice) bool
+    + to_dict() dict
+}
+
+class OrderExecution as "OrderExecution" {
+    + int leverage
+    + double executionPrice
+    + FinancialInstrument instrument
+    --
+    + calculateRequiredMargin() double
+}
+
+abstract class FinancialInstrument as "FinancialInstrument" {
+    + Guid id
+    + string symbol
+    + double markPrice
+    --
+    + FinancialInstrument(symbol, markPrice)
+    + CalculateLiqPrice(leverage, margin) double
+    + ApplyLeverage() double
+}
+
+class SpotInstrument as "SpotInstrument" {
+    + TimeSpan settlementTime
+    --
+    + CalculateSpotPnL() double
+}
+
+class FuturesContract as "FuturesContract" {
+    + double maxLeverage (20x)
+    + double maintenanceMargin
+    --
+    + CalculateLiquidationPrice() double
+}
+
+class VirtualWallet as "VirtualWallet" {
+    + FinancialInstrument[] activePositions
+    + double availableBalance
+    + double lockedMargin
+    --
+    + addPosition(FinancialInstrument pos) void
+    + closePosition(FinancialInstrument pos) void
+    + getFreeMargin() double
+}
+
+Trader "1" --> "1..*" Order : створює
+Order "1" *-- "1..*" OrderExecution : містить
+OrderExecution "1" --> "1" FinancialInstrument : оперує
+FinancialInstrument <|-- SpotInstrument : успадковує
+FinancialInstrument <|-- FuturesContract : успадковує
+VirtualWallet "1" o-- "*" FinancialInstrument : утримує
+Trader "1" *-- "1" VirtualWallet : володіє
+@enduml
