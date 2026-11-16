@@ -38,12 +38,6 @@ function switchAuthMode(mode) {
   cancel2FA();
 }
 
-function fillCreds(email, role) {
-  document.getElementById('authEmail').value = email;
-  document.getElementById('authPassword').value = 'SecurePass123!';
-  showToast(`Заповнено облікові дані для ролі: ${role}`);
-}
-
 async function handleMainSubmit(e) {
   e.preventDefault();
   const email = document.getElementById('authEmail').value.trim();
