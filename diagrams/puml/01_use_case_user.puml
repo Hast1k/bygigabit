@@ -39,6 +39,7 @@ rectangle "Торговий вебтермінал ByGigaBit" {
     usecase "Керувати особистим профілем" as UC_Profile
 
     usecase "Переглянути графік і котирування" as UC_Chart
+    usecase "Отримати поточну ринкову ціну" as UC_Price
     usecase "Фільтрувати торгові пари" as UC_Filter
 
     usecase "Оформити торговий ордер" as UC_Order
@@ -46,30 +47,39 @@ rectangle "Торговий вебтермінал ByGigaBit" {
     usecase "Контроль маржі та балансу" as UC_Risk
 
     usecase "Закрити відкриту позицію" as UC_Close
-    usecase "Виставити лімітний ордер" as UC_Limit
+    usecase "Виконати закриття позиції" as UC_Exec
+    usecase "Розрахувати кінцевий PnL" as UC_PnL
 
     usecase "Пройти навчальний сценарій" as UC_Scenario
+    usecase "Отримати прогноз ринку" as UC_AI
+
     usecase "Переглянути журнал угод та аналітику" as UC_Journal
+    usecase "Аналіз кривої депозиту" as UC_Curve
 }
 
 Guest --> UC_Auth
 Guest --> UC_Chart
 
 User --> UC_Profile
+User --> UC_Chart
 User --> UC_Order
 User --> UC_Close
-User --> UC_Limit
 User --> UC_Scenario
 User --> UC_Journal
 
 UC_Auth <.. UC_2FA : <<extend>>
 UC_Profile <.. UC_Reset : <<extend>>
-UC_Chart <.. UC_Filter : <<extend>>
+UC_Chart ..> UC_Price : <<include>>
+UC_Price <.. UC_Filter : <<extend>>
 UC_Order ..> UC_Params : <<include>>
-UC_Order ..> UC_Risk : <<include>>
+UC_Params ..> UC_Risk : <<include>>
+UC_Close ..> UC_Exec : <<include>>
+UC_Exec ..> UC_PnL : <<include>>
+UC_Scenario <.. UC_AI : <<extend>>
+UC_Journal ..> UC_Curve : <<include>>
 
 UC_Auth --> AuthService
 UC_Reset --> NotifyService
-UC_Chart --> MarketService
-UC_Order --> MarketService
+UC_Price --> MarketService
+UC_Risk --> MarketService
 @enduml
