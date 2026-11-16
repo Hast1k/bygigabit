@@ -1,0 +1,38 @@
+flowchart LR
+    subgraph System["Панель адміністратора ByGigaBit"]
+        UC_Login(["Вхід до адмінпанелі"])
+        UC_Access(["Перевірка прав"])
+        UC_Users(["Реєстр трейдерів"])
+        UC_Role(["Змінити роль"])
+        UC_Block(["Блокувати трейдера"])
+        UC_2FA_Reset(["Скинути 2FA"])
+        UC_Balance(["Коригувати баланс"])
+        UC_Positions(["Моніторинг позицій"])
+        UC_ForceClose(["Примусово закрити"])
+        UC_Orders(["Моніторинг ордерів"])
+        UC_Stats(["Зведена статистика"])
+        UC_CSV(["Експорт CSV"])
+        UC_JSON(["Експорт JSON"])
+    end
+
+    Admin["Адміністратор"]
+    DB["База даних"]
+    MktSvc["Біржовий сервіс"]
+
+    Admin --> UC_Login
+    Admin --> UC_Users
+    Admin --> UC_Positions
+    Admin --> UC_Orders
+    Admin --> UC_Stats
+
+    UC_Login -.->|<<include>>| UC_Access
+    UC_Role -.->|<<extend>>| UC_Users
+    UC_Block -.->|<<extend>>| UC_Users
+    UC_2FA_Reset -.->|<<extend>>| UC_Users
+    UC_Balance -.->|<<extend>>| UC_Users
+    UC_ForceClose -.->|<<extend>>| UC_Positions
+    UC_Stats -.->|<<include>>| UC_CSV
+    UC_Stats -.->|<<include>>| UC_JSON
+
+    UC_Users --> DB
+    UC_Positions --> MktSvc

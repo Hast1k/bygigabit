@@ -7,86 +7,81 @@ skinparam shadowing false
 
 skinparam component {
     borderColor #333333
-    backgroundColor #FFFFFF
+    backgroundColor #FFF2CC
     fontColor #111111
+    fontStyle bold
 }
 skinparam interface {
     borderColor #333333
     backgroundColor #FFFFFF
     fontColor #111111
+    fontStyle bold
 }
 skinparam arrow {
     color #333333
 }
 
-title **Приклад діаграми компонентів для RESTful API архітектури платформи ByGigaBit**
+title **Діаграма компонентів торгової вебплатформи**
 
-[Client\n<<Application>>] as Client
+[Клієнт] as Client
 
-interface "API" as API_Int
-interface "ISqlCommands" as SQL_Int
+interface "REST API" as API_Int
+interface "SQL" as SQL_Int
 
 Client -right-> API_Int
 
-' Колонка 1: Контролери платформи ByGigaBit
-[MarketController\n<<Controller>>] as C_Market
-[OrderController\n<<Controller>>] as C_Order
-[AuthController\n<<Controller>>] as C_Auth
-[SimulatorController\n<<Controller>>] as C_Sim
-[AdminController\n<<Controller>>] as C_Admin
+' Колонка 1: Основні функціональні модулі
+[Авторизація] as C_Auth
+[Користувачі] as C_Users
+[Угоди] as C_Order
+[Сценарії] as C_Sim
+[Котирування] as C_Market
 
-API_Int --> C_Market
-API_Int --> C_Order
 API_Int --> C_Auth
+API_Int --> C_Users
+API_Int --> C_Order
 API_Int --> C_Sim
-API_Int --> C_Admin
+API_Int --> C_Market
 
-' Колонка 2: Бізнес-менеджери та рушії
-[MarketManager\n<<Component>>] as M_Market
-[TradingRiskManager\n<<Component>>] as M_Order
-[AuthManager\n<<Component>>] as M_Auth
-[SimulatorManager\n<<Component>>] as M_Sim
-[AdminManager\n<<Component>>] as M_Admin
+' Колонка 2: Обробка бізнес-логіки
+[Безпека та 2FA] as M_Auth
+[Баланс і гаманець] as M_Users
+[Розрахунок ризиків] as M_Order
+[Аналітика] as M_Sim
+[Шлюз біржі] as M_Market
 
-C_Market ..> M_Market
-C_Order ..> M_Order
 C_Auth ..> M_Auth
+C_Users ..> M_Users
+C_Order ..> M_Order
 C_Sim ..> M_Sim
-C_Admin ..> M_Admin
+C_Market ..> M_Market
 
-' Колонка 3: Репозиторії доступу до даних (SQLAlchemy ORM)
-[MarketRepository\n<<Component>>] as R_Market
-[PositionRepository\n<<Component>>] as R_Position
-[OrderRepository\n<<Component>>] as R_Order
-[UserRepository\n<<Component>>] as R_User
-[HistoryRepository\n<<Component>>] as R_History
+' Колонка 3: Компоненти збереження даних
+[Сесії] as R_Auth
+[Профілі] as R_Users
+[Позиції] as R_Order
+[Історія] as R_Hist
+[Кеш ринку] as R_Market
 
-M_Market ..> R_Market
-M_Order ..> R_Position
+M_Auth ..> R_Auth
+M_Users ..> R_Users
 M_Order ..> R_Order
-M_Auth ..> R_User
-M_Admin ..> R_User
-M_Order ..> R_History
-M_Sim ..> R_History
+M_Sim ..> R_Hist
+M_Market ..> R_Market
 
-R_Market --> SQL_Int
-R_Position --> SQL_Int
+R_Auth --> SQL_Int
+R_Users --> SQL_Int
 R_Order --> SQL_Int
-R_User --> SQL_Int
-R_History --> SQL_Int
+R_Hist --> SQL_Int
+R_Market --> SQL_Int
 
-[DB\n<<Component>>] as DB
-SQL_Int -right-> DB
+[СУБД] as DB
+SQL_Int --> DB
 
-' Нижня панель зовнішніх та допоміжних сервісів
-[BybitV5Service\n<<Service>>] as S_Bybit
-[TOTP2FAService\n<<Service>>] as S_2FA
-[SMTPService\n<<Service>>] as S_SMTP
-[AIRadarService\n<<Service>>] as S_AI
+' Зовнішні сервіси
+[Поштовий сервіс] as S_Mail
+[Зовнішня біржа] as S_Exchange
 
-M_Market ..> S_Bybit
-M_Order ..> S_Bybit
-M_Auth ..> S_2FA
-M_Auth ..> S_SMTP
-M_Sim ..> S_AI
+M_Auth ..> S_Mail
+M_Market ..> S_Exchange
 @enduml

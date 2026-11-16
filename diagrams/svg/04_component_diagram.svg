@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="820" viewBox="0 0 1500 820" font-family="Arial, Helvetica, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1460" height="800" viewBox="0 0 1460 800" font-family="Arial, Helvetica, sans-serif">
 <defs>
         <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
           <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#f0f0f0" stroke-width="0.6"/>
@@ -156,129 +156,98 @@
           <path d="M 9 8 L 19 2 M 9 8 L 19 8 M 9 8 L 19 14" fill="none" stroke="#2b7889" stroke-width="1.5"/>
         </marker>
         </defs>
-<rect width="1500" height="820" fill="#ffffff"/>
-<rect width="1500" height="820" fill="url(#grid)"/>
-<text x="750.0" y="40.3" font-size="18" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Діаграма компонентів для RESTful API архітектури вебплатформи</text>
-<rect x="35" y="315" width="165" height="76" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="180" y="321" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="176" y="324" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="176" y="332" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="113.5" y="348.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Application&gt;&gt;</text>
-<text x="113.5" y="367.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Client</text>
-<path d="M 200.0 353.0 L 240.0 353.0" fill="none" stroke="#333333" stroke-width="1.5"/>
-<path d="M 248 343 A 10 10 0 0 0 248 363" fill="none" stroke="#333333" stroke-width="1.5"/>
-<circle cx="253" cy="353" r="6" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
-<text x="248.0" y="331.9" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">API</text>
-<path d="M 259.0 353.0 L 295.0 353.0" fill="none" stroke="#333333" stroke-width="1.5"/>
-<line x1="295" y1="128" x2="295" y2="578" stroke="#333333" stroke-width="1.5"/>
-<path d="M 295.0 128.0 L 345.0 128.0" fill="none" stroke="#333333" stroke-width="1.4" marker-end="url(#vee-black)"/>
-<rect x="345" y="92" width="200" height="72" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="525" y="98" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="521" y="101" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="521" y="109" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="441.0" y="123.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Controller&gt;&gt;</text>
-<text x="441.0" y="142.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">AdminController</text>
-<path d="M 295.0 240.0 L 345.0 240.0" fill="none" stroke="#333333" stroke-width="1.4" marker-end="url(#vee-black)"/>
-<rect x="345" y="204" width="200" height="72" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="525" y="210" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="521" y="213" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="521" y="221" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="441.0" y="235.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Controller&gt;&gt;</text>
-<text x="441.0" y="254.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">AuthController</text>
-<path d="M 295.0 353.0 L 345.0 353.0" fill="none" stroke="#333333" stroke-width="1.4" marker-end="url(#vee-black)"/>
-<rect x="345" y="317" width="200" height="72" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="525" y="323" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="521" y="326" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="521" y="334" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="441.0" y="348.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Controller&gt;&gt;</text>
-<text x="441.0" y="367.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">OrderController</text>
-<path d="M 295.0 465.0 L 345.0 465.0" fill="none" stroke="#333333" stroke-width="1.4" marker-end="url(#vee-black)"/>
-<rect x="345" y="429" width="200" height="72" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="525" y="435" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="521" y="438" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="521" y="446" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="441.0" y="460.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Controller&gt;&gt;</text>
-<text x="441.0" y="479.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">ScenarioController</text>
-<path d="M 295.0 578.0 L 345.0 578.0" fill="none" stroke="#333333" stroke-width="1.4" marker-end="url(#vee-black)"/>
-<rect x="345" y="542" width="200" height="72" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="525" y="548" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="521" y="551" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="521" y="559" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="441.0" y="573.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Controller&gt;&gt;</text>
-<text x="441.0" y="592.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">MarketController</text>
-<path d="M 545.0 128.0 L 635.0 128.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
-<rect x="635" y="92" width="205" height="72" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="820" y="98" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="816" y="101" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="816" y="109" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="733.5" y="123.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Component&gt;&gt;</text>
-<text x="733.5" y="142.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">AdminManager</text>
-<path d="M 545.0 240.0 L 635.0 240.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
-<rect x="635" y="204" width="205" height="72" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="820" y="210" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="816" y="213" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="816" y="221" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="733.5" y="235.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Component&gt;&gt;</text>
-<text x="733.5" y="254.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">AuthManager</text>
-<path d="M 545.0 353.0 L 635.0 353.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
-<rect x="635" y="317" width="205" height="72" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="820" y="323" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="816" y="326" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="816" y="334" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="733.5" y="348.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Component&gt;&gt;</text>
-<text x="733.5" y="367.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">OrderManager</text>
-<path d="M 545.0 465.0 L 635.0 465.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
-<rect x="635" y="429" width="205" height="72" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="820" y="435" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="816" y="438" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="816" y="446" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="733.5" y="460.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Component&gt;&gt;</text>
-<text x="733.5" y="479.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">ScenarioManager</text>
-<path d="M 545.0 578.0 L 635.0 578.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
-<rect x="635" y="542" width="205" height="72" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="820" y="548" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="816" y="551" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="816" y="559" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="733.5" y="573.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Component&gt;&gt;</text>
-<text x="733.5" y="592.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">MarketManager</text>
-<rect x="945" y="92" width="200" height="72" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="1125" y="98" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1121" y="101" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1121" y="109" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="1041.0" y="123.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Component&gt;&gt;</text>
-<text x="1041.0" y="142.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">UserRepository</text>
-<rect x="945" y="204" width="200" height="72" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="1125" y="210" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1121" y="213" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1121" y="221" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="1041.0" y="235.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Component&gt;&gt;</text>
-<text x="1041.0" y="254.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">SessionRepository</text>
-<rect x="945" y="317" width="200" height="72" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="1125" y="323" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1121" y="326" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1121" y="334" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="1041.0" y="348.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Component&gt;&gt;</text>
-<text x="1041.0" y="367.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">PositionRepository</text>
-<rect x="945" y="429" width="200" height="72" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="1125" y="435" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1121" y="438" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1121" y="446" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="1041.0" y="460.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Component&gt;&gt;</text>
-<text x="1041.0" y="479.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">OrderRepository</text>
-<rect x="945" y="542" width="200" height="72" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="1125" y="548" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1121" y="551" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1121" y="559" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="1041.0" y="573.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Component&gt;&gt;</text>
-<text x="1041.0" y="592.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">HistoryRepository</text>
-<path d="M 840.0 128.0 L 945.0 128.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
-<path d="M 840.0 240.0 L 945.0 240.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
-<path d="M 840.0 225.0 L 875.0 225.0 L 875.0 145.0 L 945.0 145.0" fill="none" stroke="#333333" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
-<path d="M 840.0 353.0 L 945.0 353.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
-<path d="M 840.0 368.0 L 890.0 368.0 L 890.0 455.0 L 945.0 455.0" fill="none" stroke="#333333" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
-<path d="M 840.0 382.0 L 912.0 382.0 L 912.0 565.0 L 945.0 565.0" fill="none" stroke="#333333" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
-<line x1="1185" y1="128" x2="1185" y2="578" stroke="#333333" stroke-width="1.5"/>
-<path d="M 1145.0 128.0 L 1185.0 128.0" fill="none" stroke="#333333" stroke-width="1.4"/>
-<path d="M 1145.0 240.0 L 1185.0 240.0" fill="none" stroke="#333333" stroke-width="1.4"/>
-<path d="M 1145.0 353.0 L 1185.0 353.0" fill="none" stroke="#333333" stroke-width="1.4"/>
-<path d="M 1145.0 465.0 L 1185.0 465.0" fill="none" stroke="#333333" stroke-width="1.4"/>
-<path d="M 1145.0 578.0 L 1185.0 578.0" fill="none" stroke="#333333" stroke-width="1.4"/>
-<path d="M 1185.0 353.0 L 1222.0 353.0" fill="none" stroke="#333333" stroke-width="1.5"/>
-<path d="M 1230 343 A 10 10 0 0 0 1230 363" fill="none" stroke="#333333" stroke-width="1.5"/>
-<circle cx="1235" cy="353" r="6" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
-<text x="1232.0" y="329.9" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">ISqlCommands</text>
-<path d="M 1241.0 353.0 L 1285.0 353.0" fill="none" stroke="#333333" stroke-width="1.5" marker-end="url(#vee-black)"/>
-<rect x="1285" y="315" width="175" height="76" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="1440" y="321" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1436" y="324" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1436" y="332" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="1368.5" y="348.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Component&gt;&gt;</text>
-<text x="1368.5" y="367.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">DB</text>
-<rect x="355" y="705" width="195" height="70" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="530" y="711" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="526" y="714" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="526" y="722" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="448.5" y="735.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Service&gt;&gt;</text>
-<text x="448.5" y="754.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">AuthService</text>
-<rect x="595" y="705" width="195" height="70" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="770" y="711" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="766" y="714" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="766" y="722" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="688.5" y="735.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Service&gt;&gt;</text>
-<text x="688.5" y="754.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">NotificationService</text>
-<rect x="835" y="705" width="195" height="70" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="1010" y="711" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1006" y="714" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1006" y="722" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="928.5" y="735.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Service&gt;&gt;</text>
-<text x="928.5" y="754.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">AnalyticsService</text>
-<rect x="1075" y="705" width="195" height="70" fill="#f5f5f5" stroke="#666666" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="1250" y="711" width="14" height="18" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1246" y="714" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/><rect x="1246" y="722" width="8" height="4" fill="#ffffff" stroke="#666666" stroke-width="1.1"/>
-<text x="1168.5" y="735.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Service&gt;&gt;</text>
-<text x="1168.5" y="754.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">MarketService</text>
-<path d="M 737.0 276.0 L 737.0 295.0 L 585.0 295.0 L 585.0 665.0 L 452.0 665.0 L 452.0 705.0" fill="none" stroke="#333333" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
-<path d="M 585.0 665.0 L 692.0 665.0 L 692.0 705.0" fill="none" stroke="#333333" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
-<path d="M 840.0 480.0 L 868.0 480.0 L 868.0 650.0 L 932.0 650.0 L 932.0 705.0" fill="none" stroke="#333333" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
-<path d="M 840.0 578.0 L 855.0 578.0 L 855.0 678.0 L 1172.0 678.0 L 1172.0 705.0" fill="none" stroke="#333333" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
-<path d="M 760.0 389.0 L 760.0 405.0 L 855.0 405.0 L 855.0 578.0" fill="none" stroke="#333333" stroke-width="1.3" stroke-dasharray="6,4"/>
+<rect width="1460" height="800" fill="#ffffff"/>
+<rect width="1460" height="800" fill="url(#grid)"/>
+<text x="730.0" y="40.3" font-size="18" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Діаграма компонентів торгової вебплатформи</text>
+<rect x="40" y="315" width="170" height="78" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="190" y="321" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="186" y="324" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="186" y="332" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="121.0" y="358.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Клієнт</text>
+<path d="M 210.0 354.0 L 250.0 354.0" fill="none" stroke="#333333" stroke-width="1.5"/>
+<path d="M 258 344 A 10 10 0 0 0 258 364" fill="none" stroke="#333333" stroke-width="1.5"/>
+<circle cx="263" cy="354" r="6" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+<text x="258.0" y="331.9" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">REST API</text>
+<path d="M 269.0 354.0 L 305.0 354.0" fill="none" stroke="#333333" stroke-width="1.5"/>
+<line x1="305" y1="130" x2="305" y2="580" stroke="#333333" stroke-width="1.5"/>
+<path d="M 305.0 130.0 L 355.0 130.0" fill="none" stroke="#333333" stroke-width="1.4" marker-end="url(#vee-black)"/>
+<rect x="355" y="94" width="210" height="72" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="545" y="100" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="541" y="103" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="541" y="111" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="456.0" y="134.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Авторизація</text>
+<path d="M 305.0 242.0 L 355.0 242.0" fill="none" stroke="#333333" stroke-width="1.4" marker-end="url(#vee-black)"/>
+<rect x="355" y="206" width="210" height="72" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="545" y="212" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="541" y="215" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="541" y="223" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="456.0" y="246.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Користувачі</text>
+<path d="M 305.0 354.0 L 355.0 354.0" fill="none" stroke="#333333" stroke-width="1.4" marker-end="url(#vee-black)"/>
+<rect x="355" y="318" width="210" height="72" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="545" y="324" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="541" y="327" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="541" y="335" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="456.0" y="358.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Угоди</text>
+<path d="M 305.0 466.0 L 355.0 466.0" fill="none" stroke="#333333" stroke-width="1.4" marker-end="url(#vee-black)"/>
+<rect x="355" y="430" width="210" height="72" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="545" y="436" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="541" y="439" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="541" y="447" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="456.0" y="470.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Сценарії</text>
+<path d="M 305.0 578.0 L 355.0 578.0" fill="none" stroke="#333333" stroke-width="1.4" marker-end="url(#vee-black)"/>
+<rect x="355" y="542" width="210" height="72" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="545" y="548" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="541" y="551" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="541" y="559" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="456.0" y="582.5" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Котирування</text>
+<path d="M 565.0 130.0 L 655.0 130.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
+<rect x="655" y="94" width="215" height="72" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="850" y="100" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="846" y="103" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="846" y="111" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="758.5" y="134.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Безпека та 2FA</text>
+<path d="M 565.0 242.0 L 655.0 242.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
+<rect x="655" y="206" width="215" height="72" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="850" y="212" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="846" y="215" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="846" y="223" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="758.5" y="246.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Баланс і гаманець</text>
+<path d="M 565.0 354.0 L 655.0 354.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
+<rect x="655" y="318" width="215" height="72" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="850" y="324" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="846" y="327" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="846" y="335" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="758.5" y="358.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Розрахунок ризиків</text>
+<path d="M 565.0 466.0 L 655.0 466.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
+<rect x="655" y="430" width="215" height="72" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="850" y="436" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="846" y="439" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="846" y="447" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="758.5" y="470.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Аналітика</text>
+<path d="M 565.0 578.0 L 655.0 578.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
+<rect x="655" y="542" width="215" height="72" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="850" y="548" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="846" y="551" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="846" y="559" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="758.5" y="582.5" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Шлюз біржі</text>
+<rect x="965" y="94" width="210" height="72" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="1155" y="100" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="1151" y="103" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="1151" y="111" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="1066.0" y="134.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Сесії</text>
+<rect x="965" y="206" width="210" height="72" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="1155" y="212" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="1151" y="215" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="1151" y="223" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="1066.0" y="246.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Профілі</text>
+<rect x="965" y="318" width="210" height="72" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="1155" y="324" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="1151" y="327" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="1151" y="335" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="1066.0" y="358.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Позиції</text>
+<rect x="965" y="430" width="210" height="72" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="1155" y="436" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="1151" y="439" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="1151" y="447" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="1066.0" y="470.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Історія</text>
+<rect x="965" y="542" width="210" height="72" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="1155" y="548" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="1151" y="551" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="1151" y="559" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="1066.0" y="582.5" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Кеш ринку</text>
+<path d="M 870.0 130.0 L 965.0 130.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
+<path d="M 870.0 242.0 L 965.0 242.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
+<path d="M 870.0 354.0 L 965.0 354.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
+<path d="M 870.0 466.0 L 965.0 466.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
+<path d="M 870.0 578.0 L 965.0 578.0" fill="none" stroke="#333333" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
+<line x1="1205" y1="130" x2="1205" y2="578" stroke="#333333" stroke-width="1.5"/>
+<path d="M 1175.0 130.0 L 1205.0 130.0" fill="none" stroke="#333333" stroke-width="1.4"/>
+<path d="M 1175.0 242.0 L 1205.0 242.0" fill="none" stroke="#333333" stroke-width="1.4"/>
+<path d="M 1175.0 354.0 L 1205.0 354.0" fill="none" stroke="#333333" stroke-width="1.4"/>
+<path d="M 1175.0 466.0 L 1205.0 466.0" fill="none" stroke="#333333" stroke-width="1.4"/>
+<path d="M 1175.0 578.0 L 1205.0 578.0" fill="none" stroke="#333333" stroke-width="1.4"/>
+<path d="M 1205.0 354.0 L 1242.0 354.0" fill="none" stroke="#333333" stroke-width="1.5"/>
+<path d="M 1250 344 A 10 10 0 0 0 1250 364" fill="none" stroke="#333333" stroke-width="1.5"/>
+<circle cx="1255" cy="354" r="6" fill="#ffffff" stroke="#333333" stroke-width="1.5"/>
+<text x="1252.0" y="331.9" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">SQL</text>
+<path d="M 1261.0 354.0 L 1305.0 354.0" fill="none" stroke="#333333" stroke-width="1.5" marker-end="url(#vee-black)"/>
+<rect x="1305" y="315" width="140" height="78" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="1425" y="321" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="1421" y="324" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="1421" y="332" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="1371.0" y="358.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">СУБД</text>
+<rect x="500" y="695" width="210" height="70" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="690" y="701" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="686" y="704" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="686" y="712" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="601.0" y="734.5" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Поштовий сервіс</text>
+<rect x="770" y="695" width="210" height="70" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="960" y="701" width="14" height="18" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="956" y="704" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/><rect x="956" y="712" width="8" height="4" fill="#ffffff" stroke="#d6b656" stroke-width="1.2"/>
+<text x="871.0" y="734.5" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Зовнішня біржа</text>
+<path d="M 762.0 278.0 L 762.0 305.0 L 605.0 305.0 L 605.0 695.0" fill="none" stroke="#333333" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
+<path d="M 762.0 614.0 L 762.0 650.0 L 875.0 650.0 L 875.0 695.0" fill="none" stroke="#333333" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-black)"/>
 </svg>

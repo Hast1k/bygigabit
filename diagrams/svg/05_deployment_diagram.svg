@@ -159,28 +159,23 @@
 <rect width="1280" height="680" fill="#ffffff"/>
 <rect width="1280" height="680" fill="url(#grid)"/>
 <text x="640.0" y="42.3" font-size="18" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Діаграма розгортання торгової вебплатформи</text>
-<polygon points="70,119 94,95 314,95 290,119" fill="#ffd5ab" stroke="#d79b00" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon points="290,119 314,95 314,250 290,274" fill="#ffd5ab" stroke="#d79b00" stroke-width="1.6" stroke-linejoin="round"/>
-<rect x="70" y="119" width="220" height="155" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.6"/>
-<text x="180.0" y="184.8" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">PC</text>
-<text x="180.0" y="201.1" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">(Клієнтська</text>
-<text x="180.0" y="217.3" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">робоча станція)</text>
-<polygon points="170,399 194,375 414,375 390,399" fill="#ffd5ab" stroke="#d79b00" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon points="390,399 414,375 414,545 390,569" fill="#ffd5ab" stroke="#d79b00" stroke-width="1.6" stroke-linejoin="round"/>
-<rect x="170" y="399" width="220" height="170" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.6"/>
-<text x="280.0" y="472.3" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Mobile phone</text>
-<text x="280.0" y="488.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">(Мобільний</text>
-<text x="280.0" y="504.8" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">пристрій)</text>
-<polygon points="565,249 589,225 829,225 805,249" fill="#ffd5ab" stroke="#d79b00" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon points="805,249 829,225 829,420 805,444" fill="#ffd5ab" stroke="#d79b00" stroke-width="1.6" stroke-linejoin="round"/>
-<rect x="565" y="249" width="240" height="195" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.6"/>
-<text x="685.0" y="342.9" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Server</text>
-<text x="685.0" y="359.2" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">(Сервер застосунку)</text>
-<path d="M 314.0 195.0 L 415.0 195.0 L 415.0 345.0 L 565.0 345.0" fill="none" stroke="#d79b00" stroke-width="2.0"/>
-<path d="M 414.0 480.0 L 475.0 480.0 L 475.0 345.0" fill="none" stroke="#d79b00" stroke-width="2.0"/>
-<rect x="417.6" y="312.5" width="44.8" height="19.0" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
-<text x="440.0" y="326.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">HTTPS</text>
-<path d="M 829.0 320.0 L 955.0 320.0 L 955.0 220.0 L 990.0 220.0" fill="none" stroke="#d79b00" stroke-width="2.0"/>
+<polygon points="70,129 94,105 314,105 290,129" fill="#ffd5ab" stroke="#d79b00" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon points="290,129 314,105 314,255 290,279" fill="#ffd5ab" stroke="#d79b00" stroke-width="1.6" stroke-linejoin="round"/>
+<rect x="70" y="129" width="220" height="150" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.6"/>
+<text x="180.0" y="208.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Комп&#x27;ютер</text>
+<polygon points="170,409 194,385 414,385 390,409" fill="#ffd5ab" stroke="#d79b00" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon points="390,409 414,385 414,545 390,569" fill="#ffd5ab" stroke="#d79b00" stroke-width="1.6" stroke-linejoin="round"/>
+<rect x="170" y="409" width="220" height="160" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.6"/>
+<text x="280.0" y="493.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Смартфон</text>
+<polygon points="565,259 589,235 829,235 805,259" fill="#ffd5ab" stroke="#d79b00" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon points="805,259 829,235 829,430 805,454" fill="#ffd5ab" stroke="#d79b00" stroke-width="1.6" stroke-linejoin="round"/>
+<rect x="565" y="259" width="240" height="195" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.6"/>
+<text x="685.0" y="361.1" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Сервер</text>
+<path d="M 314.0 205.0 L 415.0 205.0 L 415.0 355.0 L 565.0 355.0" fill="none" stroke="#d79b00" stroke-width="2.0"/>
+<path d="M 414.0 490.0 L 475.0 490.0 L 475.0 355.0" fill="none" stroke="#d79b00" stroke-width="2.0"/>
+<rect x="417.6" y="322.5" width="44.8" height="19.0" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="440.0" y="336.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">HTTPS</text>
+<path d="M 829.0 330.0 L 955.0 330.0 L 955.0 220.0 L 990.0 220.0" fill="none" stroke="#d79b00" stroke-width="2.0"/>
 <rect x="861.3" y="246.1" width="67.4" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
 <text x="895.0" y="258.9" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">TCP / SSL</text>
 <path d="M 990 122.5 L 990 307.5 A 105 26.25 0 0 0 1200 307.5 L 1200 122.5 Z" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.6"/>
@@ -188,16 +183,14 @@
 <path d="M 990 132.5 A 105 26.25 0 0 0 1200 132.5" fill="none" stroke="#d79b00" stroke-width="1.2"/>
 <path d="M 990 140.5 A 105 26.25 0 0 0 1200 140.5" fill="none" stroke="#d79b00" stroke-width="1.2"/>
 <text x="1095.0" y="191.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">База даних</text>
-<rect x="1015" y="225" width="160" height="56" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.4" filter="url(#dropShadow)"/>
-<rect x="1155" y="231" width="14" height="18" fill="#ffffff" stroke="#d79b00" stroke-width="1.1"/><rect x="1151" y="234" width="8" height="4" fill="#ffffff" stroke="#d79b00" stroke-width="1.1"/><rect x="1151" y="242" width="8" height="4" fill="#ffffff" stroke="#d79b00" stroke-width="1.1"/>
-<text x="1091.0" y="248.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#333333">&lt;&lt;Component&gt;&gt;</text>
-<text x="1091.0" y="267.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">СУБД</text>
-<path d="M 829.0 355.0 L 960.0 355.0 L 960.0 495.0 L 995.0 495.0" fill="none" stroke="#d79b00" stroke-width="2.0"/>
-<rect x="873.1" y="416.1" width="73.8" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
-<text x="910.0" y="428.9" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">HTTPS REST</text>
+<rect x="1015" y="225" width="160" height="56" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.6" filter="url(#dropShadow)"/>
+<rect x="1155" y="231" width="14" height="18" fill="#ffffff" stroke="#d79b00" stroke-width="1.2"/><rect x="1151" y="234" width="8" height="4" fill="#ffffff" stroke="#d79b00" stroke-width="1.2"/><rect x="1151" y="242" width="8" height="4" fill="#ffffff" stroke="#d79b00" stroke-width="1.2"/>
+<text x="1091.0" y="257.6" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">СУБД</text>
+<path d="M 829.0 365.0 L 960.0 365.0 L 960.0 495.0 L 995.0 495.0" fill="none" stroke="#d79b00" stroke-width="2.0"/>
+<rect x="879.5" y="416.1" width="61.0" height="17.8" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="910.0" y="428.9" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">REST API</text>
 <polygon points="995,430 1015,410 1215,410 1195,430" fill="#ffd5ab" stroke="#d79b00" stroke-width="1.6" stroke-linejoin="round"/>
 <polygon points="1195,430 1215,410 1215,535 1195,555" fill="#ffd5ab" stroke="#d79b00" stroke-width="1.6" stroke-linejoin="round"/>
 <rect x="995" y="430" width="200" height="125" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.6"/>
-<text x="1095.0" y="488.9" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">External Market API</text>
-<text x="1095.0" y="505.2" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">(Біржовий сервіс)</text>
+<text x="1095.0" y="497.1" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Біржа</text>
 </svg>

@@ -6,37 +6,38 @@ skinparam roundCorner 8
 skinparam shadowing false
 
 skinparam rectangle {
-    borderColor #E03131
-    backgroundColor #FFE3E3
-    fontColor #491217
+    borderColor #B85450
+    backgroundColor #F8CECC
+    fontColor #111111
     fontStyle bold
 }
 skinparam database {
-    borderColor #E03131
-    backgroundColor #FFE3E3
-    fontColor #491217
+    borderColor #B85450
+    backgroundColor #F8CECC
+    fontColor #111111
     fontStyle bold
 }
 skinparam actor {
-    borderColor #E03131
-    backgroundColor #FFE3E3
-    fontColor #491217
+    borderColor #B85450
+    backgroundColor #F8CECC
+    fontColor #111111
 }
 skinparam arrow {
-    color #C92A2A
-    fontColor #491217
+    color #B85450
+    fontColor #1E293B
 }
 
-actor ":Трейдер" as Trader
-rectangle ":Website (UI)" as Website
-rectangle ":OrderController" as Controller
-rectangle ":RiskEngine" as RiskEngine
-rectangle ":BybitService" as Bybit
-database ":DB (PostgreSQL)" as DB
+actor ":Користувач" as User
+rectangle ":Інтерфейс" as UI
+rectangle ":Угоди" as Orders
+rectangle ":Позиція" as Position
+rectangle ":Котирування" as Market
+database ":База даних" as DB
 
-Trader -- Website : 1: Ввести параметри ордера >\n20: Оновити графік та баланс <
-Website -- Controller : 2: Відправити POST /api/orders >\n19: Повернути стан відкритої позиції <
-Controller -- DB : 3: Перевірити токен сесії >\n4: Дані сесії <\n7: Перевірити вільний баланс >\n8: Підтвердження балансу <\n15: Списати маржу та вставити позицію >\n16: Результат транзакції <
-Controller -- Bybit : 5: Запит актуальної ціни Bybit V5 >\n6: Поточна ринкова ціна <
-Controller -- RiskEngine : 9: Передати параметри для розрахунку >\n10: Розраховані розмір та ліквідація <
+User -- UI : 1: Отримати дані про актив >\n2: Інформація про актив <\n3: Створити ордер >\n14: Позицію відкрито <
+UI -- Orders : 4: Параметри ордера >\n13: Створена позиція <
+Orders -- DB : 5: Перевірити баланс >\n6: Результат перевірки <\n11: Зберегти позицію >\n12: Результат транзакції <
+Orders -- Market : 7: Запит ціни >\n8: Ринкова ціна <
+Orders -- Position : 9: Розрахувати ризики >\n10: Сформована позиція <
+DB -- Position : 11a: Запис даних >
 @enduml

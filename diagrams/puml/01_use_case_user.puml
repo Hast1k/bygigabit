@@ -1,0 +1,75 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam roundCorner 10
+skinparam shadowing false
+skinparam linetype ortho
+
+skinparam actor {
+    borderColor #0284C7
+    backgroundColor #E0F2FE
+    fontColor #0F172A
+}
+skinparam usecase {
+    borderColor #0284C7
+    backgroundColor #BAE6FD
+    fontColor #0369A1
+}
+skinparam arrow {
+    color #0284C7
+    fontColor #0F172A
+}
+
+left to right direction
+
+actor "Гість" as Guest
+actor "Авторизований\nкористувач" as User
+
+actor "Сервіс авторизації" as AuthService <<service>>
+actor "Сервіс сповіщень" as NotifyService <<service>>
+actor "Біржовий сервіс" as MarketService <<service>>
+
+User -up-|> Guest
+
+rectangle "Торговий вебтермінал ByGigaBit" {
+    usecase "Реєстрація та вхід\n(Auth Flow)" as UC_Auth
+    usecase "Двофакторна автентифікація" as UC_2FA
+    usecase "Відновлення доступу" as UC_Reset
+    usecase "Керувати особистим профілем" as UC_Profile
+
+    usecase "Переглянути графік і котирування" as UC_Chart
+    usecase "Фільтрувати торгові пари" as UC_Filter
+
+    usecase "Оформити торговий ордер" as UC_Order
+    usecase "Ввести параметри угоди" as UC_Params
+    usecase "Контроль маржі та балансу" as UC_Risk
+
+    usecase "Закрити відкриту позицію" as UC_Close
+    usecase "Виставити лімітний ордер" as UC_Limit
+
+    usecase "Пройти навчальний сценарій" as UC_Scenario
+    usecase "Переглянути журнал угод та аналітику" as UC_Journal
+}
+
+Guest --> UC_Auth
+Guest --> UC_Chart
+
+User --> UC_Profile
+User --> UC_Order
+User --> UC_Close
+User --> UC_Limit
+User --> UC_Scenario
+User --> UC_Journal
+
+UC_Auth <.. UC_2FA : <<extend>>
+UC_Profile <.. UC_Reset : <<extend>>
+UC_Chart <.. UC_Filter : <<extend>>
+UC_Order ..> UC_Params : <<include>>
+UC_Order ..> UC_Risk : <<include>>
+
+UC_Auth --> AuthService
+UC_Reset --> NotifyService
+UC_Chart --> MarketService
+UC_Order --> MarketService
+@enduml

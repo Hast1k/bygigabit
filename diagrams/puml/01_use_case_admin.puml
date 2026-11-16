@@ -1,0 +1,70 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam roundCorner 10
+skinparam shadowing false
+skinparam linetype ortho
+
+skinparam actor {
+    borderColor #0284C7
+    backgroundColor #E0F2FE
+    fontColor #0F172A
+}
+skinparam usecase {
+    borderColor #0284C7
+    backgroundColor #BAE6FD
+    fontColor #0369A1
+}
+skinparam arrow {
+    color #0284C7
+    fontColor #0F172A
+}
+
+left to right direction
+
+actor "Адміністратор" as Admin
+
+actor "База даних" as DB <<service>>
+actor "Біржовий сервіс" as MarketService <<service>>
+
+rectangle "Панель керування та адміністрування ByGigaBit" {
+    usecase "Вхід до адмінпанелі\n(RBAC Auth)" as UC_Login
+    usecase "Перевірка прав доступу" as UC_Access
+
+    usecase "Переглянути реєстр трейдерів" as UC_Users
+    usecase "Змінити роль користувача" as UC_Role
+    usecase "Блокувати або розблокувати трейдера" as UC_Block
+    usecase "Скинути захист 2FA трейдера" as UC_2FA_Reset
+    usecase "Коригувати баланс депозиту USDT" as UC_Balance
+
+    usecase "Моніторинг відкритих позицій" as UC_Positions
+    usecase "Примусово закрити позицію" as UC_ForceClose
+
+    usecase "Моніторинг лімітних ордерів" as UC_Orders
+    usecase "Скасувати неактивний ордер" as UC_CancelOrder
+
+    usecase "Переглянути зведену статистику платформи" as UC_Stats
+    usecase "Вивантажити звіт у форматі CSV" as UC_CSV
+    usecase "Експорт реєстрів у форматі JSON" as UC_JSON
+}
+
+Admin --> UC_Login
+Admin --> UC_Users
+Admin --> UC_Positions
+Admin --> UC_Orders
+Admin --> UC_Stats
+
+UC_Login ..> UC_Access : <<include>>
+UC_Users <.. UC_Role : <<extend>>
+UC_Users <.. UC_Block : <<extend>>
+UC_Users <.. UC_2FA_Reset : <<extend>>
+UC_Users <.. UC_Balance : <<extend>>
+UC_Positions <.. UC_ForceClose : <<extend>>
+UC_Orders <.. UC_CancelOrder : <<extend>>
+UC_Stats ..> UC_CSV : <<include>>
+UC_Stats ..> UC_JSON : <<include>>
+
+UC_Users --> DB
+UC_Positions --> MarketService
+@enduml

@@ -43,54 +43,55 @@ skinparam database {
     fontColor #000000
 }
 
-title **Приклад діаграми послідовності для створення ордера в системі ByGigaBit**
+title **Діаграма послідовності оформлення торгового ордера**
 
-actor "Клієнт" as Client
-boundary "Website" as Website
-control "OrderController" as Controller
-entity ":Order" as Order
-entity ":BybitService" as Bybit
+actor "Користувач" as User
+boundary "Інтерфейс" as UI
+control "Угоди" as Orders
+entity ":Позиція" as Position
+entity ":Котирування" as Market
 database "База даних" as DB
 
-Client -> Website : Отримати інформацію про котирування
-activate Website
-Website -> Controller : Запит ринкових даних
-activate Controller
-Controller -> Bybit : Перевірити актуальну ціну Bybit
-activate Bybit
-Bybit --> Controller : Результат котирувань
-deactivate Bybit
-Controller --> Website : Інформація про ринок
-deactivate Controller
-Website --> Client : Інформація про ринок
-deactivate Website
+User -> UI : 1. Відкрити торговий термінал
+activate UI
+UI -> Orders : 2. Запит ринкових даних
+activate Orders
+Orders -> Market : 3. Отримати актуальні котирування
+activate Market
+Market --> Orders : 4. Поточні свічки та ціна
+deactivate Market
+Orders --> UI : 5. Котирування та стан рахунку
+deactivate Orders
+UI --> User : 6. Відображення графіка активу
+deactivate UI
 
-Client -> Website : Створити ордер (Long, 10x)
-activate Website
-Website -> Controller : Створити ордер
-activate Controller
+User -> UI : 7. Створити ордер
+activate UI
+UI -> Orders : 8. Передати параметри ордера
+activate Orders
 
-Controller -> DB : Перевірити чи наявний баланс
+Orders -> DB : 9. Перевірити сесію та доступний баланс
 activate DB
-DB --> Controller : Результат перевірки
+DB --> Orders : 10. Достатність балансу підтверджено
 deactivate DB
 
-Controller -> Order : Створити позицію
-activate Order
-Order -> Bybit : Отримати ціну виконання
-activate Bybit
-Bybit --> Order : Ціна котирування
-deactivate Bybit
-Order --> Controller : Створена позиція
-deactivate Order
+Orders -> Market : 11. Запит поточної ціни виконання
+activate Market
+Market --> Orders : 12. Поточна ринкова ціна
+deactivate Market
 
-Controller -> DB : Зберегти замовлення та списати маржу
+Orders -> Position : 13. Створити позицію та розрахувати ризики
+activate Position
+Position --> Orders : 14. Сформована позиція
+deactivate Position
+
+Orders -> DB : 15. Зберегти позицію та оновити баланс
 activate DB
-DB --> Controller : Підтвердження запису
+DB --> Orders : 16. Результат транзакції
 deactivate DB
 
-Controller --> Website : Створене замовлення
-deactivate Controller
-Website --> Client : Замовлення відкрито на графіку
-deactivate Website
+Orders --> UI : 17. Підтвердження створення позиції
+deactivate Orders
+UI --> User : 18. Оновлення графіка та списку позицій
+deactivate UI
 @enduml

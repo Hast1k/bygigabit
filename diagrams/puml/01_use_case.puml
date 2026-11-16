@@ -16,11 +16,6 @@ skinparam usecase {
     backgroundColor #BAE6FD
     fontColor #0369A1
 }
-skinparam note {
-    borderColor #64748B
-    backgroundColor #FFFFFF
-    fontColor #334155
-}
 skinparam arrow {
     color #0284C7
     fontColor #0F172A
@@ -29,69 +24,52 @@ skinparam arrow {
 left to right direction
 
 actor "Гість" as Guest
-actor "Авторизований\nтрейдер" as Trader
-actor "Адміністратор" as Admin
+actor "Авторизований\nкористувач" as User
 
-actor "SMTP Gateway" as SMTP <<service>>
-actor "Bybit V5 API" as Bybit <<service>>
+actor "Сервіс авторизації" as AuthService <<service>>
+actor "Сервіс сповіщень" as NotifyService <<service>>
+actor "Біржовий сервіс" as MarketService <<service>>
 
-Trader -up-|> Guest
-Admin -up-|> Trader
+User -up-|> Guest
 
-rectangle "Вебплатформа ByGigaBit" {
-    usecase "Реєстрація та вхід" as UC_Auth
-    usecase "Двоетапна перевірка (TOTP 2FA)" as UC_2FA
-    usecase "Відновлення доступу через Email" as UC_Reset
-    usecase "Керування особистим профілем" as UC_Profile
+rectangle "Торговий вебтермінал ByGigaBit" {
+    usecase "Реєстрація та вхід\n(Auth Flow)" as UC_Auth
+    usecase "Двофакторна автентифікація" as UC_2FA
+    usecase "Відновлення доступу" as UC_Reset
+    usecase "Керувати особистим профілем" as UC_Profile
 
-    usecase "Перегляд свічкового графіка" as UC_Chart
-    usecase "Відкриття маржинальної позиції" as UC_Order
-    usecase "Введення параметрів (плече, маржа)" as UC_Params
-    usecase "Виставлення лімітного ордера" as UC_Limit
-    usecase "Закриття позиції та фіксація PnL" as UC_Close
-    usecase "Автоматична ліквідація (Margin Call)" as UC_Liq
+    usecase "Переглянути графік і котирування" as UC_Chart
+    usecase "Фільтрувати торгові пари" as UC_Filter
 
-    usecase "Симулятор сценаріїв (25 свічок)" as UC_Train
-    usecase "Стрес-тестування (Chaos Mode)" as UC_Chaos
-    usecase "Аналітика AI Quant Radar" as UC_AI
-    usecase "Журнал угод та крива капіталу" as UC_Journal
+    usecase "Оформити торговий ордер" as UC_Order
+    usecase "Ввести параметри угоди" as UC_Params
+    usecase "Контроль маржі та балансу" as UC_Risk
 
-    usecase "Перегляд реєстру користувачів" as UC_AdminUsers
-    usecase "Блокування / розблокування акаунта" as UC_AdminBlock
-    usecase "Моніторинг системної статистики" as UC_AdminStats
+    usecase "Закрити відкриту позицію" as UC_Close
+    usecase "Виставити лімітний ордер" as UC_Limit
 
-    note as N_CRUD
-      **CRUD операції платформи:**
-      **C (Create)** - відкриття ордерів (Market/Limit)
-      **R (Read)** - котирування Bybit, історія, графік
-      **U (Update)** - баланс трейдера, статус 2FA, пароль
-      **D (Delete)** - скасування активних лімітних заявок
-    end note
+    usecase "Пройти навчальний сценарій" as UC_Scenario
+    usecase "Переглянути журнал угод та аналітику" as UC_Journal
 }
 
 Guest --> UC_Auth
+Guest --> UC_Chart
 
-Trader --> UC_Profile
-Trader --> UC_Chart
-Trader --> UC_Order
-Trader --> UC_Close
-Trader --> UC_Train
-Trader --> UC_Chaos
-Trader --> UC_AI
-Trader --> UC_Journal
-
-Admin --> UC_AdminUsers
-Admin --> UC_AdminBlock
-Admin --> UC_AdminStats
+User --> UC_Profile
+User --> UC_Order
+User --> UC_Close
+User --> UC_Limit
+User --> UC_Scenario
+User --> UC_Journal
 
 UC_Auth <.. UC_2FA : <<extend>>
-UC_Auth <.. UC_Reset : <<extend>>
+UC_Profile <.. UC_Reset : <<extend>>
+UC_Chart <.. UC_Filter : <<extend>>
 UC_Order ..> UC_Params : <<include>>
-UC_Order <.. UC_Limit : <<extend>>
-UC_Order ..> UC_Liq : <<include>>
+UC_Order ..> UC_Risk : <<include>>
 
-UC_Chart <-- Bybit
-UC_Order <-- Bybit
-UC_2FA --> SMTP
-UC_Reset --> SMTP
+UC_Auth --> AuthService
+UC_Reset --> NotifyService
+UC_Chart --> MarketService
+UC_Order --> MarketService
 @enduml

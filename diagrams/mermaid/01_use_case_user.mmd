@@ -1,0 +1,42 @@
+flowchart LR
+    subgraph System["Торговий вебтермінал ByGigaBit"]
+        UC_Auth(["Реєстрація та вхід"])
+        UC_2FA(["Двофакторна автентифікація"])
+        UC_Reset(["Відновлення доступу"])
+        UC_Profile(["Керувати профілем"])
+        UC_Chart(["Переглянути графік і котирування"])
+        UC_Filter(["Фільтрувати пари"])
+        UC_Order(["Оформити торговий ордер"])
+        UC_Params(["Ввести параметри"])
+        UC_Close(["Закрити позицію"])
+        UC_Limit(["Виставити лімітний ордер"])
+        UC_Scenario(["Пройти сценарій"])
+        UC_Journal(["Переглянути аналітику"])
+    end
+
+    Guest["Гість"]
+    User["Авторизований користувач"]
+    AuthSvc["Сервіс авторизації"]
+    MktSvc["Біржовий сервіс"]
+
+    User --|> Guest
+
+    Guest --> UC_Auth
+    Guest --> UC_Chart
+
+    User --> UC_Profile
+    User --> UC_Order
+    User --> UC_Close
+    User --> UC_Limit
+    User --> UC_Scenario
+    User --> UC_Journal
+
+    UC_2FA -.->|<<extend>>| UC_Auth
+    UC_Reset -.->|<<extend>>| UC_Profile
+    UC_Filter -.->|<<extend>>| UC_Chart
+    UC_Order -.->|<<include>>| UC_Params
+    UC_Limit -.->|<<extend>>| UC_Order
+
+    UC_Auth --> AuthSvc
+    UC_Chart --> MktSvc
+    UC_Order --> MktSvc

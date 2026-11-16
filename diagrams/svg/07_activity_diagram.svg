@@ -164,74 +164,67 @@
 <text x="240.0" y="81.5" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Користувач</text>
 <rect x="440" y="58" width="400" height="877" fill="none" stroke="#82b366" stroke-width="1.6"/>
 <rect x="440" y="58" width="400" height="38" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
-<text x="640.0" y="81.5" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Сервер системи</text>
+<text x="640.0" y="81.5" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Сервер</text>
 <rect x="840" y="58" width="380" height="877" fill="none" stroke="#82b366" stroke-width="1.6"/>
 <rect x="840" y="58" width="380" height="38" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
-<text x="1030.0" y="81.5" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Біржовий сервіс та БД</text>
-<circle cx="240" cy="128" r="14" fill="#97d077" stroke="#5c9e31" stroke-width="1.8"/>
-<path d="M 240.0 142.0 L 240.0 165.0" fill="none" stroke="#5c9e31" stroke-width="1.6" marker-end="url(#vee-green)"/>
-<rect x="130.0" y="166.0" width="220" height="44" rx="18" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="240.0" y="185.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Обрати торгову пару</text>
-<text x="240.0" y="198.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">та графік</text>
-<path d="M 240.0 210.0 L 240.0 235.0" fill="none" stroke="#5c9e31" stroke-width="1.6" marker-end="url(#vee-green)"/>
-<rect x="130.0" y="236.0" width="220" height="44" rx="18" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="240.0" y="255.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Вказати параметри</text>
-<text x="240.0" y="268.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">ордера</text>
-<path d="M 240.0 280.0 L 240.0 294.0 L 165.0 294.0 L 165.0 310.0" fill="none" stroke="#5c9e31" stroke-width="1.6" marker-end="url(#vee-green)"/>
-<polygon points="165,310 250,344 165,378 80,344" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
-<text x="165.0" y="341.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Авторизований</text>
-<text x="165.0" y="354.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">користувач?</text>
-<rect x="282.5" y="323.0" width="125" height="42" rx="18" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="345.0" y="347.9" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Реєстрація / Вхід</text>
-<path d="M 250.0 344.0 L 282.0 344.0" fill="none" stroke="#5c9e31" stroke-width="1.5" marker-end="url(#vee-green)"/>
-<rect x="251.0" y="321.8" width="28.0" height="16.5" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
-<text x="265.0" y="333.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">ні</text>
-<path d="M 165.0 378.0 L 165.0 405.0 L 835.0 405.0 L 835.0 422.0" fill="none" stroke="#5c9e31" stroke-width="1.6" marker-end="url(#vee-green)"/>
-<rect x="131.0" y="383.8" width="28.0" height="16.5" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
-<text x="145.0" y="395.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">так</text>
-<path d="M 345.0 365.0 L 345.0 405.0" fill="none" stroke="#5c9e31" stroke-width="1.6"/>
-<rect x="540" y="422" width="580" height="8" rx="3" fill="#b9e0a5" stroke="#82b366" stroke-width="1.3"/>
-<path d="M 640.0 430.0 L 640.0 462.0" fill="none" stroke="#5c9e31" stroke-width="1.6" marker-end="url(#vee-green)"/>
-<rect x="535.0" y="464.0" width="210" height="44" rx="18" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="640.0" y="483.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Перевірити параметри</text>
-<text x="640.0" y="496.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">ордера</text>
-<path d="M 640.0 508.0 L 640.0 535.0" fill="none" stroke="#5c9e31" stroke-width="1.6" marker-end="url(#vee-green)"/>
-<path d="M 1030.0 430.0 L 1030.0 462.0" fill="none" stroke="#5c9e31" stroke-width="1.6" marker-end="url(#vee-green)"/>
-<rect x="915.0" y="464.0" width="230" height="44" rx="18" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="1030.0" y="483.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Отримати поточну</text>
-<text x="1030.0" y="496.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">ціну активу</text>
-<path d="M 1030.0 508.0 L 1030.0 636.0" fill="none" stroke="#5c9e31" stroke-width="1.6" marker-end="url(#vee-green)"/>
-<polygon points="640,536 735,570 640,604 545,570" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
-<text x="640.0" y="567.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Баланс</text>
-<text x="640.0" y="580.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">достатній?</text>
-<path d="M 640.0 604.0 L 640.0 636.0" fill="none" stroke="#5c9e31" stroke-width="1.6" marker-end="url(#vee-green)"/>
-<rect x="610.0" y="609.8" width="28.0" height="16.5" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
-<text x="624.0" y="621.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">так</text>
-<path d="M 545.0 570.0 L 315.0 570.0 L 315.0 636.0" fill="none" stroke="#5c9e31" stroke-width="1.5" marker-end="url(#vee-green)"/>
-<rect x="471.0" y="549.8" width="28.0" height="16.5" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
-<text x="485.0" y="561.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">ні</text>
-<rect x="227.5" y="637.0" width="175" height="42" rx="18" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="315.0" y="655.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Повідомити про</text>
-<text x="315.0" y="668.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">нестачу коштів</text>
-<rect x="540" y="636" width="580" height="8" rx="3" fill="#b9e0a5" stroke="#82b366" stroke-width="1.3"/>
-<path d="M 835.0 644.0 L 835.0 662.0 L 1030.0 662.0 L 1030.0 680.0" fill="none" stroke="#5c9e31" stroke-width="1.6" marker-end="url(#vee-green)"/>
-<rect x="910.0" y="681.0" width="240" height="46" rx="18" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="1030.0" y="701.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Розрахувати обсяг</text>
-<text x="1030.0" y="714.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">та ціну ліквідації</text>
-<path d="M 1030.0 727.0 L 1030.0 755.0" fill="none" stroke="#5c9e31" stroke-width="1.6" marker-end="url(#vee-green)"/>
-<rect x="910.0" y="756.0" width="240" height="46" rx="18" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="1030.0" y="776.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Зарезервувати маржу</text>
-<text x="1030.0" y="789.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">та зберегти позицію</text>
-<path d="M 910.0 779.0 L 640.0 779.0 L 640.0 818.0" fill="none" stroke="#5c9e31" stroke-width="1.6" marker-end="url(#vee-green)"/>
-<rect x="530.0" y="820.0" width="220" height="44" rx="18" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="640.0" y="839.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Моніторинг позиції</text>
-<text x="640.0" y="852.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">та фіксація результату</text>
-<path d="M 530.0 842.0 L 165.0 842.0 L 165.0 868.0" fill="none" stroke="#5c9e31" stroke-width="1.6" marker-end="url(#vee-green)"/>
-<rect x="55.0" y="871.0" width="220" height="42" rx="18" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="165.0" y="889.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Оновити баланс</text>
-<text x="165.0" y="902.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">та історію угод</text>
-<path d="M 315.0 679.0 L 315.0 874.0" fill="none" stroke="#5c9e31" stroke-width="1.5" marker-end="url(#vee-green)"/>
-<path d="M 275.0 892.0 L 297.0 892.0" fill="none" stroke="#5c9e31" stroke-width="1.6" marker-end="url(#vee-green)"/>
-<circle cx="315" cy="892" r="15" fill="#ffffff" stroke="#5c9e31" stroke-width="2.2"/>
-<circle cx="315" cy="892" r="9" fill="#97d077" stroke="#5c9e31" stroke-width="1.5"/>
+<text x="1030.0" y="81.5" font-size="13" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">База даних та біржа</text>
+<circle cx="240" cy="120" r="14" fill="#82b366"/>
+<path d="M 240.0 134.0 L 240.0 168.0" fill="none" stroke="#82b366" stroke-width="1.6" marker-end="url(#vee-green)"/>
+<rect x="135.0" y="173.0" width="210" height="44" rx="14" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="240.0" y="192.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Обрати торгову пару</text>
+<text x="240.0" y="205.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">та кредитне плече</text>
+<path d="M 240.0 217.0 L 240.0 255.0" fill="none" stroke="#82b366" stroke-width="1.6" marker-end="url(#vee-green)"/>
+<rect x="135.0" y="260.0" width="210" height="44" rx="14" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="240.0" y="279.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Вказати маржу</text>
+<text x="240.0" y="292.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">та напрямок (Long/Short)</text>
+<path d="M 240.0 304.0 L 240.0 342.0" fill="none" stroke="#82b366" stroke-width="1.6" marker-end="url(#vee-green)"/>
+<rect x="135.0" y="348.0" width="210" height="44" rx="14" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="240.0" y="367.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Натиснути кнопку</text>
+<text x="240.0" y="380.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">відкриття угоди</text>
+<path d="M 240.0 392.0 L 240.0 430.0" fill="none" stroke="#82b366" stroke-width="1.6" marker-end="url(#vee-green)"/>
+<polygon points="240,430 300,455 240,480 180,455" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="240.0" y="458.9" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Авторизований?</text>
+<path d="M 300.0 455.0 L 360.0 455.0" fill="none" stroke="#82b366" stroke-width="1.6" marker-end="url(#vee-green)"/>
+<rect x="314.0" y="433.8" width="28.0" height="16.5" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="328.0" y="445.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#82b366">Ні</text>
+<rect x="325.0" y="437.0" width="120" height="36" rx="14" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="385.0" y="458.9" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Вхід / Реєстрація</text>
+<path d="M 385.0 473.0 L 385.0 502.0 L 240.0 502.0 L 240.0 515.0" fill="none" stroke="#82b366" stroke-width="1.6" marker-end="url(#vee-green)"/>
+<path d="M 240.0 480.0 L 240.0 515.0" fill="none" stroke="#82b366" stroke-width="1.6" marker-end="url(#vee-green)"/>
+<rect x="242.0" y="486.8" width="28.0" height="16.5" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="256.0" y="498.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#82b366">Так</text>
+<rect x="120" y="525" width="980" height="7" fill="#82b366"/>
+<path d="M 240.0 480.0 L 240.0 525.0" fill="none" stroke="#82b366" stroke-width="1.6"/>
+<path d="M 640.0 532.0 L 640.0 570.0" fill="none" stroke="#82b366" stroke-width="1.6" marker-end="url(#vee-green)"/>
+<rect x="525.0" y="573.0" width="230" height="44" rx="14" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="640.0" y="592.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Перевірити залишок</text>
+<text x="640.0" y="605.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">вільної маржі</text>
+<path d="M 1030.0 532.0 L 1030.0 570.0" fill="none" stroke="#82b366" stroke-width="1.6" marker-end="url(#vee-green)"/>
+<rect x="915.0" y="573.0" width="230" height="44" rx="14" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="1030.0" y="592.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Запит поточної ціни</text>
+<text x="1030.0" y="605.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">з біржового шлюзу</text>
+<path d="M 640.0 617.0 L 640.0 650.0" fill="none" stroke="#82b366" stroke-width="1.6" marker-end="url(#vee-green)"/>
+<polygon points="640,650 705,675 640,700 575,675" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="640.0" y="678.9" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Баланс достатній?</text>
+<path d="M 705.0 675.0 L 755.0 675.0 L 755.0 615.0 L 345.0 615.0 L 345.0 370.0" fill="none" stroke="#82b366" stroke-width="1.6" marker-end="url(#vee-green)"/>
+<rect x="711.0" y="653.8" width="28.0" height="16.5" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="725.0" y="665.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#82b366">Ні</text>
+<rect x="331.5" y="593.8" width="97.0" height="16.5" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="380.0" y="605.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#82b366">Помилка застави</text>
+<path d="M 640.0 700.0 L 640.0 730.0" fill="none" stroke="#82b366" stroke-width="1.6" marker-end="url(#vee-green)"/>
+<rect x="642.0" y="706.8" width="28.0" height="16.5" rx="3" fill="#ffffff" stroke="none" fill-opacity="0.92"/>
+<text x="656.0" y="718.5" font-size="10" font-weight="normal" font-style="normal" text-anchor="middle" fill="#82b366">Так</text>
+<rect x="490" y="730" width="600" height="7" fill="#82b366"/>
+<path d="M 1030.0 617.0 L 1030.0 730.0" fill="none" stroke="#82b366" stroke-width="1.6"/>
+<path d="M 640.0 737.0 L 640.0 770.0" fill="none" stroke="#82b366" stroke-width="1.6" marker-end="url(#vee-green)"/>
+<rect x="520.0" y="773.0" width="240" height="44" rx="14" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="640.0" y="792.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Розрахувати ліквідацію</text>
+<text x="640.0" y="805.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">та записати позицію в БД</text>
+<path d="M 640.0 817.0 L 640.0 855.0 L 240.0 855.0 L 240.0 875.0" fill="none" stroke="#82b366" stroke-width="1.6" marker-end="url(#vee-green)"/>
+<rect x="130.0" y="876.0" width="220" height="44" rx="14" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="240.0" y="895.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Відобразити відкриту позицію</text>
+<text x="240.0" y="908.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">на графіку та в журналі</text>
+<path d="M 240.0 920.0 L 240.0 940.0" fill="none" stroke="#82b366" stroke-width="1.6" marker-end="url(#vee-green)"/>
+<circle cx="240" cy="955" r="15" fill="#ffffff" stroke="#82b366" stroke-width="2"/>
+<circle cx="240" cy="955" r="9" fill="#82b366"/>
 </svg>
