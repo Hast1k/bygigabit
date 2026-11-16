@@ -1886,7 +1886,8 @@ def auth_login(payload: Dict[str, Any] = Body(...)):
 
     user_exp = target_user.get("experienceLevel", "beginner") or "beginner"
 
-    if target_user.get("twoFactor", True) and not code_2fa:
+    # Обов'язкова вимога 2FA при вході в будь-який акаунт
+    if not code_2fa:
         return {
             "ok": True,
             "requires2FA": True,
@@ -2051,8 +2052,8 @@ def auth_google(payload: Dict[str, Any] = Body(...)):
     if target_user.get("isBlocked", False):
         return {"ok": False, "error": "Ваш акаунт заблоковано адміністратором"}
 
-    # 3. Якщо увімкнено 2FA
-    if target_user.get("twoFactor", True) and not code_2fa:
+    # 3. Обов'язкова вимога 2FA при вході в будь-який акаунт через Google
+    if not code_2fa:
         return {
             "ok": True,
             "requires2FA": True,

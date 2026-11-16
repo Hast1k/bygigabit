@@ -1,6 +1,7 @@
 let authMode = 'login';
 let currentQualification = 'beginner';
 let pendingGoogleEmail = '';
+let isGoogleAuthPending = false;
 
 function selectQualification(level) {
   currentQualification = level === 'pro' ? 'pro' : 'beginner';
@@ -96,7 +97,7 @@ async function handleMainSubmit(e) {
 }
 
 async function verify2FACode() {
-  const email = document.getElementById('authEmail').value.trim();
+  const email = document.getElementById('authEmail').value.trim() || pendingGoogleEmail;
   const password = document.getElementById('authPassword').value;
   const code = document.getElementById('input2FACode').value.trim();
 
@@ -106,10 +107,15 @@ async function verify2FACode() {
   }
 
   try {
-    const res = await fetch('/api/auth/login', {
+    const endpoint = isGoogleAuthPending ? '/api/auth/google' : '/api/auth/login';
+    const payload = isGoogleAuthPending
+      ? { email: pendingGoogleEmail, code2fa: code, experienceLevel: currentQualification }
+      : { email, password, code2fa: code, experienceLevel: currentQualification };
+
+    const res = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, code2fa: code, experienceLevel: currentQualification })
+      body: JSON.stringify(payload)
     });
     const data = await res.json();
     if (data.ok && data.token) {
@@ -147,13 +153,49 @@ async function requestAuthEmailBackupCode() {
   }
 }
 
-// ВХІД ЧЕРЕЗ GOOGLE
-async function startGoogleAuth() {
-  let googleEmail = prompt('Введіть ваш Google Email для входу:', 'trader.google@gmail.com');
-  if (!googleEmail) return;
-  googleEmail = googleEmail.trim().toLowerCase();
+// ВХІД ЧЕРЕЗ GOOGLE (МОДАЛЬНЕ ВІКНО БЕЗ PROMPT/ALERT)
+function startGoogleAuth() {
+  openGoogleAuthModal();
+}
 
+function openGoogleAuthModal() {
+  const modal = document.getElementById('modalGoogleAuth');
+  if (modal) {
+    modal.style.display = 'flex';
+    const input = document.getElementById('customGoogleEmail');
+    if (input) {
+      input.value = '';
+      setTimeout(() => input.focus(), 50);
+    }
+  }
+}
+
+function closeGoogleAuthModal() {
+  const modal = document.getElementById('modalGoogleAuth');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}
+
+function chooseGoogleAccount(email) {
+  closeGoogleAuthModal();
+  submitGoogleEmail(email);
+}
+
+function handleCustomGoogleSubmit(e) {
+  e.preventDefault();
+  const input = document.getElementById('customGoogleEmail');
+  if (!input) return;
+  const email = input.value.trim().toLowerCase();
+  if (!email) return;
+  closeGoogleAuthModal();
+  submitGoogleEmail(email);
+}
+
+async function submitGoogleEmail(googleEmail) {
+  googleEmail = googleEmail.trim().toLowerCase();
   pendingGoogleEmail = googleEmail;
+  isGoogleAuthPending = true;
 
   try {
     const res = await fetch('/api/auth/google', {
@@ -173,7 +215,7 @@ async function startGoogleAuth() {
         openGoogleModal(data.email);
         showToast(data.message);
       } else if (data.requires2FA) {
-        document.getElementById('authEmail').value = data.email;
+        document.getElementById('authEmail').value = data.email || googleEmail;
         document.getElementById('authMainForm').style.display = 'none';
         document.getElementById('auth2FAStep').style.display = 'block';
         showToast(data.message);
@@ -233,9 +275,16 @@ async function handleGooglePasswordSubmit(e) {
       })
     });
     const data = await res.json();
-    if (data.ok && data.token) {
+    if (data.ok) {
       closeGoogleModal();
-      completeLogin(data);
+      if (data.requires2FA) {
+        document.getElementById('authEmail').value = data.email || pendingGoogleEmail;
+        document.getElementById('authMainForm').style.display = 'none';
+        document.getElementById('auth2FAStep').style.display = 'block';
+        showToast(data.message);
+      } else if (data.token) {
+        completeLogin(data);
+      }
     } else {
       showToast(data.error || 'Помилка встановлення пароля');
     }
@@ -265,6 +314,8 @@ function completeLogin(data) {
 }
 
 function cancel2FA() {
+  isGoogleAuthPending = false;
+  pendingGoogleEmail = '';
   document.getElementById('authMainForm').style.display = 'block';
   document.getElementById('auth2FAStep').style.display = 'none';
 }
