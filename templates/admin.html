@@ -6,7 +6,7 @@
   <title>ByGigaBit — Панель адміністратора</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="/static/css/common.css">
   <link rel="stylesheet" href="/static/css/admin.css">
@@ -342,21 +342,20 @@
                 <table class="data-table">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Трейдер (Email)</th>
-                      <th>Пара</th>
-                      <th>Сторона</th>
-                      <th>Розмір</th>
-                      <th>Ціна входу</th>
-                      <th>Ціна ліквідації</th>
-                      <th>Маржа</th>
-                      <th>Плече</th>
-                      <th>Час відкриття</th>
-                      <th>Дія</th>
+                      <th style="width:85px;">ID</th>
+                      <th>Трейдер</th>
+                      <th style="width:80px;">Пара</th>
+                      <th style="width:75px;">Сторона</th>
+                      <th style="width:75px;">Розмір</th>
+                      <th style="width:90px;">Вхід</th>
+                      <th style="width:90px;">Ліквідація</th>
+                      <th style="width:85px;">Маржа</th>
+                      <th style="width:65px;">Плече</th>
+                      <th style="width:85px; text-align:right;">Дія</th>
                     </tr>
                   </thead>
                   <tbody id="positionsTableBody">
-                    <tr><td colspan="11" class="empty-state">Немає активних відкритих позицій</td></tr>
+                    <tr><td colspan="10" class="empty-state">Немає активних відкритих позицій</td></tr>
                   </tbody>
                 </table>
               </div>

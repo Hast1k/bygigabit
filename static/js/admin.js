@@ -329,7 +329,7 @@ function renderPositionsTable() {
   tbody.innerHTML = '';
 
   if (allPositions.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="11" class="empty-state">На даний момент немає активних відкритих позицій</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" class="empty-state">На даний момент немає активних відкритих позицій</td></tr>';
     return;
   }
 
@@ -337,7 +337,10 @@ function renderPositionsTable() {
     const tr = document.createElement('tr');
     const sideBadge = p.side === 'long' ? '<span class="badge badge-green">LONG</span>' : '<span class="badge badge-red">SHORT</span>';
     tr.innerHTML = `
-      <td style="color:#94a3b8;" class="mono">${p.id}</td>
+      <td style="color:#94a3b8;" class="mono">
+        <div>${p.id}</div>
+        ${p.time ? `<div style="font-size:10px; color:#64748b; font-weight:400;">${p.time}</div>` : ''}
+      </td>
       <td style="font-weight:600; color:#fff;">${p.userEmail || ('User #' + p.user_id)}</td>
       <td style="font-weight:700; color:var(--cyan);">${p.symbol}</td>
       <td>${sideBadge}</td>
@@ -346,9 +349,8 @@ function renderPositionsTable() {
       <td style="color:var(--red); font-weight:700;" class="mono">$${Number(p.liqPrice).toFixed(2)}</td>
       <td class="mono">$${Number(p.margin).toFixed(2)}</td>
       <td class="mono">${p.leverage}x</td>
-      <td style="font-size:11px; color:#94a3b8;" class="mono">${p.time || '-'}</td>
-      <td>
-        <button class="btn btn-danger" style="padding:5px 10px; font-size:11px;" onclick="adminClosePosition(${p.user_id}, '${p.id}', ${p.entryPrice})">
+      <td style="text-align:right;">
+        <button class="btn btn-danger" style="padding:4px 10px; font-size:11px;" onclick="adminClosePosition(${p.user_id}, '${p.id}', ${p.entryPrice})">
           Закрити
         </button>
       </td>

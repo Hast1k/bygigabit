@@ -288,6 +288,8 @@ body.sb-sidenav-toggled #layoutSidenav_nav {
 .sb-panel-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
+  max-width: 100%;
+  overflow: hidden;
 }
 .sb-panel-header {
   padding: 14px 20px;
@@ -316,7 +318,9 @@ body.sb-sidenav-toggled #layoutSidenav_nav {
   padding: 12px;
 }
 .sb-panel-body {
-  padding: 20px;
+  padding: 18px 20px;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* Секції */
@@ -429,40 +433,52 @@ body.sb-sidenav-toggled #layoutSidenav_nav {
 /* Таблиці */
 .table-wrap {
   width: 100%;
-  overflow-x: auto;
+  max-width: 100%;
+  overflow-x: hidden !important;
+  scrollbar-width: none;
+}
+.table-wrap::-webkit-scrollbar {
+  display: none;
+  height: 0;
+  width: 0;
 }
 .data-table {
   width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 11.5px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
+  table-layout: auto;
 }
 .data-table th {
-  padding: 12px 14px;
-  font-size: 11px;
+  padding: 10px 8px;
+  font-size: 10.5px;
   font-weight: 700;
   color: var(--text-dim);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   border-bottom: 1px solid var(--border-color);
   background: var(--bg-darker);
   text-align: left;
+  white-space: nowrap;
 }
 .data-table td {
-  padding: 12px 14px;
+  padding: 10px 8px;
   border-bottom: 1px solid var(--border-color);
   color: #fff;
+  font-size: 11.5px;
+  white-space: nowrap;
 }
 .data-table tr:hover {
   background: rgba(255, 255, 255, 0.02);
 }
 .empty-state {
   text-align: center;
-  padding: 28px !important;
+  padding: 24px !important;
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 12px;
 }
 
 /* Кнопки дій */
