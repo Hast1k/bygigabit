@@ -4,7 +4,6 @@ skinparam defaultFontName Arial
 skinparam defaultFontSize 11
 skinparam roundCorner 10
 skinparam shadowing false
-skinparam linetype ortho
 
 skinparam actor {
     borderColor #0284C7
