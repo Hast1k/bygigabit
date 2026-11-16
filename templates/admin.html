@@ -306,15 +306,15 @@
                 <table class="data-table">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Користувач (Email / Нік)</th>
-                      <th>Роль</th>
-                      <th>2FA Захист</th>
-                      <th>Баланс (USDT)</th>
-                      <th>К-сть угод</th>
-                      <th>Дата реєстрації</th>
-                      <th>Статус</th>
-                      <th>Дії</th>
+                      <th style="width: 6%;">ID</th>
+                      <th style="width: 24%;">Користувач (Email / Нік)</th>
+                      <th style="width: 9%;">Роль</th>
+                      <th style="width: 9%;">2FA</th>
+                      <th style="width: 12%;">Баланс (USDT)</th>
+                      <th style="width: 8%;">Угоди</th>
+                      <th style="width: 11%;">Дата</th>
+                      <th style="width: 9%;">Статус</th>
+                      <th style="width: 12%;">Дії</th>
                     </tr>
                   </thead>
                   <tbody id="usersTableBody">
@@ -342,16 +342,16 @@
                 <table class="data-table">
                   <thead>
                     <tr>
-                      <th style="width:85px;">ID</th>
-                      <th>Трейдер</th>
-                      <th style="width:80px;">Пара</th>
-                      <th style="width:75px;">Сторона</th>
-                      <th style="width:75px;">Розмір</th>
-                      <th style="width:90px;">Вхід</th>
-                      <th style="width:90px;">Ліквідація</th>
-                      <th style="width:85px;">Маржа</th>
-                      <th style="width:65px;">Плече</th>
-                      <th style="width:85px; text-align:right;">Дія</th>
+                      <th style="width: 10%;">ID</th>
+                      <th style="width: 22%;">Трейдер</th>
+                      <th style="width: 10%;">Пара</th>
+                      <th style="width: 8%;">Сторона</th>
+                      <th style="width: 8%;">Розмір</th>
+                      <th style="width: 10%;">Вхід</th>
+                      <th style="width: 10%;">Ліквідація</th>
+                      <th style="width: 8%;">Маржа</th>
+                      <th style="width: 6%;">Плече</th>
+                      <th style="width: 8%; text-align: right;">Дія</th>
                     </tr>
                   </thead>
                   <tbody id="positionsTableBody">
@@ -379,14 +379,14 @@
                 <table class="data-table">
                   <thead>
                     <tr>
-                      <th>ID ордера</th>
-                      <th>Трейдер (Email)</th>
-                      <th>Пара</th>
-                      <th>Сторона</th>
-                      <th>Лімітна ціна</th>
-                      <th>Маржа</th>
-                      <th>Дата розміщення</th>
-                      <th>Дія</th>
+                      <th style="width: 12%;">ID ордера</th>
+                      <th style="width: 24%;">Трейдер (Email)</th>
+                      <th style="width: 10%;">Пара</th>
+                      <th style="width: 8%;">Сторона</th>
+                      <th style="width: 12%;">Лімітна ціна</th>
+                      <th style="width: 11%;">Маржа</th>
+                      <th style="width: 13%;">Дата розміщення</th>
+                      <th style="width: 10%; text-align: right;">Дія</th>
                     </tr>
                   </thead>
                   <tbody id="ordersTableBody">
@@ -443,7 +443,7 @@
   <div id="tradesModal" class="admin-modal-backdrop">
     <div class="admin-modal modal-lg">
       <div class="admin-modal-header">
-        <div class="admin-modal-title">Журнал угод: <span id="tradesModalEmail" style="color:var(--cyan);"></span></div>
+        <div class="admin-modal-title">Журнал угод: <span id="tradesModalEmail" style="color:var(--cyan); font-family:var(--font-mono);"></span></div>
         <button class="admin-modal-close" onclick="closeTradesModal()">&times;</button>
       </div>
       <div class="admin-modal-body">
@@ -451,16 +451,16 @@
           <table class="data-table">
             <thead>
               <tr>
-                <th>ID угоди</th>
-                <th>Пара</th>
-                <th>Сторона</th>
-                <th>Ціна входу</th>
-                <th>Ціна закриття</th>
-                <th>Маржа</th>
-                <th>Плече</th>
-                <th>PnL (USDT)</th>
-                <th>ROI</th>
-                <th>Час</th>
+                <th style="width: 11%;">ID угоди</th>
+                <th style="width: 10%;">Пара</th>
+                <th style="width: 8%;">Сторона</th>
+                <th style="width: 11%;">Ціна входу</th>
+                <th style="width: 11%;">Ціна виходу</th>
+                <th style="width: 9%;">Маржа</th>
+                <th style="width: 7%;">Плече</th>
+                <th style="width: 11%;">PnL ($)</th>
+                <th style="width: 9%;">ROI</th>
+                <th style="width: 13%;">Час</th>
               </tr>
             </thead>
             <tbody id="userTradesTableBody">

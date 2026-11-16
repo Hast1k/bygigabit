@@ -36,7 +36,7 @@
       </div>
       <div class="status-pill">
         <span class="pulse-dot"></span>
-        <span>ANALYTICS LIVE</span>
+        <span>LIVE ANALYTICS</span>
       </div>
       <a href="/chart" class="btn btn-primary" style="padding:6px 14px; font-size:11px;">НОВА УГОДА ↗</a>
       {% if user %}
@@ -48,17 +48,21 @@
       {% endif %}
     </div>
   </nav>
+
   <main class="analytics-container">
     <header class="page-header">
       <div>
         <h1 class="page-title">Журнал угод та аналітика трейдера</h1>
-        <p class="page-subtitle">Детальний розрахунок метрик ефективності торгової сесії, Win Rate та крива капіталу</p>
+        <p class="page-subtitle">Розрахунок показників торгової стратегії, Win Rate, математичного сподівання та кривої капіталу</p>
       </div>
       <div class="header-actions">
-        <button class="btn btn-outline" onclick="loadAnalytics()">Оновити дані</button>
+        <button class="btn btn-outline" style="padding:7px 16px; font-size:12px;" onclick="loadAnalytics()">Оновити дані</button>
       </div>
     </header>
+
+    <!-- Основні 8 показників -->
     <section class="metrics-grid">
+      <!-- 1. Win Rate -->
       <div class="metric-card">
         <div class="metric-top">
           <span class="m-title">Win Rate (% прибутку)</span>
@@ -69,48 +73,149 @@
         </div>
         <div class="m-sub" id="metricWinLossCount">Прибуткові: 0 | Збиткові: 0</div>
       </div>
+
+      <!-- 2. Чистий прибуток -->
       <div class="metric-card">
         <div class="metric-top">
           <span class="m-title">Загальний чистий прибуток</span>
         </div>
         <div class="m-val mono" id="metricNetProfit">$0.00</div>
-        <div class="m-sub" id="metricProfitSub">Фіксований PnL за весь час сесії</div>
+        <div class="m-sub" id="metricProfitSub">ROI: 0.00% від старту</div>
       </div>
+
+      <!-- 3. Profit Factor & R:R -->
       <div class="metric-card">
         <div class="metric-top">
           <span class="m-title">Profit Factor & R:R</span>
         </div>
         <div class="m-val mono" id="metricPF">1.00</div>
-        <div class="m-sub" id="metricRR">Середній Risk / Reward: <strong>1:1.5</strong></div>
+        <div class="m-sub" id="metricRR">Середній Risk / Reward: <strong>1:1.0</strong></div>
       </div>
+
+      <!-- 4. Всього угод & Оборот -->
       <div class="metric-card">
         <div class="metric-top">
-          <span class="m-title">Всього угод</span>
+          <span class="m-title">Всього угод & Оборот</span>
         </div>
         <div class="m-val mono" id="metricTotalTrades">0</div>
+        <div class="m-sub" id="metricVolume">Об'єм: $0.00 USDT</div>
+      </div>
+
+      <!-- 5. Сподівання та сер. результат -->
+      <div class="metric-card">
+        <div class="metric-top">
+          <span class="m-title">Мат. сподівання / угоду</span>
+        </div>
+        <div class="m-val mono" id="metricExpectancy">$0.00</div>
+        <div class="m-sub" id="metricAvgTrade">Сер. результат: $0.00</div>
+      </div>
+
+      <!-- 6. Середній Win / Loss -->
+      <div class="metric-card">
+        <div class="metric-top">
+          <span class="m-title">Середній Win / Loss</span>
+        </div>
+        <div class="m-val mono" id="metricAvgWinLoss">$0 / $0</div>
         <div class="m-sub" id="metricExtremes">Найкраща: $0 | Найгірша: $0</div>
       </div>
+
+      <!-- 7. Максимальне просідання -->
+      <div class="metric-card">
+        <div class="metric-top">
+          <span class="m-title">Максимальне просідання</span>
+        </div>
+        <div class="m-val mono" id="metricMaxDD" style="color:var(--text-main);">$0.00 (0.0%)</div>
+        <div class="m-sub" id="metricMaxDDSub">Пікове відхилення від балансу</div>
+      </div>
+
+      <!-- 8. Серії угод -->
+      <div class="metric-card">
+        <div class="metric-top">
+          <span class="m-title">Макс. серії перемог / втрат</span>
+        </div>
+        <div class="m-val mono" id="metricStreaks">0W / 0L</div>
+        <div class="m-sub" id="metricStreakSub">Підряд: 0 перемог | 0 збитків</div>
+      </div>
     </section>
+
+    <!-- Детальний розподіл: Long vs Short та Ефективність за парами -->
+    <section class="analytics-detail-grid">
+      <!-- Картка Long vs Short -->
+      <div class="card" style="margin-bottom:0;">
+        <div class="section-head">
+          <div>
+            <h3 class="section-title">Розподіл позицій (Long vs Short)</h3>
+            <span class="section-subtitle">Співвідношення відкритих напрямків та їхня результативність</span>
+          </div>
+        </div>
+        <div class="ratio-bar-wrap">
+          <div id="ratioBarLong" class="ratio-bar-long" style="width: 50%;"></div>
+          <div id="ratioBarShort" class="ratio-bar-short" style="width: 50%;"></div>
+        </div>
+        <div class="side-stats-grid">
+          <div class="side-stat-box long-box">
+            <div class="side-stat-title" style="color:var(--cyan);">LONG ПОЗИЦІЇ</div>
+            <div class="side-stat-val mono" id="longPnl">$0.00</div>
+            <div class="side-stat-sub" id="longStatsSub">0 угод | Winrate: 0%</div>
+          </div>
+          <div class="side-stat-box short-box">
+            <div class="side-stat-title" style="color:var(--magenta);">SHORT ПОЗИЦІЇ</div>
+            <div class="side-stat-val mono" id="shortPnl">$0.00</div>
+            <div class="side-stat-sub" id="shortStatsSub">0 угод | Winrate: 0%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Картка за торговими парами -->
+      <div class="card" style="margin-bottom:0;">
+        <div class="section-head">
+          <div>
+            <h3 class="section-title">Ефективність за торговими парами</h3>
+            <span class="section-subtitle">Розподіл кількості угод, Win Rate та фінансового результату</span>
+          </div>
+        </div>
+        <div id="pairsListContainer">
+          <table class="pairs-table-mini">
+            <thead>
+              <tr>
+                <th>Торгова пара</th>
+                <th>Угод</th>
+                <th>Win Rate</th>
+                <th style="text-align:right;">Сумарний PnL</th>
+              </tr>
+            </thead>
+            <tbody id="pairsTableBody">
+              <tr><td colspan="4" class="empty-state" style="padding:14px !important;">Немає даних за парами</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Графік кривої депозиту -->
     <section class="card chart-section">
       <div class="section-head">
         <div>
-          <h3>Динаміка депозиту (Equity Curve)</h3>
-          <span style="font-size:12px; color:#94a3b8;">Зміна балансу з початкових $10,000 USDT в процесі угод</span>
+          <h3 class="section-title">Динаміка депозиту (Equity Curve)</h3>
+          <span class="section-subtitle">Зміна балансу з початкових $10,000 USDT в процесі фіксації угод</span>
         </div>
+        <div class="badge badge-green mono" id="equityCurrentBal">Баланс: $10,000.00</div>
       </div>
       <div class="equity-svg-container" id="equityContainer">
-        <svg id="equitySvg" viewBox="0 0 800 200" preserveAspectRatio="none"></svg>
+        <svg id="equitySvg" viewBox="0 0 800 220" preserveAspectRatio="none"></svg>
       </div>
     </section>
+
+    <!-- Детальний журнал закритих ордерів -->
     <section class="card journal-section">
       <div class="section-head">
         <div>
-          <h3>Детальний журнал закритих ордерів</h3>
-          <span style="font-size:12px; color:#94a3b8;">Повна історія відкриття та фіксації прибутку/збитку</span>
+          <h3 class="section-title">Детальний журнал закритих ордерів</h3>
+          <span class="section-subtitle">Повна історія відкриття, обсягів, кредитного плеча та фіксації результату</span>
         </div>
         <div class="filters-row">
           <select id="filterSide" class="filter-select" onchange="applyFilters()">
-            <option value="all">Усі сторони</option>
+            <option value="all">Усі напрямки</option>
             <option value="long">Тільки Long</option>
             <option value="short">Тільки Short</option>
           </select>
@@ -125,16 +230,16 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th>ID Угоди</th>
-              <th>Торгова пара</th>
-              <th>Напрямок</th>
-              <th>Вхід</th>
-              <th>Вихід</th>
-              <th>Маржа</th>
-              <th>Плече</th>
-              <th>Чистий PnL ($)</th>
-              <th>ROI (%)</th>
-              <th>Дата та час</th>
+              <th style="width: 10%;">ID Угоди</th>
+              <th style="width: 11%;">Пара</th>
+              <th style="width: 9%;">Напрямок</th>
+              <th style="width: 11%;">Ціна входу</th>
+              <th style="width: 11%;">Ціна виходу</th>
+              <th style="width: 9%;">Маржа</th>
+              <th style="width: 7%;">Плече</th>
+              <th style="width: 12%;">Чистий PnL ($)</th>
+              <th style="width: 9%;">ROI (%)</th>
+              <th style="width: 11%;">Дата та час</th>
             </tr>
           </thead>
           <tbody id="journalTableBody">
@@ -144,6 +249,7 @@
       </div>
     </section>
   </main>
+
   <div id="toast" class="toast"></div>
   <script src="/static/js/analytics.js"></script>
 </body>

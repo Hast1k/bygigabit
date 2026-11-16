@@ -999,19 +999,86 @@ def get_analytics_metrics(request: Request):
     net_profit = round(sum(t["pnl"] for t in order_history), 2)
     profit_factor = round(total_profit / total_loss, 2) if total_loss > 0 else (total_profit if total_profit > 0 else 1.0)
 
-    avg_win = (total_profit / win_count) if win_count > 0 else 0
-    avg_loss = (total_loss / loss_count) if loss_count > 0 else 1
+    avg_win = round(total_profit / win_count, 2) if win_count > 0 else 0.0
+    avg_loss = round(total_loss / loss_count, 2) if loss_count > 0 else 0.0
     avg_rr = round(avg_win / avg_loss, 2) if avg_loss > 0 else 1.0
+    avg_trade = round(net_profit / total, 2) if total > 0 else 0.0
+    expectancy = round(((win_rate / 100.0) * avg_win) - (((100.0 - win_rate) / 100.0) * avg_loss), 2) if total > 0 else 0.0
+    total_volume = round(sum(t.get("margin", 0) * t.get("leverage", 1) for t in order_history), 2)
+    avg_leverage = round(sum(t.get("leverage", 1) for t in order_history) / total, 1) if total > 0 else 10.0
 
-    equity_curve = [{"trade": 0, "balance": STARTING_BALANCE}]
+    # Long vs Short
+    longs = [t for t in order_history if t.get("side") == "long"]
+    shorts = [t for t in order_history if t.get("side") == "short"]
+    long_count = len(longs)
+    short_count = len(shorts)
+    long_wins = sum(1 for t in longs if t.get("pnl", 0) >= 0)
+    short_wins = sum(1 for t in shorts if t.get("pnl", 0) >= 0)
+    long_win_rate = round((long_wins / long_count * 100), 1) if long_count > 0 else 0.0
+    short_win_rate = round((short_wins / short_count * 100), 1) if short_count > 0 else 0.0
+    long_pnl = round(sum(t.get("pnl", 0) for t in longs), 2)
+    short_pnl = round(sum(t.get("pnl", 0) for t in shorts), 2)
+
+    # Streaks & Equity Curve with Drawdown
+    chronological = list(reversed(order_history))
+    max_win_streak = 0
+    cur_win_streak = 0
+    max_loss_streak = 0
+    cur_loss_streak = 0
+    for t in chronological:
+        if t.get("pnl", 0) >= 0:
+            cur_win_streak += 1
+            cur_loss_streak = 0
+            if cur_win_streak > max_win_streak:
+                max_win_streak = cur_win_streak
+        else:
+            cur_loss_streak += 1
+            cur_win_streak = 0
+            if cur_loss_streak > max_loss_streak:
+                max_loss_streak = cur_loss_streak
+
+    equity_curve = [{"trade": 0, "balance": STARTING_BALANCE, "date": "Старт"}]
     running_bal = STARTING_BALANCE
-    for i, t in enumerate(reversed(order_history), start=1):
+    peak_bal = STARTING_BALANCE
+    max_dd = 0.0
+    max_dd_pct = 0.0
+
+    for i, t in enumerate(chronological, start=1):
         running_bal += t["pnl"]
+        if running_bal > peak_bal:
+            peak_bal = running_bal
+        dd = peak_bal - running_bal
+        dd_pct = (dd / peak_bal * 100.0) if peak_bal > 0 else 0.0
+        if dd > max_dd:
+            max_dd = dd
+        if dd_pct > max_dd_pct:
+            max_dd_pct = dd_pct
         equity_curve.append({
             "trade": i,
             "balance": round(running_bal, 2),
             "date": t.get("time", "")
         })
+
+    # Stats by instrument
+    pairs_stats = {}
+    for t in order_history:
+        sym = t.get("symbol", "BTCUSDT")
+        if sym not in pairs_stats:
+            pairs_stats[sym] = {"count": 0, "pnl": 0.0, "wins": 0}
+        pairs_stats[sym]["count"] += 1
+        pairs_stats[sym]["pnl"] += t.get("pnl", 0)
+        if t.get("pnl", 0) >= 0:
+            pairs_stats[sym]["wins"] += 1
+
+    pairs_list = []
+    for sym, st in pairs_stats.items():
+        pairs_list.append({
+            "symbol": sym,
+            "trades": st["count"],
+            "pnl": round(st["pnl"], 2),
+            "winRate": round(st["wins"] / st["count"] * 100, 1) if st["count"] > 0 else 0.0
+        })
+    pairs_list.sort(key=lambda x: x["trades"], reverse=True)
 
     return {
         "ok": True,
@@ -1023,8 +1090,31 @@ def get_analytics_metrics(request: Request):
             "netProfit": net_profit,
             "profitFactor": profit_factor,
             "avgRR": avg_rr,
+            "avgTrade": avg_trade,
+            "avgWin": avg_win,
+            "avgLoss": avg_loss,
+            "expectancy": expectancy,
+            "totalVolume": total_volume,
+            "avgLeverage": avg_leverage,
+            "maxWinStreak": max_win_streak,
+            "maxLossStreak": max_loss_streak,
+            "maxDrawdown": round(max_dd, 2),
+            "maxDrawdownPct": round(max_dd_pct, 2),
             "bestTrade": round(max((t["pnl"] for t in order_history), default=0.0), 2),
             "worstTrade": round(min((t["pnl"] for t in order_history), default=0.0), 2),
+            "longStats": {
+                "count": long_count,
+                "wins": long_wins,
+                "winRate": long_win_rate,
+                "pnl": long_pnl
+            },
+            "shortStats": {
+                "count": short_count,
+                "wins": short_wins,
+                "winRate": short_win_rate,
+                "pnl": short_pnl
+            },
+            "pairs": pairs_list
         },
         "history": order_history,
         "equityCurve": equity_curve,

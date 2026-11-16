@@ -20,7 +20,7 @@
 }
 
 .main-page-title {
-  font-family: var(--font-display), 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 32px;
   font-weight: 800;
   color: #ffffff;
@@ -86,7 +86,7 @@
 }
 
 .profile-user-name {
-  font-family: var(--font-display), 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 24px;
   font-weight: 800;
   color: #ffffff;
@@ -287,7 +287,7 @@
 }
 
 .sec-main-title {
-  font-family: var(--font-display), 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 22px;
   font-weight: 800;
   color: #ffffff;
@@ -299,7 +299,7 @@
 }
 
 .sec-section-title {
-  font-family: var(--font-display), 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 15px;
   font-weight: 700;
   color: #ffffff;
@@ -523,7 +523,7 @@
 }
 
 .qr-step-title {
-  font-family: var(--font-display), 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 15px;
   font-weight: 700;
   color: #ffffff;
@@ -684,7 +684,7 @@
 }
 
 .disable-title {
-  font-family: var(--font-display), 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 15px;
   font-weight: 700;
   color: var(--orange);
@@ -717,7 +717,7 @@
 }
 
 .card-icon-title h3 {
-  font-family: var(--font-display), 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 20px;
   font-weight: 800;
   color: #ffffff;
@@ -749,7 +749,7 @@
 }
 
 .bal-val {
-  font-family: var(--font-display), 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 42px;
   font-weight: 900;
   color: #ffffff;
