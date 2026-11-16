@@ -33,12 +33,15 @@ rectangle "Панель керування та адміністрування B
 
     usecase "Переглянути реєстр трейдерів" as UC_Users
     usecase "Змінити роль користувача" as UC_Role
+    usecase "Оновити запис у базі даних" as UC_DBUp
+
     usecase "Блокувати або розблокувати трейдера" as UC_Block
     usecase "Скинути захист 2FA трейдера" as UC_2FA_Reset
     usecase "Коригувати баланс депозиту USDT" as UC_Balance
 
     usecase "Моніторинг відкритих позицій" as UC_Positions
     usecase "Примусово закрити позицію" as UC_ForceClose
+    usecase "Синхронізація ринку та котирувань" as UC_Sync
 
     usecase "Моніторинг лімітних ордерів" as UC_Orders
     usecase "Скасувати неактивний ордер" as UC_CancelOrder
@@ -50,20 +53,22 @@ rectangle "Панель керування та адміністрування B
 
 Admin --> UC_Login
 Admin --> UC_Users
+Admin --> UC_Block
 Admin --> UC_Positions
 Admin --> UC_Orders
 Admin --> UC_Stats
 
 UC_Login ..> UC_Access : <<include>>
 UC_Users <.. UC_Role : <<extend>>
-UC_Users <.. UC_Block : <<extend>>
-UC_Users <.. UC_2FA_Reset : <<extend>>
-UC_Users <.. UC_Balance : <<extend>>
+UC_Role ..> UC_DBUp : <<include>>
+UC_Block <.. UC_2FA_Reset : <<extend>>
+UC_Block <.. UC_Balance : <<extend>>
 UC_Positions <.. UC_ForceClose : <<extend>>
+UC_ForceClose ..> UC_Sync : <<include>>
 UC_Orders <.. UC_CancelOrder : <<extend>>
 UC_Stats ..> UC_CSV : <<include>>
 UC_Stats ..> UC_JSON : <<include>>
 
-UC_Users --> DB
-UC_Positions --> MarketService
+UC_DBUp --> DB
+UC_Sync --> MarketService
 @enduml
