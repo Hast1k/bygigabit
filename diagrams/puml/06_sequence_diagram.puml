@@ -48,8 +48,8 @@ title **Діаграма послідовності оформлення тор�
 actor "Користувач" as User
 boundary "Інтерфейс" as UI
 control "Угоди" as Orders
-entity ":Позиція" as Position
-entity ":Котирування" as Market
+entity "Позиція" as Position
+entity "Котирування" as Market
 database "База даних" as DB
 
 User -> UI : 1. Відкрити торговий термінал

@@ -27,22 +27,21 @@ skinparam arrow {
     fontColor #1E293B
 }
 
-actor ":Користувач" as User
-rectangle ":Інтерфейс" as UI
-rectangle ":Угоди" as Orders
-rectangle ":Позиція" as Position
-rectangle ":Котирування" as Market
-database ":База даних" as DB
+actor "Користувач" as User
+rectangle "Інтерфейс" as UI
+rectangle "Угоди" as Orders
+rectangle "Позиція" as Position
+rectangle "Котирування" as Market
+database "База даних" as DB
 
 User -> UI : 1: Отримати дані про актив\n3: Створити ордер
 UI -> User : 2: Інформація про актив\n14: Позицію відкрито
 UI -> Orders : 4: Параметри ордера
 Orders -> UI : 13: Створена позиція
-Orders -> DB : 5: Перевірити баланс\n11: Зберегти позицію
-DB -> Orders : 6: Результат перевірки\n12: Результат транзакції
 Orders -> Market : 7: Запит ціни
 Market -> Orders : 8: Ринкова ціна
 Orders -> Position : 9: Розрахувати ризики
 Position -> Orders : 10: Сформована позиція
-DB -> Position : 11a: Запис даних
+Orders -> DB : 5: Перевірити баланс\n11: Зберегти позицію
+DB -> Orders : 6: Результат перевірки\n12: Результат транзакції
 @enduml
