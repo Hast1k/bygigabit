@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1460" height="860" viewBox="0 0 1460 860" font-family="Arial, Helvetica, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1460" height="880" viewBox="0 0 1460 880" font-family="Arial, Helvetica, sans-serif">
 <defs>
         <pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
           <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#f0f0f0" stroke-width="0.6"/>
@@ -156,17 +156,17 @@
           <path d="M 9 8 L 19 2 M 9 8 L 19 8 M 9 8 L 19 14" fill="none" stroke="#2b7889" stroke-width="1.5"/>
         </marker>
         </defs>
-<rect width="1460" height="860" fill="#ffffff"/>
-<rect width="1460" height="860" fill="url(#grid)"/>
-<text x="730.0" y="38.3" font-size="18" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Діаграма прецедентів: Торговий термінал користувача</text>
-<rect x="220" y="60" width="1000" height="770" rx="16" fill="none" stroke="#2b7889" stroke-width="2"/>
+<rect width="1460" height="880" fill="#ffffff"/>
+<rect width="1460" height="880" fill="url(#grid)"/>
+<text x="730.0" y="38.3" font-size="18" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Діаграма прецедентів: Торговий вебтермінал користувача</text>
+<rect x="220" y="60" width="1000" height="790" rx="16" fill="none" stroke="#2b7889" stroke-width="2"/>
 <text x="720.0" y="92.0" font-size="17" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Торговий вебтермінал ByGigaBit</text>
-<circle cx="100" cy="180" r="10" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6"/>
-<line x1="100" y1="190" x2="100" y2="215" stroke="#2b7889" stroke-width="1.6"/>
-<line x1="84" y1="200" x2="116" y2="200" stroke="#2b7889" stroke-width="1.6"/>
-<line x1="100" y1="215" x2="86" y2="234" stroke="#2b7889" stroke-width="1.6"/>
-<line x1="100" y1="215" x2="114" y2="234" stroke="#2b7889" stroke-width="1.6"/>
-<text x="100.0" y="254.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Гість</text>
+<circle cx="100" cy="160" r="10" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6"/>
+<line x1="100" y1="170" x2="100" y2="195" stroke="#2b7889" stroke-width="1.6"/>
+<line x1="84" y1="180" x2="116" y2="180" stroke="#2b7889" stroke-width="1.6"/>
+<line x1="100" y1="195" x2="86" y2="214" stroke="#2b7889" stroke-width="1.6"/>
+<line x1="100" y1="195" x2="114" y2="214" stroke="#2b7889" stroke-width="1.6"/>
+<text x="100.0" y="234.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Гість</text>
 <circle cx="100" cy="500" r="10" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6"/>
 <line x1="100" y1="510" x2="100" y2="535" stroke="#2b7889" stroke-width="1.6"/>
 <line x1="84" y1="520" x2="116" y2="520" stroke="#2b7889" stroke-width="1.6"/>
@@ -174,7 +174,7 @@
 <line x1="100" y1="535" x2="114" y2="554" stroke="#2b7889" stroke-width="1.6"/>
 <text x="100.0" y="566.7" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Авторизований</text>
 <text x="100.0" y="581.7" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">користувач</text>
-<path d="M 100.0 455.0 L 100.0 265.0" fill="none" stroke="#2b7889" stroke-width="1.6" marker-end="url(#hollow-blue)"/>
+<path d="M 100.0 455.0 L 100.0 245.0" fill="none" stroke="#2b7889" stroke-width="1.6" marker-end="url(#hollow-blue)"/>
 <text x="1340.0" y="105.8" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">&lt;&lt;service&gt;&gt;</text>
 <circle cx="1340" cy="120" r="10" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6"/>
 <line x1="1340" y1="130" x2="1340" y2="155" stroke="#2b7889" stroke-width="1.6"/>
@@ -182,110 +182,111 @@
 <line x1="1340" y1="155" x2="1326" y2="174" stroke="#2b7889" stroke-width="1.6"/>
 <line x1="1340" y1="155" x2="1354" y2="174" stroke="#2b7889" stroke-width="1.6"/>
 <text x="1340.0" y="194.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Сервіс авторизації</text>
-<text x="1340.0" y="225.8" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">&lt;&lt;service&gt;&gt;</text>
-<circle cx="1340" cy="240" r="10" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6"/>
-<line x1="1340" y1="250" x2="1340" y2="275" stroke="#2b7889" stroke-width="1.6"/>
-<line x1="1324" y1="260" x2="1356" y2="260" stroke="#2b7889" stroke-width="1.6"/>
-<line x1="1340" y1="275" x2="1326" y2="294" stroke="#2b7889" stroke-width="1.6"/>
-<line x1="1340" y1="275" x2="1354" y2="294" stroke="#2b7889" stroke-width="1.6"/>
-<text x="1340.0" y="314.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Сервіс сповіщень</text>
-<text x="1340.0" y="440.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">&lt;&lt;service&gt;&gt;</text>
-<circle cx="1340" cy="455" r="10" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6"/>
-<line x1="1340" y1="465" x2="1340" y2="490" stroke="#2b7889" stroke-width="1.6"/>
-<line x1="1324" y1="475" x2="1356" y2="475" stroke="#2b7889" stroke-width="1.6"/>
-<line x1="1340" y1="490" x2="1326" y2="509" stroke="#2b7889" stroke-width="1.6"/>
-<line x1="1340" y1="490" x2="1354" y2="509" stroke="#2b7889" stroke-width="1.6"/>
-<text x="1340.0" y="529.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Біржовий сервіс</text>
-<ellipse cx="390" cy="135" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="390.0" y="132.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Реєстрація та вхід</text>
-<text x="390.0" y="145.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">(Auth Flow)</text>
-<ellipse cx="710" cy="110" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="710.0" y="107.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Двофакторна</text>
-<text x="710.0" y="120.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">автентифікація</text>
-<ellipse cx="710" cy="165" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="710.0" y="162.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Зовнішня перевірка</text>
-<text x="710.0" y="175.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">доступу</text>
-<ellipse cx="390" cy="250" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="390.0" y="247.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Керувати особистим</text>
-<text x="390.0" y="260.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">профілем</text>
-<ellipse cx="690" cy="250" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="690.0" y="253.8" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Відновлення доступу</text>
-<ellipse cx="980" cy="250" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="980.0" y="247.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Надіслати код</text>
-<text x="980.0" y="260.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">підтвердження</text>
-<ellipse cx="390" cy="360" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="390.0" y="357.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Переглянути графік</text>
-<text x="390.0" y="370.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">і котирування</text>
-<ellipse cx="710" cy="330" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="710.0" y="327.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Фільтрувати</text>
-<text x="710.0" y="340.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">торгові пари</text>
-<ellipse cx="710" cy="390" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="710.0" y="387.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Отримати поточну</text>
-<text x="710.0" y="400.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">ринкову ціну</text>
-<ellipse cx="390" cy="475" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="390.0" y="472.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Оформити торговий</text>
-<text x="390.0" y="485.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">ордер</text>
-<ellipse cx="690" cy="475" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="690.0" y="472.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Ввести параметри</text>
-<text x="690.0" y="485.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">угоди</text>
-<ellipse cx="980" cy="475" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="980.0" y="472.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Контроль маржі</text>
-<text x="980.0" y="485.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">та балансу</text>
-<ellipse cx="390" cy="585" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="390.0" y="582.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Закрити відкриту</text>
-<text x="390.0" y="595.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">позицію</text>
-<ellipse cx="690" cy="585" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="690.0" y="582.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Виконати закриття</text>
-<text x="690.0" y="595.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">позиції</text>
-<ellipse cx="980" cy="585" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="980.0" y="582.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Розрахувати кінцевий</text>
-<text x="980.0" y="595.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">PnL</text>
-<ellipse cx="390" cy="685" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="390.0" y="682.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Пройти навчальний</text>
-<text x="390.0" y="695.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">сценарій</text>
-<ellipse cx="710" cy="685" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="710.0" y="682.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Отримати прогноз</text>
-<text x="710.0" y="695.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">ринку</text>
-<ellipse cx="390" cy="770" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="390.0" y="767.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Переглянути журнал</text>
-<text x="390.0" y="780.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">угод та аналітику</text>
-<ellipse cx="710" cy="770" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
-<text x="710.0" y="767.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Аналіз кривої</text>
-<text x="710.0" y="780.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">депозиту</text>
-<path d="M 120.0 195.0 L 276.0 135.0" fill="none" stroke="#2b7889" stroke-width="1.5"/>
-<path d="M 120.0 215.0 L 276.0 355.0" fill="none" stroke="#2b7889" stroke-width="1.5"/>
-<path d="M 120.0 490.0 L 276.0 250.0" fill="none" stroke="#2b7889" stroke-width="1.5"/>
-<path d="M 120.0 505.0 L 276.0 365.0" fill="none" stroke="#2b7889" stroke-width="1.5"/>
-<path d="M 120.0 520.0 L 276.0 475.0" fill="none" stroke="#2b7889" stroke-width="1.5"/>
-<path d="M 120.0 535.0 L 276.0 585.0" fill="none" stroke="#2b7889" stroke-width="1.5"/>
-<path d="M 120.0 550.0 L 276.0 685.0" fill="none" stroke="#2b7889" stroke-width="1.5"/>
-<path d="M 120.0 565.0 L 276.0 770.0" fill="none" stroke="#2b7889" stroke-width="1.5"/>
-<path d="M 596.0 118.0 L 504.0 130.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
-<text x="550.0" y="117.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;extend&gt;&gt;</text>
-<path d="M 504.0 140.0 L 596.0 158.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
-<text x="550.0" y="163.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
-<path d="M 576.0 250.0 L 504.0 250.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
-<text x="540.0" y="243.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;extend&gt;&gt;</text>
-<path d="M 804.0 250.0 L 866.0 250.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
-<text x="835.0" y="243.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
-<path d="M 596.0 338.0 L 504.0 352.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
-<text x="550.0" y="339.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;extend&gt;&gt;</text>
-<path d="M 504.0 368.0 L 596.0 382.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
-<text x="550.0" y="389.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
-<path d="M 504.0 475.0 L 576.0 475.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
-<text x="540.0" y="468.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
-<path d="M 804.0 475.0 L 866.0 475.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
-<text x="835.0" y="468.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
-<path d="M 504.0 585.0 L 576.0 585.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
-<text x="540.0" y="578.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
-<path d="M 804.0 585.0 L 866.0 585.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
-<text x="835.0" y="578.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
-<path d="M 596.0 685.0 L 504.0 685.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
-<text x="550.0" y="678.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;extend&gt;&gt;</text>
-<path d="M 504.0 770.0 L 596.0 770.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
-<text x="550.0" y="763.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
-<path d="M 824.0 165.0 L 1320.0 140.0" fill="none" stroke="#2b7889" stroke-width="1.4"/>
-<path d="M 1094.0 250.0 L 1320.0 260.0" fill="none" stroke="#2b7889" stroke-width="1.4"/>
-<path d="M 824.0 390.0 L 1050.0 390.0 L 1320.0 470.0" fill="none" stroke="#2b7889" stroke-width="1.4"/>
-<path d="M 1094.0 475.0 L 1320.0 480.0" fill="none" stroke="#2b7889" stroke-width="1.4"/>
+<text x="1340.0" y="215.8" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">&lt;&lt;service&gt;&gt;</text>
+<circle cx="1340" cy="230" r="10" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6"/>
+<line x1="1340" y1="240" x2="1340" y2="265" stroke="#2b7889" stroke-width="1.6"/>
+<line x1="1324" y1="250" x2="1356" y2="250" stroke="#2b7889" stroke-width="1.6"/>
+<line x1="1340" y1="265" x2="1326" y2="284" stroke="#2b7889" stroke-width="1.6"/>
+<line x1="1340" y1="265" x2="1354" y2="284" stroke="#2b7889" stroke-width="1.6"/>
+<text x="1340.0" y="304.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Сервіс сповіщень</text>
+<text x="1340.0" y="415.9" font-size="11" font-weight="normal" font-style="normal" text-anchor="middle" fill="#111111">&lt;&lt;service&gt;&gt;</text>
+<circle cx="1340" cy="430" r="10" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6"/>
+<line x1="1340" y1="440" x2="1340" y2="465" stroke="#2b7889" stroke-width="1.6"/>
+<line x1="1324" y1="450" x2="1356" y2="450" stroke="#2b7889" stroke-width="1.6"/>
+<line x1="1340" y1="465" x2="1326" y2="484" stroke="#2b7889" stroke-width="1.6"/>
+<line x1="1340" y1="465" x2="1354" y2="484" stroke="#2b7889" stroke-width="1.6"/>
+<text x="1340.0" y="504.2" font-size="12" font-weight="bold" font-style="normal" text-anchor="middle" fill="#111111">Біржовий сервіс</text>
+<ellipse cx="400" cy="135" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="400.0" y="132.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Реєстрація та вхід</text>
+<text x="400.0" y="145.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">(Auth Flow)</text>
+<ellipse cx="720" cy="100" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="720.0" y="97.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Двофакторна</text>
+<text x="720.0" y="110.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">автентифікація</text>
+<ellipse cx="720" cy="170" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="720.0" y="167.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Зовнішня перевірка</text>
+<text x="720.0" y="180.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">доступу</text>
+<ellipse cx="400" cy="250" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="400.0" y="247.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Керувати особистим</text>
+<text x="400.0" y="260.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">профілем</text>
+<ellipse cx="710" cy="250" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="710.0" y="253.8" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Відновлення доступу</text>
+<ellipse cx="1010" cy="250" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="1010.0" y="247.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Надіслати код</text>
+<text x="1010.0" y="260.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">підтвердження</text>
+<ellipse cx="400" cy="370" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="400.0" y="367.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Переглянути графік</text>
+<text x="400.0" y="380.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">і котирування</text>
+<ellipse cx="720" cy="330" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="720.0" y="327.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Фільтрувати</text>
+<text x="720.0" y="340.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">торгові пари</text>
+<ellipse cx="720" cy="410" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="720.0" y="407.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Отримати поточну</text>
+<text x="720.0" y="420.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">ринкову ціну</text>
+<ellipse cx="400" cy="500" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="400.0" y="497.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Оформити торговий</text>
+<text x="400.0" y="510.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">ордер</text>
+<ellipse cx="710" cy="500" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="710.0" y="497.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Ввести параметри</text>
+<text x="710.0" y="510.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">угоди</text>
+<ellipse cx="1010" cy="500" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="1010.0" y="497.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Контроль маржі</text>
+<text x="1010.0" y="510.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">та балансу</text>
+<ellipse cx="400" cy="620" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="400.0" y="617.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Закрити відкриту</text>
+<text x="400.0" y="630.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">позицію</text>
+<ellipse cx="710" cy="620" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="710.0" y="617.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Виконати закриття</text>
+<text x="710.0" y="630.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">позиції</text>
+<ellipse cx="1010" cy="620" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="1010.0" y="617.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Розрахувати кінцевий</text>
+<text x="1010.0" y="630.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">PnL</text>
+<ellipse cx="400" cy="745" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="400.0" y="742.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Переглянути журнал</text>
+<text x="400.0" y="755.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">угод та аналітику</text>
+<ellipse cx="720" cy="710" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="720.0" y="707.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Аналіз кривої</text>
+<text x="720.0" y="720.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">депозиту</text>
+<ellipse cx="720" cy="780" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="720.0" y="777.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Пройти навчальний</text>
+<text x="720.0" y="790.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">сценарій</text>
+<ellipse cx="1010" cy="780" rx="114" ry="27" fill="#b0e3e6" stroke="#2b7889" stroke-width="1.6" filter="url(#dropShadow)"/>
+<text x="1010.0" y="777.0" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">Отримати прогноз</text>
+<text x="1010.0" y="790.7" font-size="11" font-weight="bold" font-style="normal" text-anchor="middle" fill="#0f172a">ринку</text>
+<path d="M 120.0 175.0 L 286.0 135.0" fill="none" stroke="#2b7889" stroke-width="1.5" marker-end="url(#vee-blue)"/>
+<path d="M 120.0 195.0 L 286.0 370.0" fill="none" stroke="#2b7889" stroke-width="1.5" marker-end="url(#vee-blue)"/>
+<path d="M 120.0 485.0 L 286.0 250.0" fill="none" stroke="#2b7889" stroke-width="1.5" marker-end="url(#vee-blue)"/>
+<path d="M 120.0 500.0 L 286.0 370.0" fill="none" stroke="#2b7889" stroke-width="1.5" marker-end="url(#vee-blue)"/>
+<path d="M 120.0 515.0 L 286.0 500.0" fill="none" stroke="#2b7889" stroke-width="1.5" marker-end="url(#vee-blue)"/>
+<path d="M 120.0 530.0 L 286.0 620.0" fill="none" stroke="#2b7889" stroke-width="1.5" marker-end="url(#vee-blue)"/>
+<path d="M 120.0 545.0 L 286.0 745.0" fill="none" stroke="#2b7889" stroke-width="1.5" marker-end="url(#vee-blue)"/>
+<path d="M 606.0 108.0 L 514.0 128.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
+<text x="560.0" y="110.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;extend&gt;&gt;</text>
+<path d="M 514.0 142.0 L 606.0 162.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
+<text x="560.0" y="166.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
+<path d="M 596.0 250.0 L 514.0 250.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
+<text x="555.0" y="243.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;extend&gt;&gt;</text>
+<path d="M 824.0 250.0 L 896.0 250.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
+<text x="860.0" y="243.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
+<path d="M 606.0 338.0 L 514.0 362.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
+<text x="560.0" y="341.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;extend&gt;&gt;</text>
+<path d="M 514.0 378.0 L 606.0 402.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
+<text x="560.0" y="405.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
+<path d="M 514.0 500.0 L 596.0 500.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
+<text x="555.0" y="493.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
+<path d="M 824.0 500.0 L 896.0 500.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
+<text x="860.0" y="493.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
+<path d="M 514.0 620.0 L 596.0 620.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
+<text x="555.0" y="613.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
+<path d="M 824.0 620.0 L 896.0 620.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
+<text x="860.0" y="613.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
+<path d="M 514.0 738.0 L 606.0 718.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
+<text x="560.0" y="721.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;include&gt;&gt;</text>
+<path d="M 606.0 772.0 L 514.0 752.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
+<text x="560.0" y="775.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;extend&gt;&gt;</text>
+<path d="M 896.0 780.0 L 834.0 780.0" fill="none" stroke="#2b7889" stroke-width="1.3" stroke-dasharray="6,4" marker-end="url(#vee-blue)"/>
+<text x="865.0" y="773.5" font-size="10" font-weight="bold" font-style="normal" text-anchor="middle" fill="#2b7889">&lt;&lt;extend&gt;&gt;</text>
+<path d="M 834.0 170.0 L 1320.0 140.0" fill="none" stroke="#2b7889" stroke-width="1.4" marker-end="url(#vee-blue)"/>
+<path d="M 1124.0 250.0 L 1320.0 250.0" fill="none" stroke="#2b7889" stroke-width="1.4" marker-end="url(#vee-blue)"/>
+<path d="M 834.0 410.0 L 1050.0 420.0 L 1320.0 445.0" fill="none" stroke="#2b7889" stroke-width="1.4" marker-end="url(#vee-blue)"/>
+<path d="M 1124.0 500.0 L 1320.0 455.0" fill="none" stroke="#2b7889" stroke-width="1.4" marker-end="url(#vee-blue)"/>
 </svg>

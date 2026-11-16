@@ -34,12 +34,15 @@ User -up-|> Guest
 rectangle "Торговий вебтермінал ByGigaBit" {
     usecase "Реєстрація та вхід\n(Auth Flow)" as UC_Auth
     usecase "Двофакторна автентифікація" as UC_2FA
-    usecase "Відновлення доступу" as UC_Reset
+    usecase "Зовнішня перевірка доступу" as UC_AuthExt
+
     usecase "Керувати особистим профілем" as UC_Profile
+    usecase "Відновлення доступу" as UC_Reset
+    usecase "Надіслати код підтвердження" as UC_Mail
 
     usecase "Переглянути графік і котирування" as UC_Chart
-    usecase "Отримати поточну ринкову ціну" as UC_Price
     usecase "Фільтрувати торгові пари" as UC_Filter
+    usecase "Отримати поточну ринкову ціну" as UC_Price
 
     usecase "Оформити торговий ордер" as UC_Order
     usecase "Ввести параметри угоди" as UC_Params
@@ -49,11 +52,10 @@ rectangle "Торговий вебтермінал ByGigaBit" {
     usecase "Виконати закриття позиції" as UC_Exec
     usecase "Розрахувати кінцевий PnL" as UC_PnL
 
-    usecase "Пройти навчальний сценарій" as UC_Scenario
-    usecase "Отримати прогноз ринку" as UC_AI
-
     usecase "Переглянути журнал угод та аналітику" as UC_Journal
     usecase "Аналіз кривої депозиту" as UC_Curve
+    usecase "Пройти навчальний сценарій" as UC_Scenario
+    usecase "Отримати прогноз ринку" as UC_AI
 }
 
 Guest --> UC_Auth
@@ -63,22 +65,29 @@ User --> UC_Profile
 User --> UC_Chart
 User --> UC_Order
 User --> UC_Close
-User --> UC_Scenario
 User --> UC_Journal
 
 UC_Auth <.. UC_2FA : <<extend>>
+UC_Auth ..> UC_AuthExt : <<include>>
+
 UC_Profile <.. UC_Reset : <<extend>>
+UC_Reset ..> UC_Mail : <<include>>
+
+UC_Chart <.. UC_Filter : <<extend>>
 UC_Chart ..> UC_Price : <<include>>
-UC_Price <.. UC_Filter : <<extend>>
+
 UC_Order ..> UC_Params : <<include>>
 UC_Params ..> UC_Risk : <<include>>
+
 UC_Close ..> UC_Exec : <<include>>
 UC_Exec ..> UC_PnL : <<include>>
-UC_Scenario <.. UC_AI : <<extend>>
-UC_Journal ..> UC_Curve : <<include>>
 
-UC_Auth --> AuthService
-UC_Reset --> NotifyService
+UC_Journal ..> UC_Curve : <<include>>
+UC_Journal <.. UC_Scenario : <<extend>>
+UC_Scenario <.. UC_AI : <<extend>>
+
+UC_AuthExt --> AuthService
+UC_Mail --> NotifyService
 UC_Price --> MarketService
 UC_Risk --> MarketService
 @enduml
