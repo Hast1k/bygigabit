@@ -76,7 +76,7 @@ async function loadAdminStats() {
       if (marginEl) marginEl.textContent = '$' + (s.totalMarginLocked || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
     }
   } catch (err) {
-    console.error("Помилка завантаження статистики адмінки:", err);
+    console.error("Помилка завантаження статистики:", err);
   }
 }
 
@@ -89,7 +89,7 @@ async function loadAdminUsers() {
       filterUsers();
     }
   } catch (err) {
-    console.error("Помилка завантаження користувачів:", err);
+    console.error("Помилка завантаження списку користувачів:", err);
   }
 }
 
@@ -111,49 +111,48 @@ function filterUsers() {
   });
 
   if (filtered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" class="empty-state">Користувачів за вказаним фільтром не знайдено</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" class="empty-state">Користувачів за вказаними параметрами не знайдено</td></tr>';
     return;
   }
 
   filtered.forEach(u => {
     const tr = document.createElement('tr');
-    tr.className = 'mono';
     const isBlocked = u.isBlocked;
     const roleBadgeClass = u.role === 'Admin' ? 'badge-red' : 'badge-cyan';
     const statusBadge = isBlocked 
-      ? '<span class="badge badge-red">ЗАБЛОКОВАНО</span>' 
-      : '<span class="badge badge-green">АКТИВНИЙ</span>';
+      ? '<span class="badge badge-red">Заблоковано</span>' 
+      : '<span class="badge badge-green">Активний</span>';
     const btnBlockText = isBlocked ? 'Розблокувати' : 'Блокувати';
     const btnBlockClass = isBlocked ? 'btn-success' : 'btn-danger';
 
     tr.innerHTML = `
-      <td style="color:#94a3b8;">#${u.id}</td>
+      <td style="color:#94a3b8;" class="mono">#${u.id}</td>
       <td style="font-weight:600; color:#fff;">
         <div>${u.email}</div>
-        ${u.nickname ? `<div style="font-size:10px; color:var(--text-muted); font-weight:400;">@${u.nickname}</div>` : ''}
+        ${u.nickname ? `<div style="font-size:11px; color:var(--text-muted); font-weight:400;">@${u.nickname}</div>` : ''}
       </td>
-      <td><span class="badge ${roleBadgeClass}">${u.role.toUpperCase()}</span></td>
-      <td>${u.twoFactor ? '<span style="color:var(--green);"><i class="fas fa-check-circle"></i> Активно</span>' : '<span style="color:#64748b;"><i class="fas fa-times-circle"></i> Вимкнено</span>'}</td>
-      <td style="font-weight:700; color:var(--green);">$${u.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-      <td>${u.tradesCount || 0}</td>
-      <td style="font-size:11px; color:#94a3b8;">${u.registeredAt || '-'}</td>
+      <td><span class="badge ${roleBadgeClass}">${u.role}</span></td>
+      <td>${u.twoFactor ? '<span style="color:var(--green); font-weight:600;">Увімкнено</span>' : '<span style="color:#64748b;">Вимкнено</span>'}</td>
+      <td style="font-weight:700; color:var(--green);" class="mono">$${u.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+      <td class="mono">${u.tradesCount || 0}</td>
+      <td style="font-size:11px; color:#94a3b8;" class="mono">${u.registeredAt || '-'}</td>
       <td>${statusBadge}</td>
       <td>
         <div class="admin-actions-cell">
           <button class="btn-action-sm btn-action-balance" title="Корекція балансу" onclick="openBalanceModal(${u.id}, '${u.email}', ${u.balance})">
-            <i class="fas fa-wallet"></i> Баланс
+            Баланс
           </button>
-          <button class="btn-action-sm btn-action-role" title="Змінити роль користувача" onclick="changeUserRole(${u.id}, '${u.role}')">
-            <i class="fas fa-user-shield"></i> Роль
+          <button class="btn-action-sm btn-action-role" title="Змінити роль" onclick="changeUserRole(${u.id}, '${u.role}')">
+            Роль
           </button>
           <button class="btn-action-sm" title="Скинути 2FA" onclick="resetUser2FA(${u.id}, '${u.email}')">
-            <i class="fas fa-key"></i> 2FA
+            Скинути 2FA
           </button>
-          <button class="btn ${btnBlockClass}" style="padding:4px 8px; font-size:10px;" onclick="toggleBlockUser(${u.id})">
+          <button class="btn ${btnBlockClass}" style="padding:5px 9px; font-size:11px;" onclick="toggleBlockUser(${u.id})">
             ${btnBlockText}
           </button>
           <button class="btn-action-sm btn-action-history" title="Переглянути угоди" onclick="openTradesModal(${u.id}, '${u.email}')">
-            <i class="fas fa-history"></i> Угоди
+            Угоди
           </button>
         </div>
       </td>
@@ -280,20 +279,19 @@ async function openTradesModal(userId, email) {
       }
       trades.forEach(t => {
         const tr = document.createElement('tr');
-        tr.className = 'mono';
         const pnlColor = t.pnl >= 0 ? 'var(--green)' : 'var(--red)';
         const sideBadge = t.side === 'long' ? '<span class="badge badge-green">LONG</span>' : '<span class="badge badge-red">SHORT</span>';
         tr.innerHTML = `
-          <td style="color:#94a3b8;">${t.id}</td>
+          <td style="color:#94a3b8;" class="mono">${t.id}</td>
           <td style="font-weight:700;">${t.symbol}</td>
           <td>${sideBadge}</td>
-          <td>$${t.price.toFixed(2)}</td>
-          <td>$${t.closePrice.toFixed(2)}</td>
-          <td>$${t.margin.toFixed(2)}</td>
-          <td>${t.leverage}x</td>
-          <td style="font-weight:700; color:${pnlColor};">${t.pnl >= 0 ? '+' : ''}$${t.pnl.toFixed(2)}</td>
-          <td style="color:${pnlColor};">${t.roi >= 0 ? '+' : ''}${t.roi.toFixed(2)}%</td>
-          <td style="font-size:10px; color:#94a3b8;">${t.time}</td>
+          <td class="mono">$${Number(t.price).toFixed(2)}</td>
+          <td class="mono">$${Number(t.closePrice).toFixed(2)}</td>
+          <td class="mono">$${Number(t.margin).toFixed(2)}</td>
+          <td class="mono">${t.leverage}x</td>
+          <td style="font-weight:700; color:${pnlColor};" class="mono">${t.pnl >= 0 ? '+' : ''}$${Number(t.pnl).toFixed(2)}</td>
+          <td style="color:${pnlColor};" class="mono">${t.roi >= 0 ? '+' : ''}${Number(t.roi).toFixed(2)}%</td>
+          <td style="font-size:11px; color:#94a3b8;" class="mono">${t.time}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -331,28 +329,27 @@ function renderPositionsTable() {
   tbody.innerHTML = '';
 
   if (allPositions.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="11" class="empty-state">На даний момент немає активних відкритих позицій по платформі</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="11" class="empty-state">На даний момент немає активних відкритих позицій</td></tr>';
     return;
   }
 
   allPositions.forEach(p => {
     const tr = document.createElement('tr');
-    tr.className = 'mono';
     const sideBadge = p.side === 'long' ? '<span class="badge badge-green">LONG</span>' : '<span class="badge badge-red">SHORT</span>';
     tr.innerHTML = `
-      <td style="color:#94a3b8;">${p.id}</td>
+      <td style="color:#94a3b8;" class="mono">${p.id}</td>
       <td style="font-weight:600; color:#fff;">${p.userEmail || ('User #' + p.user_id)}</td>
       <td style="font-weight:700; color:var(--cyan);">${p.symbol}</td>
       <td>${sideBadge}</td>
-      <td>${p.size}</td>
-      <td>$${p.entryPrice.toFixed(2)}</td>
-      <td style="color:var(--red); font-weight:700;">$${p.liqPrice.toFixed(2)}</td>
-      <td>$${p.margin.toFixed(2)}</td>
-      <td>${p.leverage}x</td>
-      <td style="font-size:11px; color:#94a3b8;">${p.time || '-'}</td>
+      <td class="mono">${p.size}</td>
+      <td class="mono">$${Number(p.entryPrice).toFixed(2)}</td>
+      <td style="color:var(--red); font-weight:700;" class="mono">$${Number(p.liqPrice).toFixed(2)}</td>
+      <td class="mono">$${Number(p.margin).toFixed(2)}</td>
+      <td class="mono">${p.leverage}x</td>
+      <td style="font-size:11px; color:#94a3b8;" class="mono">${p.time || '-'}</td>
       <td>
-        <button class="btn btn-danger" style="padding:4px 8px; font-size:10px;" onclick="adminClosePosition(${p.user_id}, '${p.id}', ${p.entryPrice})">
-          <i class="fas fa-times-circle"></i> Закрити
+        <button class="btn btn-danger" style="padding:5px 10px; font-size:11px;" onclick="adminClosePosition(${p.user_id}, '${p.id}', ${p.entryPrice})">
+          Закрити
         </button>
       </td>
     `;
@@ -411,22 +408,25 @@ function renderOrdersTable() {
 
   allOrders.forEach(o => {
     const tr = document.createElement('tr');
-    tr.className = 'mono';
     const sideBadge = o.side === 'buy' || o.side === 'long' 
       ? '<span class="badge badge-green">BUY</span>' 
       : '<span class="badge badge-red">SELL</span>';
 
+    const ordPrice = parseFloat(o.orderPrice ?? o.price ?? 0);
+    const ordMargin = parseFloat(o.margin ?? 0);
+    const ordDate = o.createdAt || o.time || '-';
+
     tr.innerHTML = `
-      <td style="color:#94a3b8;">${o.id}</td>
+      <td style="color:#94a3b8;" class="mono">${o.id}</td>
       <td style="font-weight:600; color:#fff;">${o.userEmail || ('User #' + o.user_id)}</td>
       <td style="font-weight:700; color:var(--cyan);">${o.symbol}</td>
       <td>${sideBadge}</td>
-      <td style="font-weight:700;">$${parseFloat(o.price || 0).toFixed(2)}</td>
-      <td>$${parseFloat(o.margin || 0).toFixed(2)}</td>
-      <td style="font-size:11px; color:#94a3b8;">${o.time || '-'}</td>
+      <td style="font-weight:700;" class="mono">$${ordPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+      <td class="mono">$${ordMargin.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+      <td style="font-size:11px; color:#94a3b8;" class="mono">${ordDate}</td>
       <td>
-        <button class="btn btn-outline" style="padding:4px 8px; font-size:10px; color:var(--red); border-color:var(--red);" onclick="adminCancelOrder(${o.user_id}, '${o.id}')">
-          <i class="fas fa-ban"></i> Скасувати
+        <button class="btn btn-outline" style="padding:5px 10px; font-size:11px; color:var(--red); border-color:var(--red);" onclick="adminCancelOrder(${o.user_id}, '${o.id}')">
+          Скасувати
         </button>
       </td>
     `;

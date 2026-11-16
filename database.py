@@ -146,12 +146,14 @@ class LimitOrderModel(Base):
             "side": self.side,
             "orderType": self.orderType,
             "orderPrice": self.orderPrice,
+            "price": self.orderPrice,
             "initialPrice": getattr(self, "initialPrice", None),
             "margin": self.margin,
             "leverage": self.leverage,
             "size": self.size,
             "status": self.status,
             "createdAt": self.createdAt,
+            "time": self.createdAt,
         }
 
 

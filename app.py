@@ -1083,8 +1083,7 @@ def get_admin_stats(request: Request):
             "activeLimitOrders": len(all_orders),
             "totalSystemBalance": total_system_balance,
             "totalMarginLocked": total_margin_locked,
-            "bybitApiStatus": "Connected",
-            "dbEngine": "SQLite (WAL Mode)"
+            "systemStatus": "Online"
         }
     }
 
@@ -1308,8 +1307,7 @@ def export_admin_stats(request: Request, format: str = Query("csv")):
         "active_positions_count": len(all_positions),
         "total_margin_locked_usdt": total_margin_locked,
         "active_limit_orders_count": len(all_orders),
-        "bybit_v5_api_status": "Online (WebSocket/REST)",
-        "database_storage": "SQLite 3 (WAL)",
+        "system_status": "Online"
     }
 
     if format.lower() == "json":
@@ -1331,8 +1329,7 @@ def export_admin_stats(request: Request, format: str = Query("csv")):
     writer.writerow(["Заблокована маржа у відкритих угодах (USDT)", f"{stats_dict['total_margin_locked_usdt']:.2f}"])
     writer.writerow(["Кількість активних лімітних ордерів", stats_dict["active_limit_orders_count"]])
     writer.writerow(["Всього завершених угод", stats_dict["total_system_trades"]])
-    writer.writerow(["Статус шлюзу Bybit API V5", stats_dict["bybit_v5_api_status"]])
-    writer.writerow(["Сховище даних", stats_dict["database_storage"]])
+    writer.writerow(["Статус системи", stats_dict["system_status"]])
 
     csv_data = "\ufeff" + output.getvalue()
     return Response(
