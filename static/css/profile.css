@@ -1,9 +1,16 @@
+/* ========================================================
+   BYGIGABIT — ПРОФІЛЬ ТА БЕЗПЕКА (АВТЕНТИЧНИЙ ДИЗАЙН BYGIGABIT)
+   ======================================================== */
+
 .profile-container {
   max-width: 1040px;
   width: 100%;
   margin: 0 auto;
   padding: 40px 24px 80px;
+  flex: 1;
 }
+
+/* ЗАГОЛОВОК СТОРІНКИ */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -14,329 +21,554 @@
   flex-wrap: wrap;
   gap: 16px;
 }
+
 .page-title {
   font-family: var(--font-display);
   font-size: 32px;
   font-weight: 900;
-  color: #fff;
+  color: #ffffff;
   letter-spacing: -0.03em;
   text-transform: uppercase;
   margin-bottom: 6px;
 }
+
 .page-subtitle {
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--text-dim);
   text-transform: uppercase;
 }
-.profile-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 28px;
-}
-.settings-col {
+
+/* СТЕК КАРТОК ПРОФІЛЮ */
+.profile-cards-stack {
   display: flex;
   flex-direction: column;
   gap: 28px;
 }
-.wallet-card {
-  padding: 32px;
-}
+
+/* БАЗОВІ СТИЛІ КАРТОК */
 .card {
   padding: 28px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   transition: border-color 0.15s ease;
+  position: relative;
 }
+
 .card:hover {
   border-color: var(--border-bright);
 }
+
 .card-head-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
 }
+
 .card-icon-title h3 {
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
-  text-transform: uppercase;
-  color: #fff;
+  color: #ffffff;
   margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
 }
+
 .card-subtitle {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: #94a3b8;
-  display: block;
+  color: var(--text-dim);
 }
-.wallet-balance-hero {
-  background: var(--bg-darker);
-  border: 1px solid var(--border-color);
-  padding: 28px;
+
+/* ========================================================
+   КАРТКА 1: ОСОБИСТІ ДАНІ ТА КВАЛІФІКАЦІЯ
+   ======================================================== */
+.nickname-block {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.nickname-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.profile-user-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--cyan);
+  letter-spacing: 0.04em;
+}
+
+.btn-nick-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-bright);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-nick-edit:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: var(--bg-card);
+}
+
+.nickname-edit-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.nickname-edit-box .auth-input {
+  max-width: 280px;
+}
+
+.nick-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ПЕРЕМИКАЧ КВАЛІФІКАЦІЇ */
+.qual-section-wrap {
   margin-bottom: 24px;
 }
-.bal-label {
+
+.qualification-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .qualification-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.qual-card-btn {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 16px 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.qual-card-btn:hover {
+  border-color: var(--border-bright);
+}
+
+.qual-card-btn.active#profPillBeginner {
+  border-color: var(--cyan);
+  background: rgba(0, 240, 255, 0.05);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.15);
+}
+
+.qual-card-btn.active#profPillPro {
+  border-color: var(--magenta);
+  background: rgba(255, 0, 234, 0.05);
+  box-shadow: 0 0 12px rgba(255, 0, 234, 0.15);
+}
+
+.qual-head-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.qual-head-row strong {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+}
+
+.qual-dot {
+  width: 8px;
+  height: 8px;
+  display: inline-block;
+}
+
+.qual-dot.beginner {
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan);
+}
+
+.qual-dot.pro {
+  background: var(--magenta);
+  box-shadow: 0 0 6px var(--magenta);
+}
+
+.qual-desc-text {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* МЕТАДАНІ КОРИСТУВАЧА */
+.user-meta-box {
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.meta-label {
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--text-dim);
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  display: block;
-  margin-bottom: 8px;
+  letter-spacing: 0.06em;
 }
-.bal-val {
+
+.meta-val {
+  font-size: 13px;
+  color: #ffffff;
+}
+
+/* ========================================================
+   КАРТКА 2: БЕЗПЕКА (ЗМІНА ПАРОЛЯ ТА 2FA РОЗГОРТАННЯ)
+   ======================================================== */
+.sec-subsection {
+  margin-bottom: 10px;
+}
+
+.sec-subtitle-row {
+  margin-bottom: 16px;
+}
+
+.sec-sub-h4 {
   font-family: var(--font-display);
-  font-size: 48px;
-  font-weight: 900;
-  color: #fff;
-  margin-bottom: 8px;
-  text-shadow: -2px 0 var(--magenta), 2px 0 var(--cyan);
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 4px;
 }
-.bal-sub {
+
+.sec-sub-hint {
   font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-muted);
+  font-size: 11px;
+  color: var(--text-dim);
 }
-.wallet-stats-cols {
+
+.passwords-grid-3 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-  margin-bottom: 24px;
 }
-.w-stat {
-  background: var(--bg-darker);
-  border: 1px solid var(--border-color);
-  padding: 18px;
+
+@media (max-width: 840px) {
+  .passwords-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sec-field-group {
   display: flex;
   flex-direction: column;
 }
-.w-stat-label {
+
+.sec-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.sec-input-wrap .auth-input {
+  width: 100%;
+  padding-right: 38px;
+}
+
+.btn-toggle-eye {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+  padding: 4px;
+}
+
+.btn-toggle-eye:hover {
+  color: var(--cyan);
+}
+
+.sec-card-divider {
+  border-bottom: 1px solid var(--border-color);
+  margin: 28px 0;
+}
+
+/* 2FA ROW & ACCORDION */
+.twofa-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.sec-section-desc {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.accordion-panel {
+  margin-top: 20px;
+  background: var(--bg-darker);
+  border: 1px solid var(--border-bright);
+  padding: 24px;
+  animation: modalPopIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPopIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.qr-setup-grid {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 720px) {
+  .qr-setup-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.qr-code-box {
+  background: #ffffff;
+  border: 1px solid var(--border-bright);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  width: 180px;
+}
+
+.qr-code-box svg {
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+}
+
+.qr-loading-spinner {
+  font-size: 11px;
+  color: #000000;
+  text-align: center;
+}
+
+.qr-step-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.qr-step-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.qr-step-text strong {
+  color: var(--cyan);
+}
+
+.secret-box-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  max-width: 440px;
+}
+
+.confirm-code-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.verify-code-input {
+  max-width: 160px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-align: center;
+}
+
+.lost-key-link-wrap {
+  margin-top: 14px;
+}
+
+.link-lost-key {
+  background: transparent;
+  border: none;
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.15s ease;
+}
+
+.link-lost-key:hover {
+  opacity: 0.8;
+}
+
+.disable-warning-box {
+  max-width: 540px;
+}
+
+.disable-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--red);
+  margin-bottom: 6px;
+}
+
+.disable-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ========================================================
+   КАРТКА 3: ВІРТУАЛЬНИЙ ГАМАНЕЦЬ PAPER TRADING
+   ======================================================== */
+.wallet-card {
+  border-color: var(--border-bright);
+}
+
+.wallet-balance-hero {
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.bal-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
   color: var(--text-dim);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin-bottom: 6px;
+  display: block;
+  margin-bottom: 8px;
 }
+
+.bal-val {
+  font-size: 42px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.bal-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.bal-sub strong {
+  color: var(--green);
+}
+
+.wallet-stats-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 720px) {
+  .wallet-stats-cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+.w-stat {
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.w-stat-label {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
 .w-stat-val {
-  font-family: var(--font-mono);
   font-size: 18px;
   font-weight: 800;
-  color: #fff;
+  color: #ffffff;
 }
+
 .wallet-actions {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
 }
 
-/* ========================================================
-   ПЕРЕМИКАЧ РІВНЯ КВАЛІФІКАЦІЇ В ПРОФІЛІ
-   ======================================================== */
-.exp-level-switcher {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-@media (max-width: 768px) {
-  .exp-level-switcher {
-    grid-template-columns: 1fr;
-  }
-}
-.exp-btn {
-  background: var(--bg-darker);
-  border: 1px solid var(--border-color);
-  padding: 18px;
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  display: flex;
-  flex-direction: column;
-}
-.exp-btn:hover {
-  border-color: var(--cyan);
-}
-.exp-btn.active#profBtnBeginner {
-  border-color: var(--cyan);
-  background: rgba(0, 240, 255, 0.08);
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.15);
-}
-.exp-btn.active#profBtnPro {
-  border-color: var(--magenta);
-  background: rgba(255, 0, 234, 0.08);
-  box-shadow: 0 0 16px rgba(255, 0, 234, 0.15);
-}
-.exp-btn-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-}
-
-/* ========================================================
-   БЕЗПЕКА ТА 2FA TOGGLE
-   ======================================================== */
-.setting-toggle-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--bg-darker);
-  border: 1px solid var(--border-color);
-  padding: 18px 22px;
-  margin-bottom: 20px;
-  gap: 16px;
-}
-.setting-toggle-title {
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 700;
-  color: #fff;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-.setting-toggle-desc {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: #94a3b8;
-  margin-top: 4px;
-  line-height: 1.4;
-}
-
-/* CYBERPUNK TOGGLE SWITCH */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 52px;
-  height: 28px;
-  flex-shrink: 0;
-  cursor: pointer;
-}
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-  position: absolute;
-}
-.slider-toggle {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--bg-secondary);
-  border: 1.5px solid var(--border-bright);
-  transition: all 0.25s ease;
-}
-.slider-toggle:before {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: var(--text-dim);
-  transition: all 0.25s ease;
-}
-.switch input:checked + .slider-toggle {
-  background-color: rgba(0, 255, 0, 0.15);
-  border-color: var(--green);
-  box-shadow: 0 0 12px rgba(0, 255, 0, 0.3);
-}
-.switch input:checked + .slider-toggle:before {
-  transform: translateX(24px);
-  background-color: var(--green);
-  box-shadow: 0 0 10px var(--green);
-}
-
-/* USER METADATA BOX */
-.user-meta-box {
-  background: var(--bg-darker);
-  border: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-}
-.meta-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 22px;
-  border-bottom: 1px solid var(--border-color);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  gap: 16px;
-}
-.meta-row:last-child {
-  border-bottom: none;
-}
-.meta-label {
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 11px;
-}
-.meta-val {
-  color: #fff;
-  font-weight: 700;
-  word-break: break-all;
-}
-
-/* ========================================================
-   ЗМІНА ПАРОЛЯ
-   ======================================================== */
-.password-form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.input-label {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-.auth-input {
-  width: 100%;
-  background: var(--bg-darker);
-  border: 1px solid var(--border-color);
-  color: #fff;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  padding: 13px 16px;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.auth-input:focus {
-  border-color: var(--magenta);
-  box-shadow: 0 0 10px var(--magenta-glow);
-}
-.btn-save-pass {
-  margin-top: 6px;
-  width: 100%;
-  padding: 14px 24px;
-  background: transparent;
+/* TOAST СПОВІЩЕННЯ */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--cyan);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 12px var(--cyan-glow);
   color: #ffffff;
-  border: 1px solid var(--border-bright);
   font-family: var(--font-mono);
   font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.btn-save-pass:hover {
-  background: rgba(255, 0, 234, 0.1);
-  border-color: var(--magenta);
-  color: var(--magenta);
-  box-shadow: -3px 0 0 var(--cyan);
+  padding: 12px 20px;
+  z-index: 99999;
+  display: none;
+  animation: modalPopIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
