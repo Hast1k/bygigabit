@@ -30,7 +30,8 @@ async function loadUserProfile() {
       const u = data.user;
       document.getElementById('userEmailMeta').textContent = u.email;
       document.getElementById('userRoleBadge').textContent = (u.role || 'TRADER').toUpperCase();
-      document.getElementById('navRoleBadge').textContent = (u.role || 'TRADER') + ' Role';
+      const navRole = document.getElementById('navRoleBadge');
+      if (navRole) navRole.textContent = (u.role || 'TRADER') + ' Role';
       
       const is2FA = u.twoFactor !== false;
       const toggle = document.getElementById('toggle2FA');

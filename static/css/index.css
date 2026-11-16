@@ -104,7 +104,7 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
 }
 .terminal-mock-box::before {
-  content: "CH_01 / BYBIT_V5_STREAM";
+  content: "СПОТОВИЙ ПОТІК / СИМУЛЯЦІЯ";
   position: absolute;
   top: 8px;
   left: 12px;

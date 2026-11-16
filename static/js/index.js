@@ -15,7 +15,7 @@ async function updateMarketPrices() {
           const btcP = document.getElementById('btcPriceVal');
           if (heroP) heroP.textContent = '$' + priceFmt;
           if (heroC) {
-            heroC.textContent = `${sign}${changeVal}% (24H SPOT VOLATILITY)`;
+            heroC.textContent = `${sign}${changeVal}% (волатильність 24г)`;
             heroC.style.color = changeVal >= 0 ? 'var(--green)' : 'var(--red)';
           }
           if (featP) featP.textContent = `${priceFmt} USDT`;

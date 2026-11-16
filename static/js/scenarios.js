@@ -131,8 +131,10 @@ function renderCurrentScenario() {
   document.getElementById('scenarioTitle').textContent = scen.title;
   document.getElementById('scenarioSymbolTag').textContent = scen.symbolLabel || scen.symbol;
   document.getElementById('scenarioTfTag').textContent = scen.timeframe;
-  document.getElementById('scenarioDiffTag').textContent = scen.difficulty;
-  document.getElementById('scenarioCategoryTag').textContent = scen.category;
+  const diffTag = document.getElementById('scenarioDiffTag');
+  if (diffTag) diffTag.textContent = scen.difficulty;
+  const catTag = document.getElementById('scenarioCategoryTag');
+  if (catTag) catTag.textContent = scen.category;
   document.getElementById('scenarioContextText').textContent = scen.context;
   document.getElementById('scenarioQuestionText').textContent = scen.question || 'Оцініть графік та виберіть дію:';
 
