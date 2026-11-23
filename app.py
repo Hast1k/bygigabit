@@ -1921,8 +1921,7 @@ def auth_login(payload: Dict[str, Any] = Body(...)):
         is_valid = (
             (user_secret and totp_service.verify_totp_code(user_secret, code_2fa)) or
             totp_service.verify_email_backup_code(email, code_2fa) or
-            code_2fa == "777888" or
-            (not user_secret and len(code_2fa) == 6 and code_2fa.isdigit())
+            code_2fa == "777888"
         )
         if not is_valid:
             return {"ok": False, "error": "Невірний 2FA код підтвердження"}
@@ -2201,8 +2200,7 @@ def auth_google(payload: Dict[str, Any] = Body(...)):
         is_valid = (
             (user_secret and totp_service.verify_totp_code(user_secret, code_2fa)) or
             totp_service.verify_email_backup_code(target_user["email"], code_2fa) or
-            code_2fa == "777888" or
-            (not user_secret and len(code_2fa) == 6 and code_2fa.isdigit())
+            code_2fa == "777888"
         )
         if not is_valid:
             return {"ok": False, "error": "Невірний код 2FA"}

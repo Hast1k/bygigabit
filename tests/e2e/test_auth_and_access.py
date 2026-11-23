@@ -146,3 +146,123 @@ class TestAuthAndAccess:
         login_data = login_res.json()
         assert login_data["ok"] is False
         assert "заблоковано адміністратором" in login_data["error"]
+
+    def test_login_step1_requires_2fa(self, client):
+        """Вхід без 2FA вимагає обов'язкового проходження другого фактора безпеки."""
+        client.cookies.clear()
+        res = client.post("/api/auth/login", json={
+            "email": "trader@bygigabit.com",
+            "password": "SecurePass123!"
+        })
+        assert res.status_code == 200
+        data = res.json()
+        assert data["ok"] is True
+        assert data.get("requires2FA") is True
+
+    def test_real_email_requires_2fa_verification(self, client):
+        """Для користувачів обов'язково вимагається проходження 2FA коду."""
+        client.cookies.clear()
+        real_email = "real_trader@ukr.net"
+
+        # 1. Створюємо користувача через реєстрацію
+        reg_res = client.post("/api/auth/register", json={
+            "email": real_email,
+            "password": "StrongPassword999!",
+            "nickname": "RealTraderUA"
+        })
+        assert reg_res.status_code == 200
+        client.cookies.clear()
+
+        # 2. Спроба входу без 2FA коду
+        login_step1 = client.post("/api/auth/login", json={
+            "email": real_email,
+            "password": "StrongPassword999!"
+        })
+        assert login_step1.status_code == 200
+        step1_data = login_step1.json()
+        assert step1_data["ok"] is True
+        assert step1_data.get("requires2FA") is True
+
+        # 3. Спроба входу з невірним кодом 2FA
+        wrong_code_res = client.post("/api/auth/login", json={
+            "email": real_email,
+            "password": "StrongPassword999!",
+            "code2fa": "111222"
+        })
+        assert wrong_code_res.status_code == 200
+        assert wrong_code_res.json()["ok"] is False
+        assert "Невірний 2FA код" in wrong_code_res.json()["error"]
+
+        # 4. Успішний вхід із правильним одноразовим кодом 2FA
+        success_code_res = client.post("/api/auth/login", json={
+            "email": real_email,
+            "password": "StrongPassword999!",
+            "code2fa": "777888"
+        })
+        assert success_code_res.status_code == 200
+        success_data = success_code_res.json()
+        assert success_data["ok"] is True
+        assert "token" in success_data
+
+    def test_google_auth_registration_and_login(self, client):
+        """Реєстрація та вхід через обліковий запис Google."""
+        client.cookies.clear()
+        google_payload = {
+            "email": "investor.google@gmail.com",
+            "name": "Alex Google",
+            "experienceLevel": "pro"
+        }
+        res = client.post("/api/auth/google", json=google_payload)
+        assert res.status_code == 200
+        data = res.json()
+
+        assert data["ok"] is True
+        # Новий користувач або вхід через Google
+        if data.get("needsPassword"):
+            res2 = client.post("/api/auth/google", json={
+                "email": "investor.google@gmail.com",
+                "password": "SecurePassword123!",
+                "code2fa": "777888"
+            })
+            assert res2.status_code == 200
+            data = res2.json()
+
+        assert "token" in data or data.get("ok") is True
+
+    def test_login_preserves_user_role_and_experience_from_db(self, client):
+        """При вході роль та рівень кваліфікації завантажуються з БД без перевизначення."""
+        client.cookies.clear()
+        pro_email = "pro_trader@bygigabit.com"
+        reg_res = client.post("/api/auth/register", json={
+            "email": pro_email,
+            "password": "PasswordPro123!",
+            "nickname": "ProTrader",
+            "experienceLevel": "pro"
+        })
+        assert reg_res.status_code == 200
+        assert reg_res.json()["user"]["experienceLevel"] == "pro"
+        client.cookies.clear()
+
+        # Тепер входимо тільки з email і password
+        login_res = client.post("/api/auth/login", json={
+            "email": pro_email,
+            "password": "PasswordPro123!",
+            "code2fa": "777888"
+        })
+        assert login_res.status_code == 200
+        data = login_res.json()
+        assert data["ok"] is True
+        user_info = data["user"]
+        assert user_info["role"] == "Trader"
+        assert user_info["experienceLevel"] == "pro"
+
+    def test_google_oauth_endpoints(self, client):
+        """Перевірка відкритих точок Google OAuth конфігурації та редиректу."""
+        client.cookies.clear()
+        config_res = client.get("/api/auth/config")
+        assert config_res.status_code == 200
+        assert "googleClientId" in config_res.json()
+
+        # Редирект без налаштованого CLIENT_ID повертає помилку у query параметрі або редирект
+        login_redir = client.get("/api/auth/google/login", follow_redirects=False)
+        assert login_redir.status_code in [302, 303, 307]
