@@ -11,7 +11,7 @@ class TestScenariosData:
     """Тести для сценаріїв тренажера та функцій розрахунку розв'язки."""
 
     def test_get_all_scenarios_meta_security(self):
-        """get_all_scenarios_meta() не розкриває futureCandles і містить рівно 25 свічок."""
+        """get_all_scenarios_meta() не розкриває futureCandles і містить рівно 30 свічок."""
         meta_list = scenarios_data.get_all_scenarios_meta()
 
         assert len(meta_list) > 0, "Список сценаріїв не повинен бути порожнім"
@@ -20,7 +20,7 @@ class TestScenariosData:
             # Свічки майбутнього не повинні передаватися у браузер до прийняття рішення
             assert "futureCandles" not in scen, "Свічки майбутнього скомпрометовано в метаданих"
             assert "initialCandles" in scen
-            assert len(scen["initialCandles"]) == 25, "Початковий відрізок повинен містити рівно 25 свічок"
+            assert len(scen["initialCandles"]) == 30, "Початковий відрізок повинен містити рівно 30 свічок"
 
             # Обов'язкові метадані
             assert "id" in scen

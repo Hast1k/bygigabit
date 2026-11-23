@@ -10,6 +10,18 @@ let candleSeries = null;
 let volumeSeries = null;
 let isFetching = false;
 
+// Стан інтерактивного Replay-режиму
+let replayTimer = null;
+let replaySpeed = 1200; // 1x = 1200ms, 2x = 600ms, 3x = 300ms
+let isReplayPaused = false;
+let replayFutureCandles = [];
+let replayCurrentStep = 0;
+let replayAction = 'long';
+let replayEntryPrice = 0;
+let currentScenarioResult = null;
+let currentLiveRoi = 0;
+let replayClosedEarly = false;
+
 // Ініціалізація графіка TradingView Lightweight Charts
 function initTrainerChart() {
   const container = document.getElementById('trainerChartContainer');
@@ -115,8 +127,17 @@ async function loadInitialScenario() {
 
 // Відображення поточного сценарію
 function renderCurrentScenario() {
+  if (replayTimer) {
+    clearTimeout(replayTimer);
+    replayTimer = null;
+  }
+
   const scen = sessionHistory[currentIndex];
   if (!scen) return;
+
+  // Приховуємо панель відтворення під час переходів
+  const replayPanel = document.getElementById('replayPanel');
+  if (replayPanel) replayPanel.style.display = 'none';
 
   // Оновлення кнопок та індикаторів степпера
   const btnPrev = document.getElementById('btnPrevScenario');
@@ -145,7 +166,7 @@ function renderCurrentScenario() {
   document.getElementById('scenSmaDesc').textContent = ind.smaStatus || 'Стан SMA';
   document.getElementById('scenVolDesc').textContent = ind.volumeStatus || 'Динаміка об\'єму';
 
-  // Якщо сценарій уже розв\'язаний раніше в цій сесії
+  // Якщо сценарій уже розв'язаний раніше в цій сесії
   if (scen.result) {
     if (statusBadge) {
       statusBadge.textContent = scen.result.isCorrect ? 'ПРАВИЛЬНО' : 'ПОМИЛКА';
@@ -163,14 +184,14 @@ function renderCurrentScenario() {
     document.getElementById('outcomePanel').style.display = 'none';
     document.getElementById('btnActionLong').disabled = false;
     document.getElementById('btnActionShort').disabled = false;
-    document.getElementById('scenarioPhaseBadge').textContent = 'ЕТАП 1: АНАЛІЗ (25 СВІЧОК)';
-    document.getElementById('chartWatermark').textContent = 'ВІДРІЗОК: 25 СВІЧОК';
+    document.getElementById('scenarioPhaseBadge').textContent = 'ЕТАП 1: АНАЛІЗ (30 СВІЧОК)';
+    document.getElementById('chartWatermark').textContent = 'ВІДРІЗОК: 30 СВІЧОК';
   }
 
   updateScoreBoard();
 }
 
-// Відображення початкових 25 свічок
+// Відображення початкових 30 свічок
 function renderInitialChart(scen) {
   if (!candleSeries || !chart) return;
   const candles = scen.initialCandles || [];
@@ -191,7 +212,7 @@ function renderInitialChart(scen) {
   chart.timeScale().fitContent();
 }
 
-// Відображення повного графіка (35 свічок)
+// Відображення повного графіка (40 свічок)
 function renderResolvedChart(scen) {
   if (!candleSeries || !chart) return;
   const init = scen.initialCandles || [];
@@ -213,11 +234,11 @@ function renderResolvedChart(scen) {
   })));
 
   document.getElementById('scenarioPhaseBadge').textContent = 'ЕТАП 2: РОЗВ\'ЯЗКА';
-  document.getElementById('chartWatermark').textContent = 'ПОВНИЙ РИНОК: 35 СВІЧОК';
+  document.getElementById('chartWatermark').textContent = 'ПОВНИЙ РИНОК: 40 СВІЧОК';
   chart.timeScale().fitContent();
 }
 
-// Прийняття рішення (Long або Short)
+// Прийняття рішення (Long або Short) та перехід у режим покрокового Replay
 async function chooseAction(action) {
   const scen = sessionHistory[currentIndex];
   if (!scen || scen.result) return;
@@ -241,19 +262,53 @@ async function chooseAction(action) {
       return;
     }
 
-    scen.result = data;
+    currentScenarioResult = data;
+    replayAction = action;
+    replayFutureCandles = (data.resolution && data.resolution.futureCandles) || [];
+    replayCurrentStep = 0;
+    replayClosedEarly = false;
+    isReplayPaused = false;
 
-    // Плавна анімація домальовування наступних 10 свічок
-    await animateFutureCandles(data.resolution.futureCandles || []);
+    // Ціна входу = закриття останньої початкової свічки (30-ї)
+    const initCandles = scen.initialCandles || [];
+    replayEntryPrice = (initCandles.length > 0)
+      ? initCandles[initCandles.length - 1].close
+      : (replayFutureCandles[0] ? replayFutureCandles[0].open : 1);
+    currentLiveRoi = 0;
 
-    const statusBadge = document.getElementById('stepStatusBadge');
-    if (statusBadge) {
-      statusBadge.textContent = data.isCorrect ? 'ПРАВИЛЬНО' : 'ПОМИЛКА';
-      statusBadge.className = 'step-status-badge ' + (data.isCorrect ? 'correct' : 'wrong');
+    // Перемикання інтерфейсу на інтерактивне відтворення
+    document.getElementById('decisionPanel').style.display = 'none';
+    const replayPanel = document.getElementById('replayPanel');
+    if (replayPanel) replayPanel.style.display = 'block';
+
+    const sideBadge = document.getElementById('replaySideBadge');
+    if (sideBadge) {
+      sideBadge.textContent = action === 'long' ? 'ВІДКРИТО LONG 10x' : 'ВІДКРИТО SHORT 10x';
+      sideBadge.className = 'badge ' + (action === 'long' ? 'badge-green' : 'badge-red');
     }
 
-    showOutcome(data, true);
-    updateScoreBoard();
+    const fmtPrice = (p) => Number(p).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('replayEntryPrice').textContent = '$' + fmtPrice(replayEntryPrice);
+    document.getElementById('replayCurrentPrice').textContent = '$' + fmtPrice(replayEntryPrice);
+    document.getElementById('replayStepCounter').textContent = `СВІЧКА 0 / ${replayFutureCandles.length}`;
+
+    const pnlVal = document.getElementById('replayPnlVal');
+    pnlVal.textContent = '+0.00% ROI';
+    pnlVal.className = 'replay-pnl-val mono pos';
+
+    const btnClose = document.getElementById('btnCloseReplayEarly');
+    if (btnClose) btnClose.disabled = false;
+
+    const btnPause = document.getElementById('btnReplayPause');
+    if (btnPause) btnPause.textContent = 'Пауза ⏸';
+
+    document.getElementById('scenarioPhaseBadge').textContent = 'ЕТАП 2: СИМУЛЯЦІЯ УГОДИ';
+    document.getElementById('chartWatermark').textContent = `СИМУЛЯЦІЯ: 0 / ${replayFutureCandles.length} СВІЧОК`;
+
+    // Запуск кроків відтворення
+    if (replayTimer) clearTimeout(replayTimer);
+    replayTimer = setTimeout(tickReplay, replaySpeed);
+
   } catch (err) {
     showToast('Помилка зв\'язку із сервером');
     btnLong.disabled = false;
@@ -261,39 +316,164 @@ async function chooseAction(action) {
   }
 }
 
-// Анімація додавання свічок майбутнього по черзі
-function animateFutureCandles(candles) {
-  return new Promise((resolve) => {
-    let i = 0;
-    document.getElementById('chartWatermark').textContent = 'ДОБУДОВА РИНКУ...';
+// Крок відтворення наступної свічки
+function tickReplay() {
+  if (replayClosedEarly || !currentScenarioResult) return;
 
-    const interval = setInterval(() => {
-      if (i >= candles.length) {
-        clearInterval(interval);
-        document.getElementById('chartWatermark').textContent = 'ПОВНИЙ РИНОК: 35 СВІЧОК';
-        document.getElementById('scenarioPhaseBadge').textContent = 'ЕТАП 2: РОЗВ\'ЯЗКА';
-        resolve();
-        return;
-      }
+  if (replayCurrentStep >= replayFutureCandles.length) {
+    // Всі свічки завершено за планом
+    finishReplay(false);
+    return;
+  }
 
-      const c = candles[i];
-      candleSeries.update({
-        time: c.time,
-        open: c.open,
-        high: c.high,
-        low: c.low,
-        close: c.close
-      });
-
-      volumeSeries.update({
-        time: c.time,
-        value: c.volume,
-        color: c.close >= c.open ? 'rgba(0, 255, 0, 0.45)' : 'rgba(255, 42, 85, 0.45)'
-      });
-
-      i++;
-    }, 110);
+  const c = replayFutureCandles[replayCurrentStep];
+  candleSeries.update({
+    time: c.time,
+    open: c.open,
+    high: c.high,
+    low: c.low,
+    close: c.close
   });
+
+  volumeSeries.update({
+    time: c.time,
+    value: c.volume,
+    color: c.close >= c.open ? 'rgba(0, 255, 0, 0.45)' : 'rgba(255, 42, 85, 0.45)'
+  });
+
+  replayCurrentStep++;
+
+  // Розрахунок поточного live ROI з плечем 10x
+  const rawPct = (replayAction === 'long')
+    ? ((c.close - replayEntryPrice) / replayEntryPrice)
+    : ((replayEntryPrice - c.close) / replayEntryPrice);
+  currentLiveRoi = rawPct * 100 * 10;
+
+  // Оновлення блоків метрик
+  const fmtPrice = (p) => Number(p).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  document.getElementById('replayCurrentPrice').textContent = '$' + fmtPrice(c.close);
+  document.getElementById('replayStepCounter').textContent = `СВІЧКА ${replayCurrentStep} / ${replayFutureCandles.length}`;
+
+  const pnlVal = document.getElementById('replayPnlVal');
+  const sign = currentLiveRoi >= 0 ? '+' : '';
+  pnlVal.textContent = `${sign}${currentLiveRoi.toFixed(2)}% ROI`;
+  pnlVal.className = 'replay-pnl-val mono ' + (currentLiveRoi >= 0 ? 'pos' : 'neg');
+
+  document.getElementById('chartWatermark').textContent = `СИМУЛЯЦІЯ: ${replayCurrentStep} / ${replayFutureCandles.length} СВІЧОК`;
+
+  if (replayCurrentStep < replayFutureCandles.length) {
+    if (!isReplayPaused) {
+      replayTimer = setTimeout(tickReplay, replaySpeed);
+    }
+  } else {
+    // Остання свічка
+    finishReplay(false);
+  }
+}
+
+// Дострокове закриття угоди користувачем
+function closeReplayPositionEarly() {
+  if (replayClosedEarly || !currentScenarioResult) return;
+  if (replayTimer) clearTimeout(replayTimer);
+  replayClosedEarly = true;
+
+  const btnClose = document.getElementById('btnCloseReplayEarly');
+  if (btnClose) btnClose.disabled = true;
+
+  // Домальовуємо всі залишкові свічки, щоб користувач бачив майбутній рух ринку
+  for (let i = replayCurrentStep; i < replayFutureCandles.length; i++) {
+    const rc = replayFutureCandles[i];
+    candleSeries.update({
+      time: rc.time,
+      open: rc.open,
+      high: rc.high,
+      low: rc.low,
+      close: rc.close
+    });
+    volumeSeries.update({
+      time: rc.time,
+      value: rc.volume,
+      color: rc.close >= rc.open ? 'rgba(0, 255, 0, 0.45)' : 'rgba(255, 42, 85, 0.45)'
+    });
+  }
+
+  finishReplay(true);
+}
+
+// Пауза / продовження
+function toggleReplayPause() {
+  if (replayClosedEarly) return;
+  isReplayPaused = !isReplayPaused;
+  const btn = document.getElementById('btnReplayPause');
+
+  if (isReplayPaused) {
+    if (replayTimer) clearTimeout(replayTimer);
+    if (btn) btn.textContent = 'Продовжити ▶';
+  } else {
+    if (btn) btn.textContent = 'Пауза ⏸';
+    tickReplay();
+  }
+}
+
+// Зміна швидкості відтворення (1x / 2x / 3x)
+function cycleReplaySpeed() {
+  const btn = document.getElementById('btnReplaySpeed');
+  if (replaySpeed === 1200) {
+    replaySpeed = 600;
+    if (btn) btn.textContent = '2x (0.6с)';
+  } else if (replaySpeed === 600) {
+    replaySpeed = 300;
+    if (btn) btn.textContent = '3x (0.3с)';
+  } else {
+    replaySpeed = 1200;
+    if (btn) btn.textContent = '1x (1.2с)';
+  }
+}
+
+// Ручний одиничний крок (свічка вперед)
+function stepReplayOnce() {
+  if (replayClosedEarly) return;
+  if (!isReplayPaused) {
+    isReplayPaused = true;
+    if (replayTimer) clearTimeout(replayTimer);
+    const btn = document.getElementById('btnReplayPause');
+    if (btn) btn.textContent = 'Продовжити ▶';
+  }
+  tickReplay();
+}
+
+// Завершення відтворення та фіксація результату
+function finishReplay(closedEarly) {
+  if (replayTimer) clearTimeout(replayTimer);
+  const scen = sessionHistory[currentIndex];
+  if (!scen) return;
+
+  const replayPanel = document.getElementById('replayPanel');
+  if (replayPanel) replayPanel.style.display = 'none';
+
+  if (closedEarly) {
+    const earlyResult = JSON.parse(JSON.stringify(currentScenarioResult));
+    earlyResult.closedEarly = true;
+    earlyResult.exitCandleIndex = Math.max(1, replayCurrentStep);
+    earlyResult.userRoi = currentLiveRoi;
+    // Дострокове закриття в плюс вважається успішною дією трейдера
+    earlyResult.isCorrect = (currentLiveRoi > 0);
+    scen.result = earlyResult;
+  } else {
+    scen.result = currentScenarioResult;
+  }
+
+  const statusBadge = document.getElementById('stepStatusBadge');
+  if (statusBadge) {
+    statusBadge.textContent = scen.result.isCorrect ? 'ПРАВИЛЬНО' : 'ПОМИЛКА';
+    statusBadge.className = 'step-status-badge ' + (scen.result.isCorrect ? 'correct' : 'wrong');
+  }
+
+  document.getElementById('scenarioPhaseBadge').textContent = 'ЕТАП 2: РОЗВ\'ЯЗКА';
+  document.getElementById('chartWatermark').textContent = 'ПОВНИЙ РИНОК: 40 СВІЧОК';
+
+  showOutcome(scen.result, true);
+  updateScoreBoard();
 }
 
 // Показ розв'язки
@@ -309,18 +489,35 @@ function showOutcome(data, isNew) {
 
   outcomeCard.style.display = 'block';
   headerBox.className = 'outcome-header ' + (isCorrect ? 'win' : 'loss');
-  verdictTitle.textContent = isCorrect ? 'ВЕРДИКТ: ПРАВИЛЬНЕ РІШЕННЯ' : 'ВЕРДИКТ: ПОМИЛКОВЕ РІШЕННЯ';
 
   const roi = data.userRoi || 0;
   const sign = roi >= 0 ? '+' : '';
   roiBadge.textContent = `${sign}${roi.toFixed(1)}% ROI`;
 
-  titleText.textContent = data.resolution.outcomeTitle || '';
-  expText.textContent = data.resolution.analysisExplanation || '';
+  if (data.closedEarly) {
+    verdictTitle.textContent = isCorrect
+      ? `ДОСТРОКОВО ЗАКРИТО (СВІЧКА #${data.exitCandleIndex}): ПРИБУТОК`
+      : `ДОСТРОКОВО ЗАКРИТО (СВІЧКА #${data.exitCandleIndex}): ЗБИТОК`;
+    titleText.textContent = isCorrect
+      ? `Позицію зафіксовано на свічці #${data.exitCandleIndex}`
+      : `Достроковий вихід на свічці #${data.exitCandleIndex}`;
+    expText.textContent = (isCorrect
+      ? `Ви вчасно зрізали ризик та зафіксували прибуток на ${data.exitCandleIndex}-й свічці до повного відпрацювання сценарію! `
+      : `Позицію закрито з мінусом на ${data.exitCandleIndex}-й свічці. `) + (data.resolution.analysisExplanation || '');
+  } else {
+    verdictTitle.textContent = isCorrect ? 'ВЕРДИКТ: ПРАВИЛЬНЕ РІШЕННЯ' : 'ВЕРДИКТ: ПОМИЛКОВЕ РІШЕННЯ';
+    titleText.textContent = data.resolution.outcomeTitle || '';
+    expText.textContent = data.resolution.analysisExplanation || '';
+  }
+
   takeawayText.textContent = data.resolution.keyTakeaway || '';
 
   if (isNew) {
-    showToast(isCorrect ? 'Вірно! Відмінний аналіз ринку.' : 'Помилка. Ознайомтеся з аналізом нижче.');
+    if (data.closedEarly) {
+      showToast(isCorrect ? 'Угоду закрито з прибутком!' : 'Угоду закрито зі збитком.');
+    } else {
+      showToast(isCorrect ? 'Вірно! Відмінний аналіз ринку.' : 'Помилка. Ознайомтеся з аналізом нижче.');
+    }
   }
 }
 

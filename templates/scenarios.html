@@ -62,7 +62,7 @@
         <div class="trainer-badge">Курс біржового трейдингу &bull; Практичний тренажер</div>
         <h1 class="trainer-title">Тренажер історичних біржових ситуацій</h1>
         <p class="trainer-desc">
-          Проаналізуйте перші 25 свічок реального графіка, оцініть стан індикаторів та прийміть рішення: відкрити <strong>LONG</strong> чи <strong>SHORT</strong>. Після вашого вибору тренажер покаже наступні 10 свічок та надасть докладний аналіз.
+          Проаналізуйте перші 30 свічок реального графіка, оцініть стан індикаторів та прийміть рішення: відкрити <strong>LONG</strong> чи <strong>SHORT</strong>. Після вашого вибору тренажер покроково відтворить наступні 10 свічок, дозволяючи вам зафіксувати прибуток у будь-який момент.
         </p>
       </div>
 
@@ -106,7 +106,7 @@
               <span class="tag-pill mono" id="scenarioTfTag">15m</span>
             </div>
           </div>
-          <div class="scenario-phase-badge" id="scenarioPhaseBadge">ЕТАП 1: АНАЛІЗ (25 СВІЧОК)</div>
+          <div class="scenario-phase-badge" id="scenarioPhaseBadge">ЕТАП 1: АНАЛІЗ (30 СВІЧОК)</div>
         </div>
 
         <!-- КОНТЕКСТ СИТУАЦІЇ -->
@@ -118,7 +118,7 @@
         <!-- ГРАФІК СВІЧОК -->
         <div class="trainer-chart-box">
           <div id="trainerChartContainer" class="chart-canvas-wrap"></div>
-          <div class="chart-watermark-overlay" id="chartWatermark">ВІДРІЗОК: 25 СВІЧОК</div>
+          <div class="chart-watermark-overlay" id="chartWatermark">ВІДРІЗОК: 30 СВІЧОК</div>
         </div>
 
         <!-- ПАНЕЛЬ ПОКАЗНИКІВ ТА ІНДИКАТОРІВ -->
@@ -164,7 +164,50 @@
             </button>
           </div>
           <div class="decision-note">
-            Угода відкривається з умовним плечем <strong>10x</strong>. Наступні 10 свічок покажуть реальну реакцію біржі.
+            Угода відкривається з умовним плечем <strong>10x</strong>. Наступні 10 свічок відтворюватимуться по черзі, і ви зможете закрити угоду в будь-який момент.
+          </div>
+        </div>
+
+        <!-- БЛОК ПОКРОКОВОГО ВІДТВОРЕННЯ СВІЧОК (СИМУЛЯЦІЯ УГОДИ) -->
+        <div class="card replay-card" id="replayPanel" style="display: none;">
+          <div class="box-title">
+            <span id="replaySideBadge" class="badge badge-green">ВІДКРИТО LONG 10x</span>
+            <span class="step-num mono" id="replayStepCounter">СВІЧКА 0 / 10</span>
+          </div>
+
+          <div class="replay-metrics-grid">
+            <div class="replay-metric-box">
+              <span class="replay-metric-label">ЦІНА ВХОДУ</span>
+              <span class="replay-metric-val mono" id="replayEntryPrice">$0.00</span>
+            </div>
+            <div class="replay-metric-box">
+              <span class="replay-metric-label">ПОТОЧНА ЦІНА</span>
+              <span class="replay-metric-val mono" id="replayCurrentPrice">$0.00</span>
+            </div>
+          </div>
+
+          <div class="replay-pnl-banner" id="replayPnlBanner">
+            <div class="replay-pnl-label">ПОТОЧНИЙ РЕЗУЛЬТАТ (PnL / ROI):</div>
+            <div class="replay-pnl-val mono" id="replayPnlVal">+0.00% ROI</div>
+          </div>
+
+          <button type="button" class="btn btn-danger btn-close-early" id="btnCloseReplayEarly" onclick="closeReplayPositionEarly()">
+            ⚡ ЗАКРИТИ УГОДУ ЗАРАЗ
+          </button>
+
+          <div class="replay-controls-row">
+            <button type="button" class="btn btn-outline" id="btnReplayPause" onclick="toggleReplayPause()">
+              Пауза ⏸
+            </button>
+            <button type="button" class="btn btn-outline" id="btnReplaySpeed" onclick="cycleReplaySpeed()">
+              1x (1.2с)
+            </button>
+            <button type="button" class="btn btn-outline" id="btnReplayStep" onclick="stepReplayOnce()">
+              Крок ⏭
+            </button>
+          </div>
+          <div class="replay-hint-note">
+            Свічки з'являються по черзі. Натисніть «Закрити угоду», щоб не пересиджувати можливий відкат ціни!
           </div>
         </div>
 

@@ -565,6 +565,132 @@
   gap: 10px;
 }
 
+/* ІНТЕРАКТИВНИЙ ВІДТВОРЮВАЧ СВІЧОК (REPLAY MODE) */
+.replay-card {
+  border: 1px solid var(--border-bright);
+  background: var(--bg-card);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.replay-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.replay-metric-box {
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.replay-metric-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.replay-metric-val {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.replay-pnl-banner {
+  background: var(--bg-darker);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--cyan);
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.replay-pnl-banner.win {
+  border-left-color: var(--green);
+  background: rgba(0, 255, 0, 0.05);
+}
+
+.replay-pnl-banner.loss {
+  border-left-color: var(--red);
+  background: rgba(255, 42, 85, 0.05);
+}
+
+.replay-pnl-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.replay-pnl-val {
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+.replay-pnl-val.text-green { color: var(--green); }
+.replay-pnl-val.text-red { color: var(--red); }
+
+.btn-close-early {
+  width: 100%;
+  padding: 12px 14px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: #ff0055;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 12px;
+  box-shadow: 0 0 16px rgba(255, 0, 85, 0.4);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-close-early:hover {
+  background: #ff1a6b;
+  box-shadow: 0 0 24px rgba(255, 0, 85, 0.6);
+  transform: translateY(-1px);
+}
+
+.replay-controls-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.replay-controls-row .btn {
+  flex: 1;
+  padding: 6px 4px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  text-align: center;
+}
+
+.replay-hint-note {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.4;
+  text-align: center;
+}
+
 /* АДАПТИВНІСТЬ ДЛЯ СМАРТФОНІВ ТА ПЛАНШЕТІВ */
 @media (max-width: 1024px) {
   .scenario-workspace {
