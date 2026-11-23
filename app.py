@@ -690,6 +690,13 @@ def get_paper_wallet(request: Request):
         return JSONResponse(status_code=401, content={"ok": False, "error": "Для перегляду балансу необхідно зареєструватися або увійти", "authRequired": True})
 
     positions = database.db_get_positions(user["id"])
+    for p in positions:
+        sym = p.get("symbol", "BTCUSDT")
+        sym_mark = get_symbol_mark_price(sym)
+        if sym_mark > 0:
+            p["markPrice"] = sym_mark
+        elif "markPrice" not in p or not p["markPrice"]:
+            p["markPrice"] = p.get("entryPrice", 0.0)
     orders = database.db_get_limit_orders(user["id"])
     history = database.db_get_order_history(user["id"])
     used = sum(p.get("margin", 0.0) for p in positions) + sum(o.get("margin", 0.0) for o in orders)
@@ -734,6 +741,13 @@ def get_terminal_state(request: Request):
     check_and_execute_liquidations_sync()
 
     positions = database.db_get_positions(user["id"])
+    for p in positions:
+        sym = p.get("symbol", "BTCUSDT")
+        sym_mark = get_symbol_mark_price(sym)
+        if sym_mark > 0:
+            p["markPrice"] = sym_mark
+        elif "markPrice" not in p or not p["markPrice"]:
+            p["markPrice"] = p.get("entryPrice", 0.0)
     orders = database.db_get_limit_orders(user["id"])
     history = database.db_get_order_history(user["id"], limit=15)
 
@@ -955,7 +969,14 @@ def close_terminal_position(request: Request, payload: Dict[str, Any] = Body(...
         return {"ok": False, "error": "Позицію не знайдено"}
 
     entry = target["entryPrice"]
-    exit_p = mark_price if mark_price > 0 else entry
+    target_sym = target.get("symbol", "BTCUSDT")
+    real_mark = get_symbol_mark_price(target_sym)
+    if mark_price > 0 and (real_mark <= 0 or 0.2 <= (mark_price / real_mark) <= 5.0):
+        exit_p = mark_price
+    elif real_mark > 0:
+        exit_p = real_mark
+    else:
+        exit_p = entry
     size = target["size"]
     side = target["side"]
 
@@ -1312,7 +1333,14 @@ def admin_close_position(request: Request, user_id: int, pos_id: str, payload: D
 
     mark_price = float(payload.get("markPrice", 0))
     entry = target["entryPrice"]
-    exit_p = mark_price if mark_price > 0 else entry
+    target_sym = target.get("symbol", "BTCUSDT")
+    real_mark = get_symbol_mark_price(target_sym)
+    if mark_price > 0 and (real_mark <= 0 or 0.2 <= (mark_price / real_mark) <= 5.0):
+        exit_p = mark_price
+    elif real_mark > 0:
+        exit_p = real_mark
+    else:
+        exit_p = entry
     size = target["size"]
     side = target["side"]
 

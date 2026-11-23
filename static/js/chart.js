@@ -9,6 +9,22 @@ let orderType = 'market';
 let allPairsList = [];
 let currentPairTab = 'top';
 
+function getMarkPriceForSymbol(symbol, fallbackPrice) {
+  if (symbol === currentSymbol && currentPrice > 0) {
+    return currentPrice;
+  }
+  if (window.allPairsList && window.allPairsList.length > 0) {
+    const item = window.allPairsList.find(t => t.symbol === symbol);
+    if (item && item.price > 0) {
+      return item.price;
+    }
+  }
+  if (fallbackPrice && fallbackPrice > 0) {
+    return fallbackPrice;
+  }
+  return currentSymbol === symbol ? currentPrice : (fallbackPrice || 0);
+}
+
 function formatPrice(p) {
   if (p === undefined || p === null || isNaN(p)) return '---.--';
   if (p >= 1000) return p.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -250,8 +266,9 @@ async function loadTerminalState() {
       posBody.innerHTML = '';
       data.positions.forEach(p => {
         const isLong = p.side === 'long';
-        const curPnL = isLong ? (currentPrice - p.entryPrice) * p.size : (p.entryPrice - currentPrice) * p.size;
-        const curRoi = (curPnL / p.margin) * 100;
+        const posMarkPrice = getMarkPriceForSymbol(p.symbol, p.markPrice || p.entryPrice);
+        const curPnL = isLong ? (posMarkPrice - p.entryPrice) * p.size : (p.entryPrice - posMarkPrice) * p.size;
+        const curRoi = p.margin > 0 ? (curPnL / p.margin) * 100 : 0;
         const isWin = curPnL >= 0;
         const sign = isWin ? '+' : '';
         const color = isWin ? 'var(--green)' : 'var(--red)';
@@ -263,13 +280,13 @@ async function loadTerminalState() {
           <td><span class="badge ${isLong ? 'badge-green' : 'badge-red'}">${p.side.toUpperCase()}</span></td>
           <td>${p.leverage}x</td>
           <td>${p.size.toFixed(4)}</td>
-          <td>$${p.entryPrice.toLocaleString('en-US', { minimumFractionDigits: 1 })}</td>
-          <td>$${currentPrice.toLocaleString('en-US', { minimumFractionDigits: 1 })}</td>
+          <td>$${formatPrice(p.entryPrice)}</td>
+          <td>$${formatPrice(posMarkPrice)}</td>
           <td>$${p.margin.toFixed(2)}</td>
-          <td style="color:var(--red); font-weight:600;">$${p.liqPrice.toLocaleString('en-US', { minimumFractionDigits: 1 })}</td>
+          <td style="color:var(--red); font-weight:600;">$${formatPrice(p.liqPrice)}</td>
           <td style="color:${color}; font-weight:700;">${sign}$${curPnL.toFixed(2)} (${sign}${curRoi.toFixed(2)}%)</td>
           <td>
-            <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="closePosition('${p.id}')">
+            <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="closePosition('${p.id}', ${posMarkPrice})">
               Закрити
             </button>
           </td>
@@ -480,13 +497,17 @@ async function submitOrder() {
     }
   }
 }
-async function closePosition(posId) {
+async function closePosition(posId, markPrice) {
   if (!confirm('Ви дійсно бажаєте закрити позицію за поточною ціною?')) return;
   try {
+    const payload = { id: posId };
+    if (markPrice && Number(markPrice) > 0) {
+      payload.markPrice = Number(markPrice);
+    }
     const res = await fetch('/api/terminal/close-position', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: posId, markPrice: currentPrice })
+      body: JSON.stringify(payload)
     });
     const data = await res.json();
     if (data.ok) {
@@ -745,6 +766,7 @@ async function selectPair(symbol) {
   await loadKlines(currentInterval);
   await updateOrderbook();
   renderPairsList();
+  await loadTerminalState();
 }
 
 function togglePairDropdown() {
