@@ -300,7 +300,7 @@ async function chooseAction(action) {
     if (btnClose) btnClose.disabled = false;
 
     const btnPause = document.getElementById('btnReplayPause');
-    if (btnPause) btnPause.textContent = 'Пауза ⏸';
+    if (btnPause) btnPause.textContent = 'Пауза';
 
     document.getElementById('scenarioPhaseBadge').textContent = 'ЕТАП 2: СИМУЛЯЦІЯ УГОДИ';
     document.getElementById('chartWatermark').textContent = `СИМУЛЯЦІЯ: 0 / ${replayFutureCandles.length} СВІЧОК`;
@@ -408,9 +408,9 @@ function toggleReplayPause() {
 
   if (isReplayPaused) {
     if (replayTimer) clearTimeout(replayTimer);
-    if (btn) btn.textContent = 'Продовжити ▶';
+    if (btn) btn.textContent = 'Продовжити';
   } else {
-    if (btn) btn.textContent = 'Пауза ⏸';
+    if (btn) btn.textContent = 'Пауза';
     tickReplay();
   }
 }
@@ -437,7 +437,7 @@ function stepReplayOnce() {
     isReplayPaused = true;
     if (replayTimer) clearTimeout(replayTimer);
     const btn = document.getElementById('btnReplayPause');
-    if (btn) btn.textContent = 'Продовжити ▶';
+    if (btn) btn.textContent = 'Продовжити';
   }
   tickReplay();
 }
