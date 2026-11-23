@@ -137,23 +137,32 @@ function filterUsers() {
       <td class="mono">${u.tradesCount || 0}</td>
       <td style="font-size:11px; color:#94a3b8;" class="mono">${u.registeredAt || '-'}</td>
       <td>${statusBadge}</td>
-      <td>
-        <div class="admin-actions-cell">
-          <button class="btn-action-sm btn-action-balance" title="Корекція балансу" onclick="openBalanceModal(${u.id}, '${u.email}', ${u.balance})">
-            Баланс
+      <td class="actions-cell">
+        <div class="admin-actions-dropdown">
+          <button type="button" class="btn-dots-menu" onclick="toggleActionsMenu(event, ${u.id})" title="Вибір дій">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="5" r="2.2"></circle>
+              <circle cx="12" cy="12" r="2.2"></circle>
+              <circle cx="12" cy="19" r="2.2"></circle>
+            </svg>
           </button>
-          <button class="btn-action-sm btn-action-role" title="Змінити роль" onclick="changeUserRole(${u.id}, '${u.role}')">
-            Роль
-          </button>
-          <button class="btn-action-sm" title="Скинути 2FA" onclick="resetUser2FA(${u.id}, '${u.email}')">
-            Скинути 2FA
-          </button>
-          <button class="btn ${btnBlockClass}" style="padding:5px 9px; font-size:11px;" onclick="toggleBlockUser(${u.id})">
-            ${btnBlockText}
-          </button>
-          <button class="btn-action-sm btn-action-history" title="Переглянути угоди" onclick="openTradesModal(${u.id}, '${u.email}')">
-            Угоди
-          </button>
+          <div id="actionsMenu_${u.id}" class="actions-dropdown-menu" style="display:none;">
+            <button type="button" class="actions-dropdown-item" onclick="openBalanceModal(${u.id}, '${u.email}', ${u.balance}); closeAllActionMenus();">
+              Баланс
+            </button>
+            <button type="button" class="actions-dropdown-item" onclick="changeUserRole(${u.id}, '${u.role}'); closeAllActionMenus();">
+              Змінити роль
+            </button>
+            <button type="button" class="actions-dropdown-item" onclick="resetUser2FA(${u.id}, '${u.email}'); closeAllActionMenus();">
+              Скинути 2FA
+            </button>
+            <button type="button" class="actions-dropdown-item ${u.isBlocked ? 'item-unblock' : 'item-danger'}" onclick="toggleBlockUser(${u.id}); closeAllActionMenus();">
+              ${btnBlockText}
+            </button>
+            <button type="button" class="actions-dropdown-item" onclick="openTradesModal(${u.id}, '${u.email}'); closeAllActionMenus();">
+              Угоди трейдера
+            </button>
+          </div>
         </div>
       </td>
     `;
@@ -563,3 +572,42 @@ function showToast(msg) {
   t.style.display = 'block';
   setTimeout(() => { t.style.display = 'none'; }, 4000);
 }
+
+function toggleActionsMenu(event, userId) {
+  event.stopPropagation();
+  const menu = document.getElementById(`actionsMenu_${userId}`);
+  if (!menu) return;
+  const isShown = menu.style.display === 'block';
+  closeAllActionMenus();
+  if (!isShown) {
+    menu.style.display = 'block';
+    const btn = event.currentTarget;
+    if (btn) btn.classList.add('active');
+
+    const rect = menu.getBoundingClientRect();
+    if (rect.bottom > window.innerHeight) {
+      menu.style.top = 'auto';
+      menu.style.bottom = '100%';
+      menu.style.marginTop = '0';
+      menu.style.marginBottom = '4px';
+    } else {
+      menu.style.top = '100%';
+      menu.style.bottom = 'auto';
+      menu.style.marginTop = '4px';
+      menu.style.marginBottom = '0';
+    }
+  }
+}
+
+function closeAllActionMenus() {
+  document.querySelectorAll('.actions-dropdown-menu').forEach(m => {
+    m.style.display = 'none';
+  });
+  document.querySelectorAll('.btn-dots-menu').forEach(b => {
+    b.classList.remove('active');
+  });
+}
+
+document.addEventListener('click', () => {
+  closeAllActionMenus();
+});

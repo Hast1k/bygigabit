@@ -8,8 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <link rel="stylesheet" href="/static/css/common.css">
-  <link rel="stylesheet" href="/static/css/admin.css">
+  <link rel="stylesheet" href="/static/css/common.css?v=2.1">
+  <link rel="stylesheet" href="/static/css/admin.css?v=2.1">
   <script src="/static/js/theme.js"></script>
 </head>
 <body class="sb-nav-fixed">
@@ -30,7 +30,6 @@
       <a href="/api/admin/export/stats?format=csv" class="btn btn-outline" style="padding:6px 14px; font-size:11px; color:var(--green); border-color:var(--green);" title="Завантажити зведений звіт">
         Звіт CSV
       </a>
-      <button class="btn-theme-toggle" onclick="toggleTheme()" type="button" title="Змінити тему оформлення">Тема: Темна</button>
       <a href="/chart" class="btn-terminal-back" title="Перейти в торговий термінал">Термінал</a>
       <a href="/auth" class="btn-terminal-back" style="color:var(--red);" title="Вихід із системи">Вихід</a>
     </div>
@@ -306,15 +305,15 @@
                 <table class="data-table">
                   <thead>
                     <tr>
-                      <th style="width: 6%;">ID</th>
-                      <th style="width: 24%;">Користувач (Email / Нік)</th>
-                      <th style="width: 9%;">Роль</th>
+                      <th style="width: 5%;">ID</th>
+                      <th style="width: 27%;">Користувач (Email / Нік)</th>
+                      <th style="width: 10%;">Роль</th>
                       <th style="width: 9%;">2FA</th>
-                      <th style="width: 12%;">Баланс (USDT)</th>
+                      <th style="width: 14%;">Баланс (USDT)</th>
                       <th style="width: 8%;">Угоди</th>
                       <th style="width: 11%;">Дата</th>
                       <th style="width: 9%;">Статус</th>
-                      <th style="width: 12%;">Дії</th>
+                      <th style="width: 7%; text-align: center;">Дії</th>
                     </tr>
                   </thead>
                   <tbody id="usersTableBody">
@@ -476,6 +475,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script src="/static/js/admin.js"></script>
+  <script src="/static/js/admin.js?v=2.1"></script>
 </body>
 </html>

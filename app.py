@@ -5,6 +5,8 @@ import random
 import asyncio
 import csv
 import io
+import urllib.parse
+import urllib.request
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, Query, Request, Body, Response
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
@@ -19,6 +21,14 @@ import totp_service
 
 API_KEY = os.getenv("BYBIT_API_KEY", "pTRtHhIA6TD0eqyeB3")
 API_SECRET = os.getenv("BYBIT_API_SECRET", "MDncLofTbAsBhk2EWhTagfLj4y6BHdGj4k44")
+GOOGLE_CLIENT_ID = (
+    os.getenv("GOOGLE_CLIENT_ID")
+    or os.getenv("GOOGLE_ID")
+    or os.getenv("GOOGLE_CLIENTID")
+    or os.getenv("GOOGLE_OAUTH_CLIENT_ID")
+    or os.getenv("CLIENT_ID")
+    or ""
+)
 
 app = FastAPI(title="ByGigaBit Platform", version="3.0")
 
@@ -86,8 +96,20 @@ def page_auth(request: Request):
     return templates.TemplateResponse(
         request=request,
         name="auth.html",
-        context={"active_page": "auth", "user": user}
+        context={
+            "active_page": "auth",
+            "user": user,
+            "google_client_id": GOOGLE_CLIENT_ID
+        }
     )
+
+
+@app.get("/api/auth/config")
+def auth_config():
+    """Конфігурація авторизації платформи для клієнтської частини."""
+    return {
+        "googleClientId": GOOGLE_CLIENT_ID
+    }
 
 
 @app.get("/chart", response_class=HTMLResponse)
@@ -2000,6 +2022,104 @@ def auth_register(payload: Dict[str, Any] = Body(...)):
     return resp
 
 
+def get_google_redirect_uri(request: Request) -> str:
+    """Формування динамічного URI перенаправлення для Google OAuth 2.0."""
+    proto = request.headers.get("x-forwarded-proto", "https")
+    host = request.headers.get("x-forwarded-host") or request.headers.get("host", "bygigabit.pp.ua")
+    return f"{proto}://{host}/api/auth/google/callback"
+
+
+@app.get("/api/auth/google/login")
+def google_auth_login(request: Request):
+    """Прямий редирект на офіційну сторінку вибору акаунта Google OAuth 2.0."""
+    client_id = GOOGLE_CLIENT_ID
+    if not client_id:
+        return RedirectResponse(url="/auth?error=google_not_configured", status_code=303)
+
+    redirect_uri = get_google_redirect_uri(request)
+    google_url = (
+        "https://accounts.google.com/o/oauth2/v2/auth?"
+        f"client_id={urllib.parse.quote(client_id)}&"
+        f"redirect_uri={urllib.parse.quote(redirect_uri)}&"
+        "response_type=code&"
+        "scope=openid%20email%20profile&"
+        "access_type=offline&"
+        "prompt=select_account"
+    )
+    return RedirectResponse(url=google_url, status_code=303)
+
+
+@app.get("/api/auth/google/callback")
+def google_auth_callback(request: Request, code: Optional[str] = None, error: Optional[str] = None):
+    """Обробка зворотного виклику Google OAuth 2.0 після вибору акаунта."""
+    if error or not code:
+        return RedirectResponse(url=f"/auth?error={error or 'no_code'}", status_code=303)
+
+    client_id = GOOGLE_CLIENT_ID
+    client_secret = (
+        os.getenv("GOOGLE_CLIENT_SECRET")
+        or os.getenv("GOOGLE_SECRET")
+        or ""
+    )
+    redirect_uri = get_google_redirect_uri(request)
+    email = ""
+    name = ""
+
+    if client_secret:
+        try:
+            import json
+            token_url = "https://oauth2.googleapis.com/token"
+            data = urllib.parse.urlencode({
+                "code": code,
+                "client_id": client_id,
+                "client_secret": client_secret,
+                "redirect_uri": redirect_uri,
+                "grant_type": "authorization_code"
+            }).encode("utf-8")
+
+            req = urllib.request.Request(token_url, data=data, method="POST")
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                token_data = json.loads(resp.read().decode("utf-8"))
+                access_token = token_data.get("access_token")
+
+            if access_token:
+                userinfo_req = urllib.request.Request(
+                    "https://www.googleapis.com/oauth2/v3/userinfo",
+                    headers={"Authorization": f"Bearer {access_token}"}
+                )
+                with urllib.request.urlopen(userinfo_req, timeout=10) as user_resp:
+                    user_info = json.loads(user_resp.read().decode("utf-8"))
+                    email = user_info.get("email", "").lower().strip()
+                    name = user_info.get("name", "")
+        except Exception as e:
+            print(f"[Google OAuth Callback Error]: {e}")
+
+    if not email:
+        return RedirectResponse(url="/auth?error=google_auth_failed", status_code=303)
+
+    target_user = database.db_get_user_by_email(email)
+    if not target_user:
+        clean_nick = name or email.split("@")[0]
+        role = "Admin" if "admin" in email else "Trader"
+        target_user = database.db_create_user(
+            email=email,
+            password=secrets.token_urlsafe(16),
+            role=role,
+            balance=STARTING_BALANCE,
+            experience_level="beginner",
+            nickname=clean_nick
+        )
+
+    session_token = f"sess_{int(time.time())}_{secrets.token_hex(12)}"
+    database.db_save_session(session_token, target_user["id"])
+
+    target_url = "/admin" if target_user["role"] == "Admin" else "/chart"
+    resp = RedirectResponse(url=target_url, status_code=303)
+    resp.set_cookie(key="bygigabit_session", value=session_token, max_age=86400 * 7, httponly=False, samesite="lax", path="/")
+    resp.set_cookie(key="bygigabit_exp_level", value=target_user.get("experienceLevel", "beginner"), max_age=86400 * 30, httponly=False, samesite="lax", path="/")
+    return resp
+
+
 @app.post("/api/auth/google")
 def auth_google(payload: Dict[str, Any] = Body(...)):
     """Вхід через Google з вимогою задати пароль, якщо він відсутній."""
@@ -2007,6 +2127,21 @@ def auth_google(payload: Dict[str, Any] = Body(...)):
     nickname = payload.get("nickname", "").strip()
     password = payload.get("password")
     code_2fa = payload.get("code2fa", "").strip()
+    credential = payload.get("credential")
+
+    if not email and credential:
+        try:
+            import base64
+            import json
+            parts = credential.split(".")
+            if len(parts) >= 2:
+                padded = parts[1] + "=" * ((4 - len(parts[1]) % 4) % 4)
+                jwt_data = json.loads(base64.urlsafe_b64decode(padded.encode("utf-8")).decode("utf-8"))
+                email = jwt_data.get("email", "").strip().lower()
+                if not nickname:
+                    nickname = jwt_data.get("name") or email.split("@")[0]
+        except Exception:
+            pass
 
     if not email:
         return {"ok": False, "error": "Не вказано email від Google"}

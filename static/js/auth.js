@@ -153,47 +153,99 @@ async function requestAuthEmailBackupCode() {
   }
 }
 
-// ВХІД ЧЕРЕЗ GOOGLE (МОДАЛЬНЕ ВІКНО БЕЗ PROMPT/ALERT)
-function startGoogleAuth() {
-  openGoogleAuthModal();
+// ВХІД ЧЕРЕЗ GOOGLE
+function initGoogleIdentity() {
+  const clientId = window.GOOGLE_CLIENT_ID;
+  if (!clientId || !window.google || !window.google.accounts) return;
+
+  try {
+    if (window.google.accounts.id) {
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: handleGoogleCredentialResponse,
+        auto_select: false,
+        cancel_on_tap_outside: true
+      });
+    }
+  } catch (err) {
+    console.warn("Помилка ініціалізації Google Identity:", err);
+  }
 }
 
-function openGoogleAuthModal() {
-  const modal = document.getElementById('modalGoogleAuth');
-  if (modal) {
-    modal.style.display = 'flex';
-    const input = document.getElementById('customGoogleEmail');
-    if (input) {
-      input.value = '';
-      setTimeout(() => input.focus(), 50);
+function handleGoogleCredentialResponse(response) {
+  if (response && response.credential) {
+    const payload = parseJwtPayload(response.credential);
+    if (payload && payload.email) {
+      submitGoogleEmail(payload.email, payload.name, response.credential);
     }
   }
 }
 
-function closeGoogleAuthModal() {
-  const modal = document.getElementById('modalGoogleAuth');
-  if (modal) {
-    modal.style.display = 'none';
+function parseJwtPayload(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    return null;
   }
 }
 
-function chooseGoogleAccount(email) {
-  closeGoogleAuthModal();
-  submitGoogleEmail(email);
+function startGoogleAuth() {
+  const clientId = window.GOOGLE_CLIENT_ID;
+
+  // 1. Через Google Identity Services OAuth2 Token Client (нативне вікно вибору акаунта Google)
+  if (clientId && window.google && window.google.accounts && window.google.accounts.oauth2) {
+    try {
+      const tokenClient = window.google.accounts.oauth2.initTokenClient({
+        client_id: clientId,
+        scope: 'email profile openid',
+        prompt: 'select_account',
+        callback: async (tokenResponse) => {
+          if (tokenResponse && tokenResponse.access_token) {
+            try {
+              const userRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+              });
+              const userInfo = await userRes.json();
+              if (userInfo && userInfo.email) {
+                submitGoogleEmail(userInfo.email, userInfo.name);
+                return;
+              }
+            } catch (err) {
+              console.error('Помилка отримання профілю Google:', err);
+            }
+          }
+        }
+      });
+      tokenClient.requestAccessToken({ prompt: 'select_account' });
+      return;
+    } catch (err) {
+      console.warn('Google SDK token client error:', err);
+    }
+  }
+
+  // 2. Якщо Client ID наявний, відкриваємо офіційне спливаюче вікно Google OAuth (popup)
+  if (clientId) {
+    const width = 500, height = 650;
+    const left = (window.innerWidth - width) / 2 + window.screenX;
+    const top = (window.innerHeight - height) / 2 + window.screenY;
+    const redirectUri = window.location.origin + '/api/auth/google/callback';
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=openid%20email%20profile&access_type=offline&prompt=select_account`;
+    window.open(authUrl, 'GoogleSignIn', `width=${width},height=${height},top=${top},status=no,menubar=no,toolbar=no`);
+    return;
+  }
+
+  // 3. Прямий перехід на серверний ендпоінт Google OAuth
+  window.location.href = '/api/auth/google/login';
 }
 
-function handleCustomGoogleSubmit(e) {
-  e.preventDefault();
-  const input = document.getElementById('customGoogleEmail');
-  if (!input) return;
-  const email = input.value.trim().toLowerCase();
-  if (!email) return;
-  closeGoogleAuthModal();
-  submitGoogleEmail(email);
-}
-
-async function submitGoogleEmail(googleEmail) {
-  googleEmail = googleEmail.trim().toLowerCase();
+async function submitGoogleEmail(googleEmail, nickname, credential) {
+  googleEmail = (googleEmail || '').trim().toLowerCase();
+  if (!googleEmail && !credential) return;
   pendingGoogleEmail = googleEmail;
   isGoogleAuthPending = true;
 
@@ -203,7 +255,8 @@ async function submitGoogleEmail(googleEmail) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: googleEmail,
-        nickname: googleEmail.split('@')[0],
+        nickname: nickname || (googleEmail ? googleEmail.split('@')[0] : ''),
+        credential: credential || undefined,
         experienceLevel: currentQualification
       })
     });
@@ -335,4 +388,5 @@ window.addEventListener('DOMContentLoaded', () => {
   if (urlParams.get('mode') === 'register' || window.location.pathname === '/register') {
     switchAuthMode('register');
   }
+  setTimeout(initGoogleIdentity, 300);
 });
