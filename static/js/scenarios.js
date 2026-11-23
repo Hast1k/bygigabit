@@ -184,14 +184,14 @@ function renderCurrentScenario() {
     document.getElementById('outcomePanel').style.display = 'none';
     document.getElementById('btnActionLong').disabled = false;
     document.getElementById('btnActionShort').disabled = false;
-    document.getElementById('scenarioPhaseBadge').textContent = 'ЕТАП 1: АНАЛІЗ (30 СВІЧОК)';
-    document.getElementById('chartWatermark').textContent = 'ВІДРІЗОК: 30 СВІЧОК';
+    document.getElementById('scenarioPhaseBadge').textContent = 'ЕТАП 1: АНАЛІЗ (40 СВІЧОК)';
+    document.getElementById('chartWatermark').textContent = 'ВІДРІЗОК: 40 СВІЧОК';
   }
 
   updateScoreBoard();
 }
 
-// Відображення початкових 30 свічок
+// Відображення початкових 40 свічок
 function renderInitialChart(scen) {
   if (!candleSeries || !chart) return;
   const candles = scen.initialCandles || [];
@@ -212,7 +212,7 @@ function renderInitialChart(scen) {
   chart.timeScale().fitContent();
 }
 
-// Відображення повного графіка (40 свічок)
+// Відображення повного графіка (60 свічок)
 function renderResolvedChart(scen) {
   if (!candleSeries || !chart) return;
   const init = scen.initialCandles || [];
@@ -234,7 +234,7 @@ function renderResolvedChart(scen) {
   })));
 
   document.getElementById('scenarioPhaseBadge').textContent = 'ЕТАП 2: РОЗВ\'ЯЗКА';
-  document.getElementById('chartWatermark').textContent = 'ПОВНИЙ РИНОК: 40 СВІЧОК';
+  document.getElementById('chartWatermark').textContent = 'ПОВНИЙ РИНОК: 60 СВІЧОК';
   chart.timeScale().fitContent();
 }
 
@@ -470,7 +470,7 @@ function finishReplay(closedEarly) {
   }
 
   document.getElementById('scenarioPhaseBadge').textContent = 'ЕТАП 2: РОЗВ\'ЯЗКА';
-  document.getElementById('chartWatermark').textContent = 'ПОВНИЙ РИНОК: 40 СВІЧОК';
+  document.getElementById('chartWatermark').textContent = 'ПОВНИЙ РИНОК: 60 СВІЧОК';
 
   showOutcome(scen.result, true);
   updateScoreBoard();

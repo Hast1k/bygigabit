@@ -11,7 +11,7 @@ class TestScenariosData:
     """Тести для сценаріїв тренажера та функцій розрахунку розв'язки."""
 
     def test_get_all_scenarios_meta_security(self):
-        """get_all_scenarios_meta() не розкриває futureCandles і містить рівно 30 свічок."""
+        """get_all_scenarios_meta() не розкриває futureCandles і містить рівно 40 свічок."""
         meta_list = scenarios_data.get_all_scenarios_meta()
 
         assert len(meta_list) > 0, "Список сценаріїв не повинен бути порожнім"
@@ -20,7 +20,7 @@ class TestScenariosData:
             # Свічки майбутнього не повинні передаватися у браузер до прийняття рішення
             assert "futureCandles" not in scen, "Свічки майбутнього скомпрометовано в метаданих"
             assert "initialCandles" in scen
-            assert len(scen["initialCandles"]) == 30, "Початковий відрізок повинен містити рівно 30 свічок"
+            assert len(scen["initialCandles"]) == 40, "Початковий відрізок повинен містити рівно 40 свічок"
 
             # Обов'язкові метадані
             assert "id" in scen
@@ -30,7 +30,7 @@ class TestScenariosData:
             assert "question" in scen
 
     def test_get_scenario_resolution_future_and_roi(self):
-        """get_scenario_resolution() повертає 10 майбутніх свічок і правильний ROI."""
+        """get_scenario_resolution() повертає 20 майбутніх свічок і правильний ROI."""
         # Генеруємо тестовий сценарій із відомим ID
         scen = scenarios_data.generate_fallback_scenario(1)
         scen_id = scen["id"]
@@ -40,7 +40,7 @@ class TestScenariosData:
         assert resolution["ok"] is True
         assert resolution["id"] == scen_id
         assert "futureCandles" in resolution
-        assert len(resolution["futureCandles"]) == 10, "Розв'язка повинна містити рівно 10 свічок"
+        assert len(resolution["futureCandles"]) == 20, "Розв'язка повинна містити рівно 20 свічок"
 
         assert resolution["correctAction"] in ["long", "short", "skip"]
         assert isinstance(resolution["longRoi"], float)

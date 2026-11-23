@@ -49,7 +49,7 @@ def generate_fallback_scenario(scen_id: int) -> Dict[str, Any]:
     base_price = 68000.0 + (scen_id * 150.0)
     candles = []
     curr = base_price
-    for i in range(40):
+    for i in range(60):
         noise = random.uniform(-0.008, 0.010)
         o = curr
         c = round(o * (1.0 + noise), 2)
@@ -63,20 +63,20 @@ def generate_fallback_scenario(scen_id: int) -> Dict[str, Any]:
 
 
 def _build_scenario_object(scen_id: int, sym: str, sym_label: str, coin_name: str, candles: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Формування повної структури сценарію на базі 40 свічок (30 початкових + 10 майбутніх)."""
-    init_candles = candles[:30]
-    future_candles = candles[30:40]
+    """Формування повної структури сценарію на базі 60 свічок (40 початкових + 20 майбутніх)."""
+    init_candles = candles[:40]
+    future_candles = candles[40:60]
 
     closes = [c["close"] for c in init_candles]
-    c30 = init_candles[-1]["close"]
-    c40 = future_candles[-1]["close"]
-    price_change = round(((c40 - c30) / c30) * 100, 2)
+    c40 = init_candles[-1]["close"]
+    c60 = future_candles[-1]["close"]
+    price_change = round(((c60 - c40) / c40) * 100, 2)
 
     rsi = calculate_rsi(closes, 14)
     sma_20 = calculate_sma(closes, 20)
 
     # Аналіз об'єму
-    avg_vol = sum(c["volume"] for c in init_candles[:29]) / 29 if len(init_candles) > 29 else 1.0
+    avg_vol = sum(c["volume"] for c in init_candles[:39]) / 39 if len(init_candles) > 39 else 1.0
     last_vol = init_candles[-1]["volume"]
     vol_ratio = round(last_vol / avg_vol, 2) if avg_vol > 0 else 1.0
 
@@ -85,7 +85,7 @@ def _build_scenario_object(scen_id: int, sym: str, sym_label: str, coin_name: st
         correct_action = "long"
         roi = round(price_change * 10, 1)
         outcome_title = f"Висхідний імпульс ціни на +{price_change}% (Прибуток за Long: +{roi}% при 10x)"
-        analysis = f"Після 30-ї свічки актив {sym} здійснив зростання на +{price_change}%. Своєчасний вхід у LONG виявився прибутковим рішенням."
+        analysis = f"Після 40-ї свічки актив {sym} здійснив зростання на +{price_change}%. Своєчасний вхід у LONG виявився прибутковим рішенням."
     else:
         correct_action = "short"
         roi = round(abs(price_change) * 10, 1)
@@ -95,7 +95,7 @@ def _build_scenario_object(scen_id: int, sym: str, sym_label: str, coin_name: st
     start_dt = datetime.datetime.fromtimestamp(init_candles[0]["time"]).strftime("%d.%m.%Y %H:%M")
     
     rsi_status = "Перекупленість (> 70)" if rsi >= 70 else ("Перепроданість (< 30)" if rsi <= 30 else f"Збалансована зона ({rsi})")
-    sma_diff = round(((c30 - sma_20) / sma_20) * 100, 2)
+    sma_diff = round(((c40 - sma_20) / sma_20) * 100, 2)
     sma_status = f"Ціна {abs(sma_diff)}% {'вище' if sma_diff >= 0 else 'нижче'} SMA-20"
     vol_status = f"Об'єм у {vol_ratio}x від середнього" if vol_ratio > 1.3 else "Об'єм у межах середньої норми"
 
@@ -114,14 +114,14 @@ def _build_scenario_object(scen_id: int, sym: str, sym_label: str, coin_name: st
         "timeframe": "15m",
         "difficulty": "Реальні дані Bybit",
         "category": "Bybit Market Historical Data",
-        "context": f"Фрагмент реальних біржових торгів {coin_name} за {start_dt}. На 30-й свічці ціна закрилася на позначці ${c30:,.2f}. Оцініть баланс сил покупців та продавців перед прийняттям торгового рішення.",
+        "context": f"Фрагмент реальних біржових торгів {coin_name} за {start_dt}. На 40-й свічці ціна закрилася на позначці ${c40:,.2f}. Оцініть баланс сил покупців та продавців перед прийняттям торгового рішення.",
         "indicators": {
             "rsi": rsi,
             "rsiStatus": rsi_status,
             "smaStatus": sma_status,
             "volumeStatus": vol_status
         },
-        "question": f"Поточна ціна: ${c30:,.2f}. Яку дію слід обрати на закритті 30-ї свічки?",
+        "question": f"Поточна ціна: ${c40:,.2f}. Яку дію слід обрати на закритті 40-ї свічки?",
         "correctAction": correct_action,
         "longRoi": round(price_change * 10, 1),
         "shortRoi": round(-price_change * 10, 1),
@@ -149,10 +149,10 @@ def generate_bybit_scenario(session) -> Dict[str, Any]:
         rand_offset = random.randint(14, 400) * 86400 * 1000
         start_ms = now_ms - rand_offset
 
-        res = session.get_kline(category="spot", symbol=sym, interval="15", start=start_ms, limit=40)
+        res = session.get_kline(category="spot", symbol=sym, interval="15", start=start_ms, limit=60)
         raw_list = list(reversed(res.get("result", {}).get("list", [])))
 
-        if len(raw_list) >= 40:
+        if len(raw_list) >= 60:
             candles = [
                 {
                     "time": int(r[0]) // 1000,
@@ -162,7 +162,7 @@ def generate_bybit_scenario(session) -> Dict[str, Any]:
                     "close": float(r[4]),
                     "volume": float(r[5])
                 }
-                for r in raw_list[:40]
+                for r in raw_list[:60]
             ]
             return _build_scenario_object(scen_id, sym, sym_label, coin_name, candles)
     except Exception as e:
