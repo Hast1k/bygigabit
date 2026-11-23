@@ -763,6 +763,8 @@
     }
 
     function initHelpScrollSpy() {
+      document.documentElement.style.overflowX = 'clip';
+      document.body.style.overflowX = 'clip';
       const sections = Array.from(document.querySelectorAll('.help-card.searchable-card'));
       const navItems = Array.from(document.querySelectorAll('.help-nav-item'));
 
