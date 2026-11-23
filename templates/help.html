@@ -60,23 +60,68 @@
       </div>
     </header>
 
-    <div class="help-controls">
-      <div class="help-search-box">
-        <input type="text" id="helpSearchInput" class="help-search-input" placeholder="Швидкий пошук терміна (маржа, плече, ліквідація, pnl, size, 2fa, rsi, спред)..." oninput="filterHelpContent()">
-      </div>
-      <div class="help-category-pills">
-        <span class="cat-pill active" onclick="jumpToSection('all')">Усі визначення</span>
-        <span class="cat-pill" onclick="jumpToSection('sec-market')">Основи ринку</span>
-        <span class="cat-pill" onclick="jumpToSection('sec-orders')">Ордери & Позиції</span>
-        <span class="cat-pill" onclick="jumpToSection('sec-margin')">Маржа & Плече & Size</span>
-        <span class="cat-pill" onclick="jumpToSection('sec-liquidation')">Ліквідація, PnL & ROI</span>
-        <span class="cat-pill" onclick="jumpToSection('sec-security')">Безпека & 2FA</span>
-        <span class="cat-pill" onclick="jumpToSection('sec-ai')">Штучний інтелект (AI)</span>
-        <span class="cat-pill" onclick="jumpToSection('sec-stress')">Тренажер & Chaos Mode</span>
-      </div>
-    </div>
+    <div class="help-layout">
+      <!-- Бічна панель навігації та швидкого пошуку -->
+      <aside class="help-sidebar">
+        <div class="help-sidebar-sticky">
+          <div class="help-search-box">
+            <div class="help-search-label">Пошук у довіднику</div>
+            <input type="text" id="helpSearchInput" class="help-search-input" placeholder="Пошук терміна (маржа, плече, ліквідація)..." oninput="filterHelpContent()">
+          </div>
 
-    <div class="help-sections-grid">
+          <div class="help-nav-header">
+            <span>Розділи довідника</span>
+            <span id="helpMatchesCount" class="help-matches-badge"></span>
+          </div>
+
+          <nav class="help-sidebar-nav" id="helpSidebarNav">
+            <a href="#all" class="help-nav-item active" data-target="all" onclick="jumpToSection('all', event)">
+              <span class="help-nav-num">✦</span>
+              <span class="help-nav-text">Усі визначення</span>
+              <span class="help-nav-badge" id="badge-all"></span>
+            </a>
+            <a href="#sec-market" class="help-nav-item" data-target="sec-market" onclick="jumpToSection('sec-market', event)">
+              <span class="help-nav-num">01</span>
+              <span class="help-nav-text">Основи ринку та стакан</span>
+              <span class="help-nav-badge" id="badge-sec-market"></span>
+            </a>
+            <a href="#sec-orders" class="help-nav-item" data-target="sec-orders" onclick="jumpToSection('sec-orders', event)">
+              <span class="help-nav-num">02</span>
+              <span class="help-nav-text">Типи ордерів та позицій</span>
+              <span class="help-nav-badge" id="badge-sec-orders"></span>
+            </a>
+            <a href="#sec-margin" class="help-nav-item" data-target="sec-margin" onclick="jumpToSection('sec-margin', event)">
+              <span class="help-nav-num">03</span>
+              <span class="help-nav-text">Маржа, плече & Size</span>
+              <span class="help-nav-badge" id="badge-sec-margin"></span>
+            </a>
+            <a href="#sec-liquidation" class="help-nav-item" data-target="sec-liquidation" onclick="jumpToSection('sec-liquidation', event)">
+              <span class="help-nav-num">04</span>
+              <span class="help-nav-text">Ліквідація, PnL & ROI</span>
+              <span class="help-nav-badge" id="badge-sec-liquidation"></span>
+            </a>
+            <a href="#sec-security" class="help-nav-item" data-target="sec-security" onclick="jumpToSection('sec-security', event)">
+              <span class="help-nav-num">05</span>
+              <span class="help-nav-text">Безпека акаунта & 2FA</span>
+              <span class="help-nav-badge" id="badge-sec-security"></span>
+            </a>
+            <a href="#sec-ai" class="help-nav-item" data-target="sec-ai" onclick="jumpToSection('sec-ai', event)">
+              <span class="help-nav-num">06</span>
+              <span class="help-nav-text">Штучний інтелект (AI)</span>
+              <span class="help-nav-badge" id="badge-sec-ai"></span>
+            </a>
+            <a href="#sec-stress" class="help-nav-item" data-target="sec-stress" onclick="jumpToSection('sec-stress', event)">
+              <span class="help-nav-num">07</span>
+              <span class="help-nav-text">Тренажер & Chaos Mode</span>
+              <span class="help-nav-badge" id="badge-sec-stress"></span>
+            </a>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- Основна область розділів та термінів -->
+      <div class="help-content-area">
+        <div class="help-sections-grid">
 
       <!-- РОЗДІЛ 1: ОСНОВИ РИНКУ ТА СТАКАНИ ЗАЯВОК -->
       <section id="sec-market" class="help-card searchable-card">
@@ -639,40 +684,125 @@
         </div>
       </section>
 
-    </div>
+        </div> <!-- /.help-sections-grid -->
+      </div> <!-- /.help-content-area -->
+    </div> <!-- /.help-layout -->
   </main>
 
   <script>
-    function jumpToSection(id) {
-      document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
-      if (event && event.target) {
-        event.target.classList.add('active');
-      }
+    let isUserClicking = false;
+
+    function jumpToSection(id, event) {
+      if (event) event.preventDefault();
+      document.querySelectorAll('.help-nav-item').forEach(p => p.classList.remove('active'));
+      const activeLink = document.querySelector(`.help-nav-item[data-target="${id}"]`);
+      if (activeLink) activeLink.classList.add('active');
 
       if (id === 'all') {
-        document.querySelectorAll('.searchable-card').forEach(c => c.style.display = 'block');
+        isUserClicking = true;
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => { isUserClicking = false; }, 600);
         return;
       }
 
       const target = document.getElementById(id);
       if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        isUserClicking = true;
+        const navOffset = 76;
+        const targetPos = target.getBoundingClientRect().top + window.pageYOffset - navOffset;
+        window.scrollTo({ top: targetPos, behavior: 'smooth' });
+        setTimeout(() => { isUserClicking = false; }, 600);
       }
     }
 
     function filterHelpContent() {
       const q = document.getElementById('helpSearchInput').value.toLowerCase().trim();
       const cards = document.querySelectorAll('.searchable-card');
+      let totalMatches = 0;
+
       cards.forEach(card => {
-        const text = card.textContent.toLowerCase();
-        if (!q || text.includes(q)) {
+        const cardId = card.id;
+        const defBoxes = card.querySelectorAll('.def-box');
+        let cardMatches = 0;
+
+        defBoxes.forEach(box => {
+          const text = box.textContent.toLowerCase();
+          if (!q || text.includes(q)) {
+            box.style.display = 'block';
+            cardMatches++;
+          } else {
+            box.style.display = 'none';
+          }
+        });
+
+        const navItem = document.querySelector(`.help-nav-item[data-target="${cardId}"]`);
+        const badge = document.getElementById(`badge-${cardId}`);
+
+        if (!q) {
           card.style.display = 'block';
+          if (navItem) navItem.classList.remove('no-match');
+          if (badge) badge.textContent = '';
+        } else if (cardMatches > 0) {
+          card.style.display = 'block';
+          totalMatches += cardMatches;
+          if (navItem) navItem.classList.remove('no-match');
+          if (badge) badge.textContent = cardMatches;
         } else {
           card.style.display = 'none';
+          if (navItem) navItem.classList.add('no-match');
+          if (badge) badge.textContent = '0';
         }
       });
+
+      const badgeAll = document.getElementById('badge-all');
+      const matchesHeader = document.getElementById('helpMatchesCount');
+      if (badgeAll) badgeAll.textContent = q ? totalMatches : '';
+      if (matchesHeader) {
+        matchesHeader.textContent = q ? `(${totalMatches})` : '';
+      }
     }
+
+    function initHelpScrollSpy() {
+      const sections = Array.from(document.querySelectorAll('.help-card.searchable-card'));
+      const navItems = Array.from(document.querySelectorAll('.help-nav-item'));
+
+      function onScroll() {
+        if (isUserClicking) return;
+        const scrollPos = window.scrollY + 130;
+        let currentId = 'all';
+
+        const visibleSections = sections.filter(s => s.style.display !== 'none');
+        if (!visibleSections.length) return;
+
+        if (window.scrollY < 120) {
+          currentId = 'all';
+        } else {
+          visibleSections.forEach(sec => {
+            const top = sec.offsetTop;
+            if (scrollPos >= top) {
+              currentId = sec.id;
+            }
+          });
+
+          if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 60) {
+            currentId = visibleSections[visibleSections.length - 1].id;
+          }
+        }
+
+        navItems.forEach(item => {
+          if (item.getAttribute('data-target') === currentId) {
+            item.classList.add('active');
+          } else {
+            item.classList.remove('active');
+          }
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
+
+    window.addEventListener('DOMContentLoaded', initHelpScrollSpy);
   </script>
 </body>
 </html>

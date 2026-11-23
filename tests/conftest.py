@@ -4,6 +4,7 @@
 """
 
 import os
+os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 import time
 import pytest
 from sqlalchemy import create_engine, event

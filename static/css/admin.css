@@ -357,8 +357,10 @@ body.sb-sidenav-toggled #layoutSidenav_content {
 }
 
 /* Секції */
+section[id^="view-"],
 .sb-section-spacer {
   margin-top: 32px;
+  scroll-margin-top: 75px;
 }
 
 /* Центр експорту */

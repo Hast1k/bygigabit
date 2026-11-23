@@ -186,89 +186,7 @@
           </div>
         </section>
 
-        <!-- Розділ 2: Центр завантаження статистики та звітів -->
-        <section id="view-export" class="sb-section-spacer">
-          <div class="sb-panel-card">
-            <div class="sb-panel-header">
-              <div class="header-left">
-                <span>Центр завантаження статистики та звітів</span>
-              </div>
-              <span class="badge badge-green">ЗВІТНІСТЬ</span>
-            </div>
-            <div class="sb-panel-body">
-              <p style="font-size:13px; color:var(--text-muted); margin-bottom:18px;">
-                Вивантажуйте консолідовані дані платформи для аудиту, аналізу ефективності та обліку операцій у форматах CSV та JSON.
-              </p>
-              <div class="export-grid">
-                <!-- Картка 1 -->
-                <div class="export-card">
-                  <div class="export-card-title">Зведена статистика платформи</div>
-                  <div class="export-card-desc">
-                    Основні фінансові показники, кількість активних трейдерів, відкритих угод, заблокованої маржі та загального балансу.
-                  </div>
-                  <div class="export-btn-group">
-                    <a href="/api/admin/export/stats?format=csv" class="btn-export btn-export-csv" download>
-                      Завантажити CSV
-                    </a>
-                    <a href="/api/admin/export/stats?format=json" class="btn-export btn-export-json" download>
-                      JSON
-                    </a>
-                  </div>
-                </div>
-
-                <!-- Картка 2 -->
-                <div class="export-card">
-                  <div class="export-card-title">Реєстр облікових записів</div>
-                  <div class="export-card-desc">
-                    Повний список трейдерів: Email, баланс USDT, роль у системі, статус 2FA, стан блокування та дата створення.
-                  </div>
-                  <div class="export-btn-group">
-                    <a href="/api/admin/export/users?format=csv" class="btn-export btn-export-csv" download>
-                      Завантажити CSV
-                    </a>
-                    <a href="/api/admin/export/users?format=json" class="btn-export btn-export-json" download>
-                      JSON
-                    </a>
-                  </div>
-                </div>
-
-                <!-- Картка 3 -->
-                <div class="export-card">
-                  <div class="export-card-title">Журнал торгових угод</div>
-                  <div class="export-card-desc">
-                    Історія закритих ордерів платформи: пари, ціни входу та закриття, маржа, кредитне плече, розрахований PnL та ROI.
-                  </div>
-                  <div class="export-btn-group">
-                    <a href="/api/admin/export/trades?format=csv" class="btn-export btn-export-csv" download>
-                      Завантажити CSV
-                    </a>
-                    <a href="/api/admin/export/trades?format=json" class="btn-export btn-export-json" download>
-                      JSON
-                    </a>
-                  </div>
-                </div>
-
-                <!-- Картка 4 -->
-                <div class="export-card">
-                  <div class="export-card-title">Відкриті позиції</div>
-                  <div class="export-card-desc">
-                    Поточні активні позиції трейдерів: торгова пара, сторона, розмір, ціна входу, розрахункова ліквідація та плече.
-                  </div>
-                  <div class="export-btn-group">
-                    <a href="/api/admin/export/positions?format=csv" class="btn-export btn-export-csv" download>
-                      Завантажити CSV
-                    </a>
-                    <a href="/api/admin/export/positions?format=json" class="btn-export btn-export-json" download>
-                      JSON
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Розділ 3: Керування користувачами та трейдерами -->
+        <!-- Розділ 2: Керування користувачами та трейдерами -->
         <section id="view-users" class="sb-section-spacer">
           <div class="sb-panel-card" id="usersTableSection">
             <div class="sb-panel-header">
@@ -392,6 +310,88 @@
                     <tr><td colspan="8" class="empty-state">Немає активних лімітних ордерів</td></tr>
                   </tbody>
                 </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Розділ 5: Центр завантаження статистики та звітів -->
+        <section id="view-export" class="sb-section-spacer">
+          <div class="sb-panel-card">
+            <div class="sb-panel-header">
+              <div class="header-left">
+                <span>Центр завантаження статистики та звітів</span>
+              </div>
+              <span class="badge badge-green">ЗВІТНІСТЬ</span>
+            </div>
+            <div class="sb-panel-body">
+              <p style="font-size:13px; color:var(--text-muted); margin-bottom:18px;">
+                Вивантажуйте консолідовані дані платформи для аудиту, аналізу ефективності та обліку операцій у форматах CSV та JSON.
+              </p>
+              <div class="export-grid">
+                <!-- Картка 1 -->
+                <div class="export-card">
+                  <div class="export-card-title">Зведена статистика платформи</div>
+                  <div class="export-card-desc">
+                    Основні фінансові показники, кількість активних трейдерів, відкритих угод, заблокованої маржі та загального балансу.
+                  </div>
+                  <div class="export-btn-group">
+                    <a href="/api/admin/export/stats?format=csv" class="btn-export btn-export-csv" download>
+                      Завантажити CSV
+                    </a>
+                    <a href="/api/admin/export/stats?format=json" class="btn-export btn-export-json" download>
+                      JSON
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Картка 2 -->
+                <div class="export-card">
+                  <div class="export-card-title">Реєстр облікових записів</div>
+                  <div class="export-card-desc">
+                    Повний список трейдерів: Email, баланс USDT, роль у системі, статус 2FA, стан блокування та дата створення.
+                  </div>
+                  <div class="export-btn-group">
+                    <a href="/api/admin/export/users?format=csv" class="btn-export btn-export-csv" download>
+                      Завантажити CSV
+                    </a>
+                    <a href="/api/admin/export/users?format=json" class="btn-export btn-export-json" download>
+                      JSON
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Картка 3 -->
+                <div class="export-card">
+                  <div class="export-card-title">Журнал торгових угод</div>
+                  <div class="export-card-desc">
+                    Історія закритих ордерів платформи: пари, ціни входу та закриття, маржа, кредитне плече, розрахований PnL та ROI.
+                  </div>
+                  <div class="export-btn-group">
+                    <a href="/api/admin/export/trades?format=csv" class="btn-export btn-export-csv" download>
+                      Завантажити CSV
+                    </a>
+                    <a href="/api/admin/export/trades?format=json" class="btn-export btn-export-json" download>
+                      JSON
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Картка 4 -->
+                <div class="export-card">
+                  <div class="export-card-title">Відкриті позиції</div>
+                  <div class="export-card-desc">
+                    Поточні активні позиції трейдерів: торгова пара, сторона, розмір, ціна входу, розрахункова ліквідація та плече.
+                  </div>
+                  <div class="export-btn-group">
+                    <a href="/api/admin/export/positions?format=csv" class="btn-export btn-export-csv" download>
+                      Завантажити CSV
+                    </a>
+                    <a href="/api/admin/export/positions?format=json" class="btn-export btn-export-json" download>
+                      JSON
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

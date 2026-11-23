@@ -9,6 +9,7 @@ window.addEventListener('DOMContentLoaded', () => {
   initSidebarToggle();
   initCharts();
   loadAdminData();
+  initAdminScrollSpy();
 });
 
 function initSidebarToggle() {
@@ -29,16 +30,62 @@ function initSidebarToggle() {
   }
 }
 
+let isAdminNavClicking = false;
+
 function switchNav(linkEl) {
-  document.querySelectorAll('.sb-nav-link').forEach(el => el.classList.remove('active'));
-  linkEl.classList.add('active');
   const targetId = linkEl.getAttribute('href');
   if (targetId && targetId.startsWith('#')) {
     const targetSection = document.querySelector(targetId);
     if (targetSection) {
-      targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.querySelectorAll('.sb-nav-link').forEach(el => el.classList.remove('active'));
+      linkEl.classList.add('active');
+      isAdminNavClicking = true;
+      const navOffset = 70;
+      const elementPosition = targetSection.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - navOffset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+      setTimeout(() => { isAdminNavClicking = false; }, 600);
     }
   }
+}
+
+function initAdminScrollSpy() {
+  const sections = Array.from(document.querySelectorAll('section[id^="view-"]'));
+  const navLinks = Array.from(document.querySelectorAll('.sb-sidenav .sb-nav-link[href^="#view-"]'));
+  if (!sections.length || !navLinks.length) return;
+
+  function updateActiveNav() {
+    if (isAdminNavClicking) return;
+    const scrollPos = window.scrollY + 130;
+    let currentId = sections[0].id;
+
+    for (let i = 0; i < sections.length; i++) {
+      const sec = sections[i];
+      const top = sec.offsetTop;
+      if (scrollPos >= top) {
+        currentId = sec.id;
+      }
+    }
+
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
+      currentId = sections[sections.length - 1].id;
+    }
+
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href === '#' + currentId) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveNav, { passive: true });
+  updateActiveNav();
 }
 
 function syncSearch(val) {
